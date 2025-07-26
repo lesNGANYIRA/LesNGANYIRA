@@ -14,6 +14,7 @@
     .hero { background-color: #e9ecef; padding: 60px 20px; text-align: center; }
     .lang-switch { position: absolute; top: 10px; right: 20px; }
     #contributionHistory { margin-top: 40px; }
+    section { padding: 40px 20px; }
   </style>
 </head>
 <body>
@@ -39,7 +40,29 @@
     <h1 data-en="Welcome to Famille NGANYIRA" data-fr="Bienvenue dans la famille NGANYIRA">Welcome to Famille NGANYIRA</h1>
   </div>
 
-  <!-- Sections above remain unchanged -->
+  <section id="about" class="container">
+    <h2 data-en="About Us" data-fr="À propos de nous">About Us</h2>
+    <p data-en="This website is mainly designed for both good and future of the family." data-fr="Ce site Web est principalement conçu pour le bien et l'avenir de la famille.">
+      This website is mainly designed for both good and future of the family.
+    </p>
+  </section>
+
+  <section id="services" class="container">
+    <h2 data-en="Our Services" data-fr="Nos Services">Our Services</h2>
+    <p data-en="We are here to build a residence by the contribution of our family. We will be able to take care of old men and old women and insure their health care."
+       data-fr="Nous sommes ici pour construire une résidence grâce à la contribution de notre famille. Nous pourrons prendre soin des personnes âgées et assurer leur santé.">
+      We are here to build a residence by the contribution of our family. We will be able to take care of old men and old women and insure their health care.
+    </p>
+  </section>
+
+  <section id="contact" class="container">
+    <h2 data-en="Contact Us" data-fr="Nous contacter">Contact Us</h2>
+    <ul>
+      <li><strong>Mama Annick:</strong> +250788592450</li>
+      <li><strong>Mama Josh:</strong> +1 514-717-8891</li>
+      <li><strong>Papa Josh:</strong> +1 514-247-8891</li>
+    </ul>
+  </section>
 
   <section id="contribute" class="container my-5">
     <h2 data-en="Make a Contribution" data-fr="Faire une contribution">Make a Contribution</h2>
@@ -76,18 +99,6 @@
         el.innerText = el.getAttribute(`data-${lang}`);
       });
     }
-
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const id = document.getElementById("idNumber").value.trim();
-      if (id.length === 16 && !isNaN(id)) {
-        document.getElementById("loginMessage").innerText = currentLang === 'fr' ? "Connexion réussie ! Bienvenue." : "Login successful! Welcome.";
-        document.getElementById("loginMessage").style.color = "green";
-      } else {
-        document.getElementById("loginMessage").innerText = currentLang === 'fr' ? "Numéro invalide. Veuillez entrer un numéro de 16 chiffres." : "Invalid ID. Please enter a valid 16-digit number.";
-        document.getElementById("loginMessage").style.color = "red";
-      }
-    });
 
     document.getElementById("contributionForm").addEventListener("submit", function(e) {
       e.preventDefault();
