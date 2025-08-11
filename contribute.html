@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Les NGANYIRA — Contribution</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- NAV -->
+  <header class="nav">
+    <div class="nav-left">Les NGANYIRA</div>
+    <nav class="nav-right">
+      <a href="home.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contribute.html">Make a Contribution</a>
+      <a href="terms.html">Terms & Policies</a>
+      <button id="logoutBtn" class="nav-btn">Log out</button>
+    </nav>
+  </header>
+
+  <div class="auth-card" style="margin-top:24px;">
+    <h1>Make a Contribution</h1>
+    <p>Enter your contribution amount and currency. We’ll convert it to <b>CAD</b> automatically (demo rates).</p>
+
+    <form id="contribForm">
+      <label>Amount</label>
+      <input type="number" id="amount" min="0" step="0.01" placeholder="e.g. 50" required/>
+
+      <label>Currency</label>
+      <select id="currency" required>
+        <option value="CAD" selected>CAD — Canadian Dollar</option>
+        <option value="USD">USD — US Dollar</option>
+        <option value="EUR">EUR — Euro</option>
+        <option value="GBP">GBP — British Pound</option>
+        <option value="RWF">RWF — Rwandan Franc</option>
+      </select>
+
+      <label>Note (optional)</label>
+      <input type="text" id="note" placeholder="e.g. Family fund"/>
+
+      <div id="preview" class="muted" style="margin-top:8px;"></div>
+
+      <button type="submit" style="margin-top:10px;">Save contribution</button>
+      <p id="msg" class="success"></p>
+      <p class="muted" style="margin-top:6px;">
+        <small>Rates are demo and set locally; update them below in code if needed.</small>
+      </p>
+    </form>
+
+    <hr style="margin:16px 0; border:0; height:1px; background:#eef1f7;"/>
+
+    <h2>Your saved contributions (this device)</h2>
+    <div id="listWrap" class="muted">No contributions yet.</div>
+  </div>
+
+  <script>
+    // ----- Auth guard -----
+    const email = localStorage.getItem("lng_current_user");
+    if (!email) { window.location.href = "index.html"; }
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    });
+
+    // ----- Local demo FX rates → 1 unit of CURRENCY equals X CAD -----
+    // Update these numbers when you want fresher rates.
+    const exchangeRates = {
+      CAD: 1,        // 1 CAD = 1 CAD
+      USD: 1.35,     // 1 USD ≈ 1.35 CAD (demo)
+      EUR: 1.48,     // 1 EUR ≈ 1.48 CAD (demo)
+      GBP: 1.74,     // 1 GBP ≈ 1.74 CAD (demo)
+      RWF: 0.0011    // 1 RWF ≈ 0.0011 CAD (demo)
+    };
+
+    // ----- Helpers for localStorage -----
+    function getContribs(){
+      try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; }
+    }
+    function setContribs(o){
+      localStorage.setItem("lng_contribs", JSON.stringify(o));
+    }
+
+    // ----- UI elements -----
+    const amountEl = document.getElementById("amount");
+    const currencyEl = document.getElementById("currency");
+    const noteEl = document.getElementById("note");
+    const previewEl = document.getElementById("preview");
+    const msgEl = document.getElementById("msg");
+    const listWrap = document.getElementById("listWrap");
+
+    // Live preview of conversion
+    function updatePreview() {
+      const amt = parseFloat(amountEl.value);
+      const cur = currencyEl.value;
+      if (!amt || !exchangeRates[cur]) {
+        previewEl.textContent = "";
+        return;
+      }
+      const cad = amt * exchangeRates[cur];
+      previewEl.textContent = `≈ ${cad.toFixed(2)} CAD (from ${amt} ${cur})`;
+    }
+    amountEl.addEventListener("input", updatePreview);
+    currencyEl.addEventListener("change", updatePreview);
+
+    // Submit handler
+    document.getElementById("contribForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      msgEl.textContent = "";
+
+      const amt = parseFloat(amountEl.value);
+      const cur = currencyEl.value;
+      if (!amt || amt <= 0) { msgEl.textContent = "Enter a valid amount."; return; }
+      if (!exchangeRates[cur]) { msgEl.textContent = "Unsupported currency."; return; }
+
+      const cadAmount = amt * exchangeRates[cur];
+      const note = (noteEl.value || "").trim();
+
+      // Save per user
+      const db = getContribs();
+      if (!db[email]) db[email] = [];
+      db[email].push({
+        amountOriginal: amt,
+        currency: cur,
+        amountCAD: parseFloat(cadAmount.toFixed(2)),
+        note,
+        at: Date.now()
+      });
+      setContribs(db);
+
+      msgEl.textContent = "Saved locally (converted to CAD).";
+      e.target.reset();
+      previewEl.textContent = "";
+      renderList();
+    });
+
+    // Render list
+    function renderList() {
+      const db = getContribs();
+      const rows = (db[email]||[]).slice().reverse(); // newest first
+      if (!rows.length) { listWrap.textContent = "No contributions yet."; return; }
+
+      const fmt = (n)=> new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+
+      let html = '<div style="overflow:auto;"><table style="width:100%; border-collapse:collapse;">';
+      html += '<thead><tr>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Date</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Original</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">In CAD</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Note</th>' +
+              '</tr></thead><tbody>';
+
+      rows.forEach(r => {
+        const d = new Date(r.at);
+        const date = d.toLocaleString();
+        html += `<tr>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${date}</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmt(r.amountOriginal)} ${r.currency}</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmt(r.amountCAD)} CAD</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${r.note || ""}</td>
+        </tr>`;
+      });
+
+      html += '</tbody></table></div>';
+      listWrap.innerHTML = html;
+    }
+
+    // Init
+    renderList();
+    updatePreview();
+  </script>
+</body>
+</html>
