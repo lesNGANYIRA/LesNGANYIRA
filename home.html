@@ -5,8 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Les NGANYIRA — Home</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    .hero {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      margin: 8px auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      background: #000; color: #fff;
+    }
+    .hero img {
+      width: 100%; height: 260px; object-fit: cover; opacity: .85; display: block;
+    }
+    .overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 18px; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.45) 100%);
+    }
+    .overlay h1 { margin: 0 0 6px; font-size: 26px; }
+    .overlay p  { margin: 0 0 10px; color: #e5e7eb; }
+    .btn-row { display: flex; gap: 8px; }
+    .btn { padding: 10px 12px; border-radius: 10px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; }
+    .btn.secondary { background: #eef3ff; color: #1f3fb3; }
+  </style>
 </head>
 <body>
+  <!-- NAV -->
   <header class="nav">
     <div class="nav-left">Les NGANYIRA</div>
     <nav class="nav-right">
@@ -19,18 +44,37 @@
     </nav>
   </header>
 
-  <div class="auth-card" style="margin-top:24px;">
-    <h1>Home</h1>
-    <p>Welcome back! This is the family home page.</p>
+  <!-- HERO with your uploaded image -->
+  <section class="hero">
+    <!-- IMPORTANT: uyu path ugomba guhuza n’ayo washyize muri repo: images/EIDS5199.JPG -->
+    <img src="images/EIDS5199.JPG" alt="Les NGANYIRA family hero" width="1600" height="600" onerror="this.src='images/placeholder.jpg'"/>
+    <div class="overlay">
+      <h1>United for our future</h1>
+      <p>Tuzigama, dufashanye, dukura hamwe.</p>
+      <div class="btn-row">
+        <a href="contribute.html" class="btn">Make a Contribution</a>
+        <a href="services.html" class="btn secondary">See Services</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="auth-card" style="margin-top:16px;">
+    <h2>Welcome</h2>
+    <p id="welcomeTxt" class="muted"></p>
   </div>
 
   <script>
+    // Auth guard
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
+    // Small welcome
+    const me = JSON.parse(localStorage.getItem("lng_users") || "{}")[email];
+    document.getElementById("welcomeTxt").textContent =
+      me ? `Logged in as ${email} — Phone: ${me.phone}` : `Logged in as ${email}`;
   </script>
 </body>
 </html>
