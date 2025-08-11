@@ -7,7 +7,20 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="auth-card">
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav-left">Les NGANYIRA</div>
+    <nav class="nav-right">
+      <a href="home.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contribute.html">Make a Contribution</a>
+      <a href="terms.html">Terms & Policies</a>
+      <button id="logoutBtn" class="nav-btn">Log out</button>
+    </nav>
+  </header>
+
+  <div class="auth-card" style="margin-top:24px;">
     <h1>Family Dashboard</h1>
 
     <p id="welcome"></p>
@@ -15,23 +28,34 @@
 
     <hr style="margin:14px 0; border:0; height:1px; background:#eef1f7;"/>
 
-    <div>
-      <h2>Sections</h2>
-      <ul>
-        <li>Savings</li>
-        <li>Contributions</li>
-        <li>Announcements</li>
-      </ul>
+    <!-- Quick stats -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+      <div style="background:#fff;border:1px solid #eef1f7;border-radius:12px;padding:14px;">
+        <div style="font-size:13px;color:#4b5563;">Total contributions (CAD)</div>
+        <div id="totalCad" style="font-size:20px;font-weight:700;">0.00</div>
+      </div>
+      <div style="background:#fff;border:1px solid #eef1f7;border-radius:12px;padding:14px;">
+        <div style="font-size:13px;color:#4b5563;">Entries</div>
+        <div id="totalCount" style="font-size:20px;font-weight:700;">0</div>
+      </div>
+    </div>
+
+    <!-- Recent contributions -->
+    <div style="margin-top:18px;">
+      <h2>Recent contributions</h2>
+      <div id="recentList" class="muted">No contributions yet. <a href="contribute.html">Add one →</a></div>
     </div>
 
     <div style="display:flex; gap:10px; margin-top:18px;">
-      <button id="logoutBtn" style="background:#1f2937;">Log out</button>
       <button id="forgetDevice" style="background:#9ca3af;">Forget this device</button>
     </div>
   </div>
 
   <script>
+    // ---------- Auth guard ----------
     function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
+    function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
+
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
 
@@ -43,19 +67,68 @@
       window.location.href = "index.html";
     }
 
+    // Header info
     document.getElementById("welcome").textContent = `Welcome, ${email}`;
     document.getElementById("contact").textContent = `Phone: ${me.phone}`;
 
+    // Logout / Forget
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
-
     document.getElementById("forgetDevice").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       localStorage.removeItem("lng_remember");
       window.location.href = "index.html";
     });
+
+    // ---------- Stats & recent list ----------
+    function fmtMoney(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
+
+    function renderStats() {
+      const db = getContribs();
+      const rows = (db[email] || []);
+      const totalCad = rows.reduce((sum, r) => sum + (Number(r.amountCAD)||0), 0);
+      document.getElementById("totalCad").textContent = fmtMoney(totalCad);
+      document.getElementById("totalCount").textContent = rows.length;
+    }
+
+    function renderRecent() {
+      const db = getContribs();
+      const rows = (db[email] || []).slice().reverse(); // newest first
+      const recent = rows.slice(0, 5);
+
+      const box = document.getElementById("recentList");
+      if (!recent.length) {
+        box.innerHTML = 'No contributions yet. <a href="contribute.html">Add one →</a>';
+        return;
+      }
+
+      let html = '<div style="overflow:auto;"><table style="width:100%; border-collapse:collapse;">';
+      html += '<thead><tr>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Date</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Original</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">In CAD</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Note</th>' +
+              '</tr></thead><tbody>';
+
+      recent.forEach(r => {
+        const d = new Date(r.at).toLocaleString();
+        html += `<tr>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${d}</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmtMoney(r.amountOriginal)} ${r.currency}</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmtMoney(r.amountCAD)} CAD</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${r.note || ""}</td>
+        </tr>`;
+      });
+
+      html += '</tbody></table></div>';
+      html += '<div class="muted" style="margin-top:8px;">See more on <a href="contribute.html">Make a Contribution</a>.</div>';
+      box.innerHTML = html;
+    }
+
+    renderStats();
+    renderRecent();
   </script>
 </body>
 </html>
