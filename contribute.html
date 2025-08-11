@@ -22,8 +22,9 @@
 
   <div class="auth-card" style="margin-top:24px;">
     <h1>Make a Contribution</h1>
-    <p>Enter your contribution amount and currency. We’ll convert it to <b>CAD</b> automatically (demo rates).</p>
+    <p>Enter your contribution amount and currency. We’ll convert it to <b>CAD</b> automatically (demo rates below).</p>
 
+    <!-- FORM -->
     <form id="contribForm">
       <label>Amount</label>
       <input type="number" id="amount" min="0" step="0.01" placeholder="e.g. 50" required/>
@@ -45,14 +46,22 @@
       <button type="submit" style="margin-top:10px;">Save contribution</button>
       <p id="msg" class="success"></p>
       <p class="muted" style="margin-top:6px;">
-        <small>Rates are demo and set locally; update them below in code if needed.</small>
+        <small>Rates are demo and set locally on this page (see “Exchange Rates → CAD” below).</small>
       </p>
     </form>
 
     <hr style="margin:16px 0; border:0; height:1px; background:#eef1f7;"/>
 
+    <!-- LIST -->
     <h2>Your saved contributions (this device)</h2>
     <div id="listWrap" class="muted">No contributions yet.</div>
+
+    <hr style="margin:16px 0; border:0; height:1px; background:#eef1f7;"/>
+
+    <!-- RATES -->
+    <h2>Exchange Rates → CAD</h2>
+    <p class="muted" id="ratesUpdated">Last updated: <b>set manually in code</b></p>
+    <div id="ratesTable"></div>
   </div>
 
   <script>
@@ -65,7 +74,7 @@
     });
 
     // ----- Local demo FX rates → 1 unit of CURRENCY equals X CAD -----
-    // Update these numbers when you want fresher rates.
+    // Update these numbers + lastUpdated text when you want fresher rates.
     const exchangeRates = {
       CAD: 1,        // 1 CAD = 1 CAD
       USD: 1.35,     // 1 USD ≈ 1.35 CAD (demo)
@@ -73,6 +82,7 @@
       GBP: 1.74,     // 1 GBP ≈ 1.74 CAD (demo)
       RWF: 0.0011    // 1 RWF ≈ 0.0011 CAD (demo)
     };
+    const lastUpdated = "2025-08-11"; // <-- Hindura iyi itariki igihe uhinduye rates
 
     // ----- Helpers for localStorage -----
     function getContribs(){
@@ -89,6 +99,27 @@
     const previewEl = document.getElementById("preview");
     const msgEl = document.getElementById("msg");
     const listWrap = document.getElementById("listWrap");
+    const ratesTable = document.getElementById("ratesTable");
+    const ratesUpdated = document.getElementById("ratesUpdated");
+
+    // Show rates table
+    function renderRates() {
+      ratesUpdated.innerHTML = `Last updated: <b>${lastUpdated}</b>`;
+      const entries = Object.entries(exchangeRates);
+      let html = '<div style="overflow:auto;"><table style="width:100%; border-collapse:collapse;">';
+      html += '<thead><tr>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Currency</th>' +
+              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">1 unit equals (CAD)</th>' +
+              '</tr></thead><tbody>';
+      entries.forEach(([ccy, rate]) => {
+        html += `<tr>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${ccy}</td>
+          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${Number(rate).toFixed(4)} CAD</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+      ratesTable.innerHTML = html;
+    }
 
     // Live preview of conversion
     function updatePreview() {
@@ -144,31 +175,4 @@
       const fmt = (n)=> new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
       let html = '<div style="overflow:auto;"><table style="width:100%; border-collapse:collapse;">';
-      html += '<thead><tr>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Date</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Original</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">In CAD</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Note</th>' +
-              '</tr></thead><tbody>';
-
-      rows.forEach(r => {
-        const d = new Date(r.at);
-        const date = d.toLocaleString();
-        html += `<tr>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${date}</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmt(r.amountOriginal)} ${r.currency}</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmt(r.amountCAD)} CAD</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${r.note || ""}</td>
-        </tr>`;
-      });
-
-      html += '</tbody></table></div>';
-      listWrap.innerHTML = html;
-    }
-
-    // Init
-    renderList();
-    updatePreview();
-  </script>
-</body>
-</html>
+      html += '
