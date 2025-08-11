@@ -1,13 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les NGANYIRA Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Les NGANYIRA — Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <h1>Welcome to Les NGANYIRA Dashboard</h1>
-  <p>Here you will see savings and contributions.</p>
+  <div class="auth-card">
+    <h1>Family Dashboard</h1>
+
+    <p id="welcome"></p>
+    <p id="contact"></p>
+
+    <hr style="margin:14px 0; border:0; height:1px; background:#eef1f7;"/>
+
+    <div>
+      <h2>Sections</h2>
+      <ul>
+        <li>Savings</li>
+        <li>Contributions</li>
+        <li>Announcements</li>
+      </ul>
+    </div>
+
+    <button id="logoutBtn" style="margin-top:18px;background:#1f2937;">Log out</button>
+  </div>
+
+  <script>
+    // Guard: must be logged in
+    function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
+
+    const email = localStorage.getItem("lng_current_user");
+    if (!email) { window.location.href = "index.html"; }
+
+    const users = getUsers();
+    const me = users[email];
+
+    if (!me) {
+      localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("welcome").textContent = `Welcome, ${email}`;
+    document.getElementById("contact").textContent = `Phone: ${me.phone}`;
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    });
+  </script>
 </body>
 </html>
