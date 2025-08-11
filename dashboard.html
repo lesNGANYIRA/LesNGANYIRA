@@ -24,21 +24,22 @@
       </ul>
     </div>
 
-    <button id="logoutBtn" style="margin-top:18px;background:#1f2937;">Log out</button>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button id="logoutBtn" style="background:#1f2937;">Log out</button>
+      <button id="forgetDevice" style="background:#9ca3af;">Forget this device</button>
+    </div>
   </div>
 
   <script>
-    // Guard: must be logged in
     function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
-
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
 
     const users = getUsers();
     const me = users[email];
-
     if (!me) {
       localStorage.removeItem("lng_current_user");
+      localStorage.removeItem("lng_remember");
       window.location.href = "index.html";
     }
 
@@ -47,6 +48,12 @@
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    });
+
+    document.getElementById("forgetDevice").addEventListener("click", () => {
+      localStorage.removeItem("lng_current_user");
+      localStorage.removeItem("lng_remember");
       window.location.href = "index.html";
     });
   </script>
