@@ -18,12 +18,17 @@
       <input type="email" id="loginEmail" placeholder="you@example.com" required/>
 
       <label for="loginPassword">Password</label>
-      <input type="password" id="loginPassword" placeholder="Your password" required/>
+      <div class="pw-wrap">
+        <input type="password" id="loginPassword" placeholder="Your password" required/>
+        <button type="button" class="toggle" data-target="loginPassword">Show</button>
+      </div>
+
+      <label class="remember">
+        <input type="checkbox" id="rememberMe"/> Remember me on this device
+      </label>
 
       <button type="submit">Log in</button>
-      <p class="muted">
-        <a href="#" id="toReset">Forgot password?</a>
-      </p>
+      <p class="muted"><a href="#" id="toReset">Forgot password?</a></p>
       <p class="muted">First time here? <a href="#" id="toSignup">Create an account</a></p>
       <p id="loginError" class="error"></p>
     </form>
@@ -35,11 +40,29 @@
       <label for="signupEmail">Email</label>
       <input type="email" id="signupEmail" placeholder="you@example.com" required/>
 
-      <label for="signupPhone">Phone number</label>
-      <input type="tel" id="signupPhone" placeholder="+2507XXXXXXXX" required/>
+      <label>Phone number</label>
+      <div class="phone-row">
+        <select id="countryCode" required></select>
+        <input type="tel" id="signupPhone" placeholder="7XXXXXXXX or number without code" required/>
+      </div>
+      <div id="customCodeWrap" class="custom-code" style="display:none;">
+        <input type="text" id="customCode" placeholder="+999 (custom code)"/>
+      </div>
 
       <label for="signupPassword">Password</label>
-      <input type="password" id="signupPassword" placeholder="Min 8 characters" required/>
+      <div class="pw-wrap">
+        <input type="password" id="signupPassword" placeholder="Min 8 characters" required/>
+        <button type="button" class="toggle" data-target="signupPassword">Show</button>
+      </div>
+
+      <!-- Password strength meter -->
+      <div id="pwMeter" class="meter"><span id="pwBar"></span></div>
+      <div id="pwHints" class="hints">
+        <span id="hLen">8+ chars</span>
+        <span id="hMix">letters & numbers</span>
+        <span id="hUpper">uppercase</span>
+        <span id="hSpecial">symbol</span>
+      </div>
 
       <button type="submit">Sign up</button>
       <p class="muted">Already registered? <a href="#" id="toLogin">Log in</a></p>
@@ -53,14 +76,20 @@
       <label for="resetEmail">Email</label>
       <input type="email" id="resetEmail" placeholder="you@example.com" required/>
 
-      <label for="resetPhone">Phone number</label>
+      <label for="resetPhone">Phone number (with country code)</label>
       <input type="tel" id="resetPhone" placeholder="+2507XXXXXXXX" required/>
 
       <label for="resetPassword">New password</label>
-      <input type="password" id="resetPassword" placeholder="Min 8 characters" required/>
+      <div class="pw-wrap">
+        <input type="password" id="resetPassword" placeholder="Min 8 characters" required/>
+        <button type="button" class="toggle" data-target="resetPassword">Show</button>
+      </div>
 
       <label for="resetPassword2">Confirm new password</label>
-      <input type="password" id="resetPassword2" placeholder="Retype password" required/>
+      <div class="pw-wrap">
+        <input type="password" id="resetPassword2" placeholder="Retype password" required/>
+        <button type="button" class="toggle" data-target="resetPassword2">Show</button>
+      </div>
 
       <button type="submit">Set new password</button>
       <p class="muted"><a href="#" id="backToLoginFromReset">Back to log in</a></p>
@@ -69,6 +98,7 @@
     </form>
   </div>
 
+  <!-- JS must be last -->
   <script src="script.js"></script>
 </body>
 </html>
