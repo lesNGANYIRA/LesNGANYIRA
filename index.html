@@ -1,22 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les NGANYIRA Login</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Les NGANYIRA — Access</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <h1>Welcome to Les NGANYIRA</h1>
-  
-  <div class="login-box">
-    <h2>Member Login</h2>
-    <form id="loginForm">
-      <label for="idNumber">Enter your ID Number:</label>
-      <input type="text" id="idNumber" placeholder="e.g. NG001" required>
-      <button type="submit">Login</button>
+  <div class="auth-card">
+    <h1>Les NGANYIRA</h1>
+
+    <!-- LOGIN -->
+    <form id="loginForm" autocomplete="on">
+      <h2>Log in</h2>
+
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" required/>
+
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Your password" required/>
+
+      <button type="submit">Log in</button>
+      <p class="muted">
+        <a href="#" id="toReset">Forgot password?</a>
+      </p>
+      <p class="muted">First time here? <a href="#" id="toSignup">Create an account</a></p>
+      <p id="loginError" class="error"></p>
     </form>
-    <p id="errorMsg" style="color:red;"></p>
+
+    <!-- SIGN UP -->
+    <form id="signupForm" style="display:none;" autocomplete="on">
+      <h2>Create account</h2>
+
+      <label for="signupEmail">Email</label>
+      <input type="email" id="signupEmail" placeholder="you@example.com" required/>
+
+      <label for="signupPhone">Phone number</label>
+      <input type="tel" id="signupPhone" placeholder="+2507XXXXXXXX" required/>
+
+      <label for="signupPassword">Password</label>
+      <input type="password" id="signupPassword" placeholder="Min 8 characters" required/>
+
+      <button type="submit">Sign up</button>
+      <p class="muted">Already registered? <a href="#" id="toLogin">Log in</a></p>
+      <p id="signupError" class="error"></p>
+    </form>
+
+    <!-- RESET -->
+    <form id="resetForm" style="display:none;" autocomplete="off">
+      <h2>Reset password</h2>
+
+      <label for="resetEmail">Email</label>
+      <input type="email" id="resetEmail" placeholder="you@example.com" required/>
+
+      <label for="resetPhone">Phone number</label>
+      <input type="tel" id="resetPhone" placeholder="+2507XXXXXXXX" required/>
+
+      <label for="resetPassword">New password</label>
+      <input type="password" id="resetPassword" placeholder="Min 8 characters" required/>
+
+      <label for="resetPassword2">Confirm new password</label>
+      <input type="password" id="resetPassword2" placeholder="Retype password" required/>
+
+      <button type="submit">Set new password</button>
+      <p class="muted"><a href="#" id="backToLoginFromReset">Back to log in</a></p>
+      <p id="resetError" class="error"></p>
+      <p id="resetSuccess" class="success"></p>
+    </form>
   </div>
 
   <script src="script.js"></script>
