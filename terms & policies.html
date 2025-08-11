@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Les NGANYIRA — Terms & Policies</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-left">Les NGANYIRA</div>
+    <nav class="nav-right">
+      <a href="home.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contribute.html">Make a Contribution</a>
+      <a href="terms.html">Terms & Policies</a>
+      <button id="logoutBtn" class="nav-btn">Log out</button>
+    </nav>
+  </header>
+
+  <div class="auth-card" style="margin-top:24px;">
+    <h1>Terms & Policies</h1>
+    <p>These demo terms describe usage of this family website.</p>
+    <ul>
+      <li>Privacy: data saved on this device (LocalStorage) only.</li>
+      <li>Security: do not share your password; we’ll add server-side auth later.</li>
+      <li>Contributions: for demo only; not real payments yet.</li>
+    </ul>
+  </div>
+
+  <script>
+    const email = localStorage.getItem("lng_current_user");
+    if (!email) { window.location.href = "index.html"; }
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
