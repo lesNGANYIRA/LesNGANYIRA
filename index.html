@@ -42,9 +42,18 @@
 
       <label>Phone number</label>
       <div class="phone-row">
-        <select id="countryCode" required></select>
-        <input type="tel" id="signupPhone" placeholder="7XXXXXXXX or number without code" required/>
+        <!-- Dropdown fallback -->
+        <select id="countryCode" required>
+          <option value="+250" selected>🇷🇼 +250 Rwanda</option>
+          <option value="+256">🇺🇬 +256 Uganda</option>
+          <option value="+254">🇰🇪 +254 Kenya</option>
+          <option value="+1">🇺🇸 +1 USA/Canada</option>
+          <option value="+44">🇬🇧 +44 UK</option>
+          <option value="custom">🌍 Other (enter custom)</option>
+        </select>
+        <input type="tel" id="signupPhone" placeholder="7XXXXXXXX or local number" required/>
       </div>
+
       <div id="customCodeWrap" class="custom-code" style="display:none;">
         <input type="text" id="customCode" placeholder="+999 (custom code)"/>
       </div>
