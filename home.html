@@ -6,6 +6,7 @@
   <title>Les NGANYIRA — Home</title>
   <link rel="stylesheet" href="style.css"/>
   <style>
+    /* Extra styles for hero & cards */
     .hero {
       position: relative;
       width: 100%;
@@ -28,6 +29,11 @@
     .btn-row { display: flex; gap: 8px; }
     .btn { padding: 10px 12px; border-radius: 10px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; }
     .btn.secondary { background: #eef3ff; color: #1f3fb3; }
+
+    .quick { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); margin-top: 16px; }
+    .card { background: #fff; border: 1px solid #eef1f7; border-radius: 14px; padding: 14px; }
+    table.simple { width:100%; border-collapse:collapse; }
+    table.simple th, table.simple td { padding:8px; border-bottom:1px solid #eef1f7; text-align:left; }
   </style>
 </head>
 <body>
@@ -46,37 +52,118 @@
 
   <!-- HERO with your uploaded image -->
   <section class="hero">
-    <!-- IMPORTANT: uyu path ugomba guhuza n’ayo washyize muri repo: images/EIDS5199.JPG -->
-    <section class="hero">
-  <img src="C:\Users\bruce\OneDrive\Pictures\Saved Pictures" alt="Les NGANYIRA family hero" width="1600" height="1200" />
-  <div class="overlay">
-    <h1>United for our future</h1>
-    <p>Tuzigame, dufashanye, dukure hamwe.</p>
-    <div class="btn-row">
-      <a href="contribute.html" class="btn">Make a Contribution</a>
-      <a href="services.html" class="btn secondary">See Services</a>
+    <!-- IMPORTANT: shyira EIDS5199.JPG muri folder /images/ ya repo -->
+    <img src="./images/EIDS5199.JPG" alt="Les NGANYIRA family hero" width="1600" height="600" />
+    <div class="overlay">
+      <h1>United for our future</h1>
+      <p>Tuzigama, dufashanye, dukura hamwe.</p>
+      <div class="btn-row">
+        <a href="contribute.html" class="btn">Make a Contribution</a>
+        <a href="services.html" class="btn secondary">See Services</a>
+      </div>
     </div>
-  </div>
-</section>
-
+  </section>
 
   <div class="auth-card" style="margin-top:16px;">
-    <h2>Welcome</h2>
-    <p id="welcomeTxt" class="muted"></p>
+    <!-- Quick intro & stats -->
+    <div class="quick">
+      <div class="card">
+        <h2>Welcome</h2>
+        <p id="welcomeTxt" class="muted"></p>
+      </div>
+      <div class="card">
+        <h2>Your quick stats</h2>
+        <div class="muted"><small>Total contributions (CAD)</small></div>
+        <div id="totalCad" style="font-size:20px;font-weight:700;">0.00</div>
+        <div class="muted" style="margin-top:6px;"><small>Entries: <span id="totalCount">0</span></small></div>
+      </div>
+      <div class="card">
+        <h2>Announcements</h2>
+        <ul class="muted" style="margin:6px 0 0 18px;">
+          <li>Monthly saving reminder: 25th.</li>
+          <li>Family call — Sunday 7pm Kigali time.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recent contributions -->
+    <div class="card" style="margin-top:12px;">
+      <h2>Recent contributions</h2>
+      <div id="recentList" class="muted">No contributions yet. <a href="contribute.html">Add one →</a></div>
+    </div>
   </div>
 
   <script>
-    // Auth guard
+    // ===== Auth guard =====
+    function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
+    function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
+
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
+
+    const users = getUsers();
+    const me = users[email];
+    if (!me) {
+      localStorage.removeItem("lng_current_user");
+      localStorage.removeItem("lng_remember");
+      window.location.href = "index.html";
+    }
+
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
-    // Small welcome
-    const me = JSON.parse(localStorage.getItem("lng_users") || "{}")[email];
+
+    // Welcome text
     document.getElementById("welcomeTxt").textContent =
       me ? `Logged in as ${email} — Phone: ${me.phone}` : `Logged in as ${email}`;
+
+    // Stats
+    function fmtMoney(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
+    function renderStats() {
+      const db = getContribs();
+      const rows = (db[email] || []);
+      const totalCad = rows.reduce((sum, r) => sum + (Number(r.amountCAD)||0), 0);
+      document.getElementById("totalCad").textContent = fmtMoney(totalCad);
+      document.getElementById("totalCount").textContent = rows.length;
+    }
+
+    // Recent list
+    function renderRecent() {
+      const db = getContribs();
+      const rows = (db[email] || []).slice().reverse(); // newest first
+      const recent = rows.slice(0, 5);
+
+      const box = document.getElementById("recentList");
+      if (!recent.length) {
+        box.innerHTML = 'No contributions yet. <a href="contribute.html">Add one →</a>';
+        return;
+      }
+
+      let html = '<div style="overflow:auto;"><table class="simple">';
+      html += '<thead><tr>' +
+              '<th>Date</th>' +
+              '<th>Original</th>' +
+              '<th>In CAD</th>' +
+              '<th>Note</th>' +
+              '</tr></thead><tbody>';
+
+      recent.forEach(r => {
+        const d = new Date(r.at).toLocaleString();
+        html += `<tr>
+          <td>${d}</td>
+          <td>${fmtMoney(r.amountOriginal)} ${r.currency}</td>
+          <td>${fmtMoney(r.amountCAD)} CAD</td>
+          <td>${r.note || ""}</td>
+        </tr>`;
+      });
+
+      html += '</tbody></table></div>';
+      box.innerHTML = html;
+    }
+
+    renderStats();
+    renderRecent();
   </script>
 </body>
 </html>
