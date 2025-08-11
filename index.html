@@ -3,130 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Les NGANYIRA Family Website - United for our future">
-  <meta name="keywords" content="NGANYIRA, family, savings, support, health, care">
-  <meta name="author" content="Les NGANYIRA Family">
-  <title>Les NGANYIRA</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f8f9fa; }
-    nav a { margin: 0 10px; }
-    .hero { background-color: #e9ecef; padding: 60px 20px; text-align: center; }
-    .lang-switch { position: absolute; top: 10px; right: 20px; }
-    #contributionHistory { margin-top: 40px; }
-    section { padding: 40px 20px; }
-  </style>
+  <title>Les NGANYIRA Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="lang-switch">
-    <button onclick="setLanguage('en')" class="btn btn-sm btn-outline-primary">EN</button>
-    <button onclick="setLanguage('fr')" class="btn btn-sm btn-outline-secondary">FR</button>
-  </div>
-
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Les NGANYIRA</a>
-      <div>
-        <a class="btn btn-outline-light" href="#home">Home</a>
-        <a class="btn btn-outline-light" href="#about">About</a>
-        <a class="btn btn-outline-light" href="#services">Services</a>
-        <a class="btn btn-outline-light" href="#contact">Contact</a>
-        <a class="btn btn-outline-light" href="#contribute">Contribute</a>
-      </div>
-    </div>
-  </nav>
-
-  <div id="home" class="hero">
-    <h1 data-en="Welcome to Famille NGANYIRA" data-fr="Bienvenue dans la famille NGANYIRA">Welcome to Famille NGANYIRA</h1>
-  </div>
-
-  <section id="about" class="container">
-    <h2 data-en="About Us" data-fr="À propos de nous">About Us</h2>
-    <p data-en="This website is mainly designed for both good and future of the family." data-fr="Ce site Web est principalement conçu pour le bien et l'avenir de la famille.">
-      This website is mainly designed for both good and future of the family.
-    </p>
-  </section>
-
-  <section id="services" class="container">
-    <h2 data-en="Our Services" data-fr="Nos Services">Our Services</h2>
-    <p data-en="We are here to build a residence by the contribution of our family. We will be able to take care of old men and old women and insure their health care."
-       data-fr="Nous sommes ici pour construire une résidence grâce à la contribution de notre famille. Nous pourrons prendre soin des personnes âgées et assurer leur santé.">
-      We are here to build a residence by the contribution of our family. We will be able to take care of old men and old women and insure their health care.
-    </p>
-  </section>
-
-  <section id="contact" class="container">
-    <h2 data-en="Contact Us" data-fr="Nous contacter">Contact Us</h2>
-    <ul>
-      <li><strong>Mama Annick:</strong> +250788592450</li>
-      <li><strong>Mama Josh:</strong> +1 514-717-8891</li>
-      <li><strong>Papa Josh:</strong> +1 514-247-8891</li>
-    </ul>
-  </section>
-
-  <section id="contribute" class="container my-5">
-    <h2 data-en="Make a Contribution" data-fr="Faire une contribution">Make a Contribution</h2>
-    <form id="contributionForm">
-      <div class="mb-3">
-        <label for="currency" class="form-label" data-en="Select your currency:" data-fr="Sélectionnez votre devise:">Select your currency:</label>
-        <select id="currency" class="form-select">
-          <option value="CAD">CAD - Canadian Dollar</option>
-          <option value="USD">USD - US Dollar</option>
-          <option value="EUR">EUR - Euro</option>
-          <option value="GBP">GBP - British Pound</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="amount" class="form-label" data-en="Amount to contribute:" data-fr="Montant à contribuer:">Amount to contribute:</label>
-        <input type="number" id="amount" class="form-control" required>
-      </div>
-      <button type="submit" class="btn btn-success" data-en="Convert & Submit" data-fr="Convertir et Soumettre">Convert & Submit</button>
-      <p id="conversionResult" class="mt-3"></p>
+  <h1>Welcome to Les NGANYIRA</h1>
+  
+  <div class="login-box">
+    <h2>Member Login</h2>
+    <form id="loginForm">
+      <label for="idNumber">Enter your ID Number:</label>
+      <input type="text" id="idNumber" placeholder="e.g. NG001" required>
+      <button type="submit">Login</button>
     </form>
+    <p id="errorMsg" style="color:red;"></p>
+  </div>
 
-    <div id="contributionHistory">
-      <h3 data-en="Contribution History" data-fr="Historique des contributions">Contribution History</h3>
-      <ul id="historyList" class="list-group"></ul>
-    </div>
-  </section>
-
-  <script>
-    let currentLang = 'en';
-    function setLanguage(lang) {
-      currentLang = lang;
-      const elements = document.querySelectorAll('[data-en]');
-      elements.forEach(el => {
-        el.innerText = el.getAttribute(`data-${lang}`);
-      });
-    }
-
-    document.getElementById("contributionForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const amount = parseFloat(document.getElementById("amount").value);
-      const currency = document.getElementById("currency").value;
-      let cadAmount = amount;
-
-      switch (currency) {
-        case "USD": cadAmount *= 1.35; break;
-        case "EUR": cadAmount *= 1.45; break;
-        case "GBP": cadAmount *= 1.70; break;
-        default: break;
-      }
-
-      const today = new Date().toLocaleDateString();
-      const convertedMsg = currentLang === 'fr'
-        ? `Montant converti: ${cadAmount.toFixed(2)} CAD`
-        : `Converted amount: ${cadAmount.toFixed(2)} CAD`;
-
-      document.getElementById("conversionResult").innerText = convertedMsg;
-
-      const entry = document.createElement("li");
-      entry.className = "list-group-item";
-      entry.innerText = `${today} - ${cadAmount.toFixed(2)} CAD (from ${currency})`;
-      document.getElementById("historyList").prepend(entry);
-    });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
