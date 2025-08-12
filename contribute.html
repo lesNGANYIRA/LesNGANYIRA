@@ -134,7 +134,7 @@
         </div>
 
         <p class="muted" style="margin-top:10px">
-          <small data-i18n="pay.note">Modal y’ubwishyu ifungurwa ngaho ngaho; ntaho tubika amakuru ya karita hano.</small>
+          <small data-i18n="pay.note">Modal y’ubwishyu ifungurwa hano; ntaho tubika amakuru ya karita kuri uru rubuga.</small>
         </p>
       </div>
 
@@ -237,8 +237,8 @@
     });
 
     // ===== FLUTTERWAVE INLINE (Card & Mobile Money Rwanda) =====
-    // REPLACE with your real key (sandbox/prod):
-    const FLW_PUBLIC_KEY = "FLWPUBK_TEST_xxxxxxxxxxxxxxxxxxxxxxxxxx";
+    // Public Key yawe (SANDBOX):
+    const FLW_PUBLIC_KEY = "FLWPUBK_TEST-edf2892faa7c49620c914cff36f5f3c0-X";
 
     function baseCheckout(payload){
       FlutterwaveCheckout({
@@ -254,7 +254,7 @@
           description: "Contribution — " + labelOfFund(payload.fund)
         },
         callback: function (response) {
-          // NOTE: verification nyayo ikorwa kuri server yawe ukoresheje SECRET KEY.
+          // NOTE: Verification nyayo ikorwa kuri server ukoresheje SECRET KEY.
           const recs = JSON.parse(localStorage.getItem("lng_pay_refs")||"{}");
           recs[email] = recs[email] || [];
           recs[email].push({ id: response.transaction_id, status: response.status, at: Date.now(), fund: payload.fund });
@@ -262,7 +262,7 @@
           alert("Payment status: " + response.status);
           window.location.href = "home.html";
         },
-        onclose: function(){ /* user yakinguye modal */ }
+        onclose: function(){ /* modal ifunze */ }
       });
     }
 
@@ -274,8 +274,8 @@
       const me = users[email] || {};
       baseCheckout({
         amount: amt,
-        currency: currencyEl.value,       // Card ishobora kuba CAD/USD/EUR/GBP ... bitewe n'ibyemewe kuri account
-        payment_options: "card",          // -> modal isaba buri gihe: Card name, number, expiry, CVV
+        currency: currencyEl.value,       // Card: CAD/USD/EUR/GBP/RWF ... bitewe na account permissions
+        payment_options: "card",          // -> modal isaba: cardholder name, number, expiry, CVV
         customer: { email, phonenumber: me.phone || "", name: me.name || email },
         fund: fundEl.value
       });
@@ -368,7 +368,7 @@
         "totals.title":"Subtotals kuri buri fund (CAD)","list.title":"Ibyinjijwe byawe","list.empty":"Nta musanzu urabikwa.",
         "tbl.date":"Itariki","tbl.fund":"Fund","tbl.original":"Byatangirijweho","tbl.cad":"Mu CAD","tbl.note":"Ibisobanuro",
         "pay.title":"Hitamo aho uri n’uburyo bwo kwishyura","pay.where":"Uritangaho he?","pay.where.rw":"Mu Rwanda","pay.where.abroad":"Hanze y’u Rwanda",
-        "pay.note":"Modal y’ubwishyu ifungurwa ngaho ngaho; ntaho tubika amakuru ya karita hano.",
+        "pay.note":"Modal y’ubwishyu ifungurwa hano; ntaho tubika amakuru ya karita kuri uru rubuga.",
         "pay.missAmt":"Shyiramo umubare wemewe mbere yo kwishyura.",
         "pay.forceRwf":"Rwanda Mobile Money isaba RWF. Uhindure ifaranga kuri RWF?",
         "pay.needPhone":"Shyiramo numero ya telefoni (profile) kugira ngo MoMo ikore.",
