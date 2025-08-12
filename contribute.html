@@ -12,7 +12,7 @@
     .row{display:flex;gap:10px;flex-wrap:wrap}
     label{display:block;font-weight:600;margin-bottom:6px}
     input,select,textarea{width:100%;padding:10px;border:1px solid #d8deea;border-radius:10px}
-    .success{background:#ecfdf5;border:1px solid #bbf7d0;color:#065f46;padding:10px;border-radius:10px;display:none}
+    .muted small{color:var(--muted)}
     table.simple{width:100%;border-collapse:collapse}
     table.simple th,table.simple td{padding:8px;border-bottom:1px solid #eef1f7;text-align:left}
     .btn{padding:10px 12px;border-radius:10px;background:var(--accent);color:#fff;border:0;font-weight:700;text-decoration:none;cursor:pointer}
@@ -49,13 +49,14 @@
 
   <div class="auth-card" style="margin-top:16px;">
     <h1 data-i18n="page.h1">Tanga umusanzu</h1>
-    <p class="muted" data-i18n="page.lead">Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo. Hanyuma uhitamo uburyo bwo kwishyura.</p>
+    <p class="muted" data-i18n="page.lead">
+      Hitamo fund, shyiramo umubare n’ifaranga. Amafaranga abikwa kuri konti yawe ari uko kwishyura
+      byagenze neza.
+    </p>
 
     <div class="grid">
       <!-- Form -->
       <div class="card">
-        <div id="okMsg" class="success" role="status" aria-live="polite" data-i18n="form.ok">Byacungiwe neza!</div>
-
         <div class="row">
           <div style="flex:1 1 220px;min-width:220px">
             <label for="fund" data-i18n="form.fund">Fund</label>
@@ -97,8 +98,6 @@
         </div>
 
         <div class="row" style="margin-top:12px">
-          <button class="btn" id="saveBtn" data-i18n="form.save">Bika umusanzu</button>
-          <a href="home.html" class="btn secondary" data-i18n="form.backHome">Subira ku Ahabanza</a>
           <span class="pill">🔒 <span data-i18n="pill.secure">Kwishyura bikorerwa ku rubuga rw’umucuruzi wemewe (secure checkout)</span></span>
         </div>
 
@@ -134,7 +133,7 @@
         </div>
 
         <p class="muted" style="margin-top:10px">
-          <small data-i18n="pay.note">Modal y’ubwishyu ifungurwa hano; ntaho tubika amakuru ya karita kuri uru rubuga.</small>
+          <small data-i18n="pay.note">Umusanzu ugaragara kuri konti yawe ari uko wishyuye neza (PAID).</small>
         </p>
       </div>
 
@@ -146,7 +145,7 @@
 
       <!-- Recent list -->
       <div class="card" style="grid-column:1 / -1">
-        <h2 data-i18n="list.title">Ibyinjijwe byawe</h2>
+        <h2 data-i18n="list.title">Contribution history (PAID)</h2>
         <div id="recentList" class="muted">—</div>
       </div>
     </div>
@@ -190,7 +189,6 @@
     const noteEl = document.getElementById("note");
     const fundEl = document.getElementById("fund");
     const previewEl = document.getElementById("preview");
-    const okMsg = document.getElementById("okMsg");
     const whereEl = document.getElementById("where");
     const methodsRw = document.getElementById("methodsRw");
     const methodsAbroad = document.getElementById("methodsAbroad");
@@ -212,38 +210,32 @@
       methodsAbroad.classList.toggle("hidden", isRw);
     });
 
-    // Bika imbere (kugira ngo rikurikire totals & list)
-    function saveCurrentContribution(){
-      const amt = parseFloat(amountEl.value||"0");
-      if (!amt || amt<=0) return false;
-      const cur  = currencyEl.value;
-      const fund = fundEl.value;
-      const note = (noteEl.value||"").trim();
-      const cad  = amt * (RATES_TO_CAD[cur] || 1);
-
+    // ===== WRITE ONLY AFTER PAID =====
+    function addPaidContribution({fund, amount, currency, note, tx_ref}){
+      const cad = amount * (RATES_TO_CAD[currency] || 1);
+      const rec = {
+        fund, amountOriginal: amount, currency, amountCAD: cad,
+        note: (noteEl.value||"").trim(),
+        at: Date.now(),
+        status: "paid",
+        tx_ref
+      };
       const db = getContribs();
       db[email] = db[email] || [];
-      db[email].push({ fund, amountOriginal: amt, currency: cur, amountCAD: cad, note, at: Date.now() });
+      db[email].push(rec);
       setContribs(db);
       renderList(); renderFundTotals(); renderPreview();
-      return true;
     }
-
-    document.getElementById("saveBtn").addEventListener("click", () => {
-      if (!saveCurrentContribution()) { amountEl.focus(); return; }
-      okMsg.style.display = "block";
-      setTimeout(()=> okMsg.style.display = "none", 1800);
-      amountEl.value = ""; noteEl.value = "";
-    });
 
     // ===== FLUTTERWAVE INLINE (Card & Mobile Money Rwanda) =====
     // Public Key yawe (SANDBOX):
     const FLW_PUBLIC_KEY = "FLWPUBK_TEST-edf2892faa7c49620c914cff36f5f3c0-X";
 
     function baseCheckout(payload){
+      const txRef = "LNG-" + Date.now(); // one tx_ref per attempt
       FlutterwaveCheckout({
         public_key: FLW_PUBLIC_KEY,
-        tx_ref: "LNG-" + Date.now(),
+        tx_ref: txRef,
         amount: payload.amount,
         currency: payload.currency,
         payment_options: payload.payment_options, // "card" or "mobilemoneyrwanda"
@@ -254,28 +246,35 @@
           description: "Contribution — " + labelOfFund(payload.fund)
         },
         callback: function (response) {
-          // NOTE: Verification nyayo ikorwa kuri server ukoresheje SECRET KEY.
-          const recs = JSON.parse(localStorage.getItem("lng_pay_refs")||"{}");
-          recs[email] = recs[email] || [];
-          recs[email].push({ id: response.transaction_id, status: response.status, at: Date.now(), fund: payload.fund });
-          localStorage.setItem("lng_pay_refs", JSON.stringify(recs));
-          alert("Payment status: " + response.status);
+          // Only record when successful
+          if ((response.status || "").toLowerCase() === "successful") {
+            addPaidContribution({
+              fund: payload.fund,
+              amount: payload.amount,
+              currency: payload.currency,
+              tx_ref: response.tx_ref
+            });
+            alert(TR[langSel.value]["pay.success"]);
+          } else {
+            alert(TR[langSel.value]["pay.failed"] + " (" + (response.status||"") + ")");
+          }
           window.location.href = "home.html";
         },
-        onclose: function(){ /* modal ifunze */ }
+        onclose: function(){
+          // User closed modal – do nothing (no save)
+        }
       });
     }
 
     function payWithCard(){
       const amt = parseFloat(amountEl.value||"0");
       if (!amt || amt<=0) { alert(TR[langSel.value]["pay.missAmt"]); return; }
-      saveCurrentContribution(); // tubike mbere
       const users = JSON.parse(localStorage.getItem("lng_users")||"{}");
       const me = users[email] || {};
       baseCheckout({
         amount: amt,
-        currency: currencyEl.value,       // Card: CAD/USD/EUR/GBP/RWF ... bitewe na account permissions
-        payment_options: "card",          // -> modal isaba: cardholder name, number, expiry, CVV
+        currency: currencyEl.value,       // Card: CAD/USD/EUR/GBP/RWF ... depending on your Flutterwave settings
+        payment_options: "card",          // modal asks: cardholder name, number, expiry, CVV
         customer: { email, phonenumber: me.phone || "", name: me.name || email },
         fund: fundEl.value
       });
@@ -284,13 +283,12 @@
     function payWithMoMoRw(network){
       const amt = parseFloat(amountEl.value||"0");
       if (!amt || amt<=0) { alert(TR[langSel.value]["pay.missAmt"]); return; }
-      // MoMo Rwanda isaba RWF
+      // MoMo Rwanda requires RWF
       if (currencyEl.value !== "RWF") {
         if (!confirm(TR[langSel.value]["pay.forceRwf"])) return;
         currencyEl.value = "RWF";
         renderPreview();
       }
-      saveCurrentContribution();
       const users = JSON.parse(localStorage.getItem("lng_users")||"{}");
       const me = users[email] || {};
       if (!me.phone) { alert(TR[langSel.value]["pay.needPhone"]); return; }
@@ -308,17 +306,22 @@
     document.getElementById("btnMtn").addEventListener("click", ()=> payWithMoMoRw("mtn"));
     document.getElementById("btnAirtel").addEventListener("click", ()=> payWithMoMoRw("airtel"));
 
-    // Per-fund totals & list
+    // Per-fund totals & list (PAID ONLY)
     const FUNDS = ["savings","emergency","education","health","events","projects"];
     function labelOfFund(code){
       const L = TR[langSel.value];
       const map = {savings:L["fund.savings"],emergency:L["fund.emergency"],education:L["fund.education"],health:L["fund.health"],events:L["fund.events"],projects:L["fund.projects"]};
       return map[code] || code;
     }
+
     function renderFundTotals(){
       const db = getContribs(); const rows = (db[email]||[]);
       const totals = FUNDS.reduce((o,k)=> (o[k]=0, o), {});
-      rows.forEach(r => { totals[r.fund||"savings"] += Number(r.amountCAD)||0; });
+      rows.forEach(r => {
+        if ((r.status||"") === "paid") {
+          totals[r.fund||"savings"] += Number(r.amountCAD)||0;
+        }
+      });
       const wrap = document.getElementById("fundTotals");
       let html = "";
       FUNDS.forEach(k=>{
@@ -326,9 +329,11 @@
       });
       wrap.innerHTML = html;
     }
+
     function renderList(){
       const db = getContribs();
-      const rows = (db[email] || []).slice().reverse();
+      const rowsAll = (db[email] || []);
+      const rows = rowsAll.filter(r => (r.status||"") === "paid").slice().reverse();
       const box = document.getElementById("recentList");
       const L = TR[langSel.value];
       if (!rows.length) { box.textContent = L["list.empty"]; return; }
@@ -339,6 +344,7 @@
         <th>${L["tbl.original"]}</th>
         <th>${L["tbl.cad"]}</th>
         <th>${L["tbl.note"]}</th>
+        <th>Ref</th>
       </tr></thead><tbody>`;
       rows.slice(0,12).forEach(r=>{
         const d = new Date(r.at).toLocaleString();
@@ -348,6 +354,7 @@
           <td>${fmtMoney(r.amountOriginal)} ${r.currency}</td>
           <td>${fmtMoney(r.amountCAD)} CAD</td>
           <td>${r.note || ""}</td>
+          <td>${r.tx_ref || ""}</td>
         </tr>`;
       });
       html += '</tbody></table></div>';
@@ -361,17 +368,19 @@
         title:"Les NGANYIRA — Tanga umusanzu",
         "nav.home":"Ahabanza","nav.about":"Ibyerekeye","nav.services":"Serivisi","nav.contribute":"Tanga umusanzu","nav.terms":"Amategeko & Politiki","nav.logout":"Sohoka",
         "page.h1":"Tanga umusanzu",
-        "page.lead":"Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo. Hanyuma uhitamo uburyo bwo kwishyura.",
-        "form.ok":"Byacungiwe neza!","form.fund":"Fund",
+        "page.lead":"Hitamo fund, shyiramo umubare n’ifaranga. Amafaranga abikwa kuri konti yawe ari uko kwishyura byagenze neza.",
+        "form.fund":"Fund",
         "fund.savings":"Kwigomwa & Kuzigamira","fund.emergency":"Inkunga y’ihutirwa","fund.education":"Fonds y’Uburezi","fund.health":"Inkunga y’Ubuvuzi","fund.events":"Inkunga y’ibirori","fund.projects":"Imishinga y’iterambere",
-        "form.amount":"Umubare","form.currency":"Ifaranga","form.note":"Icyo byagenewe / Icyitonderwa","form.preview":"Igaragaza uko bihinduka:","form.save":"Bika umusanzu","form.backHome":"Subira ku Ahabanza","form.ratesHint":"Ingero z'ibiciro by'ivunjisha by'ubu: birashobora guhinduka.",
-        "totals.title":"Subtotals kuri buri fund (CAD)","list.title":"Ibyinjijwe byawe","list.empty":"Nta musanzu urabikwa.",
+        "form.amount":"Umubare","form.currency":"Ifaranga","form.note":"Icyo byagenewe / Icyitonderwa","form.preview":"Igaragaza uko bihinduka:","form.ratesHint":"Ingero z'ibiciro by'ivunjisha by'ubu: birashobora guhinduka.",
+        "totals.title":"Subtotals kuri buri fund (CAD)","list.title":"Contribution history (PAID)","list.empty":"Nta byishuwe biragaragara.",
         "tbl.date":"Itariki","tbl.fund":"Fund","tbl.original":"Byatangirijweho","tbl.cad":"Mu CAD","tbl.note":"Ibisobanuro",
         "pay.title":"Hitamo aho uri n’uburyo bwo kwishyura","pay.where":"Uritangaho he?","pay.where.rw":"Mu Rwanda","pay.where.abroad":"Hanze y’u Rwanda",
-        "pay.note":"Modal y’ubwishyu ifungurwa hano; ntaho tubika amakuru ya karita kuri uru rubuga.",
+        "pay.note":"Umusanzu ugaragara kuri konti yawe ari uko wishyuye neza (PAID).",
         "pay.missAmt":"Shyiramo umubare wemewe mbere yo kwishyura.",
         "pay.forceRwf":"Rwanda Mobile Money isaba RWF. Uhindure ifaranga kuri RWF?",
         "pay.needPhone":"Shyiramo numero ya telefoni (profile) kugira ngo MoMo ikore.",
+        "pay.success":"Murakoze! Kwishyura byagenze neza.",
+        "pay.failed":"Kwishyura byanze",
         "pill.secure":"Kwishyura bikorerwa ku rubuga rw’umucuruzi wemewe (secure checkout)",
         "footer.brand":"Umuryango Les NGANYIRA","footer.where":"Kigali n’ahandi hose","footer.email":"Email","footer.phone":"Tel","footer.terms":"Amategeko & Politiki","footer.contribute":"Tanga umusanzu"
       },
@@ -380,17 +389,19 @@
         title:"Les NGANYIRA — Make a Contribution",
         "nav.home":"Home","nav.about":"About","nav.services":"Services","nav.contribute":"Make a Contribution","nav.terms":"Terms & Policies","nav.logout":"Log out",
         "page.h1":"Make a Contribution",
-        "page.lead":"Choose a fund, enter amount and currency; we convert to CAD and save to that fund. Then pick a payment method.",
-        "form.ok":"Saved successfully!","form.fund":"Fund",
+        "page.lead":"Choose a fund, enter amount and currency. Records appear only after a successful payment.",
+        "form.fund":"Fund",
         "fund.savings":"Saving & Contributions","fund.emergency":"Emergency Support","fund.education":"Education Fund","fund.health":"Health Support","fund.events":"Events Support","fund.projects":"Development Projects",
-        "form.amount":"Amount","form.currency":"Currency","form.note":"Purpose / Note","form.preview":"Conversion preview:","form.save":"Save contribution","form.backHome":"Back to Home","form.ratesHint":"Sample exchange rates; may change.",
-        "totals.title":"Per-fund subtotals (CAD)","list.title":"Your contributions","list.empty":"No contributions yet.",
+        "form.amount":"Amount","form.currency":"Currency","form.note":"Purpose / Note","form.preview":"Conversion preview:","form.ratesHint":"Sample exchange rates; may change.",
+        "totals.title":"Per-fund subtotals (CAD)","list.title":"Contribution history (PAID)","list.empty":"No paid contributions yet.",
         "tbl.date":"Date","tbl.fund":"Fund","tbl.original":"Original","tbl.cad":"In CAD","tbl.note":"Note",
         "pay.title":"Where are you paying from & method","pay.where":"Where are you?","pay.where.rw":"In Rwanda","pay.where.abroad":"Outside Rwanda",
-        "pay.note":"Payment modal opens here; we never store card details on this site.",
+        "pay.note":"Your record is saved only after a successful payment.",
         "pay.missAmt":"Please enter a valid amount before paying.",
         "pay.forceRwf":"Rwanda Mobile Money requires RWF. Switch currency to RWF?",
         "pay.needPhone":"Please add your phone number (profile) to use Mobile Money.",
+        "pay.success":"Thank you! Payment successful.",
+        "pay.failed":"Payment failed",
         "pill.secure":"Payment happens on a certified provider (secure checkout)",
         "footer.brand":"Les NGANYIRA Family","footer.where":"Kigali & worldwide","footer.email":"Email","footer.phone":"Phone","footer.terms":"Terms & Policies","footer.contribute":"Contribute"
       },
@@ -399,17 +410,19 @@
         title:"Les NGANYIRA — Faire une contribution",
         "nav.home":"Accueil","nav.about":"À propos","nav.services":"Services","nav.contribute":"Faire une contribution","nav.terms":"Conditions & Politiques","nav.logout":"Déconnexion",
         "page.h1":"Faire une contribution",
-        "page.lead":"Choisissez un fonds, saisissez le montant et la devise ; nous convertissons en CAD et l’enregistrons dans ce fonds. Puis choisissez une méthode de paiement.",
-        "form.ok":"Enregistré avec succès !","form.fund":"Fonds",
+        "page.lead":"Choisissez un fonds, saisissez le montant et la devise. L’enregistrement apparaît uniquement après un paiement réussi.",
+        "form.fund":"Fonds",
         "fund.savings":"Épargne & Contributions","fund.emergency":"Soutien d’urgence","fund.education":"Fonds Éducation","fund.health":"Soutien Santé","fund.events":"Soutien Événements","fund.projects":"Projets de développement",
-        "form.amount":"Montant","form.currency":"Devise","form.note":"Objet / Note","form.preview":"Aperçu de conversion :","form.save":"Enregistrer","form.backHome":"Retour à l’accueil","form.ratesHint":"Taux de change d’exemple ; susceptibles d’évoluer.",
-        "totals.title":"Sous-totaux par fonds (CAD)","list.title":"Vos contributions","list.empty":"Aucune contribution.",
+        "form.amount":"Montant","form.currency":"Devise","form.note":"Objet / Note","form.preview":"Aperçu de conversion :","form.ratesHint":"Taux de change d’exemple ; susceptibles d’évoluer.",
+        "totals.title":"Sous-totaux par fonds (CAD)","list.title":"Historique des contributions (PAYÉ)","list.empty":"Aucune contribution payée.",
         "tbl.date":"Date","tbl.fund":"Fonds","tbl.original":"Original","tbl.cad":"En CAD","tbl.note":"Note",
         "pay.title":"Où payez-vous et méthode","pay.where":"Vous êtes où ?","pay.where.rw":"Au Rwanda","pay.where.abroad":"Hors du Rwanda",
-        "pay.note":"La fenêtre de paiement s’ouvre ici ; aucune donnée de carte n’est stockée sur ce site.",
+        "pay.note":"L’enregistrement est sauvegardé uniquement après un paiement réussi.",
         "pay.missAmt":"Veuillez saisir un montant valide avant de payer.",
         "pay.forceRwf":"Le Mobile Money Rwanda nécessite le RWF. Passer la devise en RWF ?",
         "pay.needPhone":"Veuillez ajouter votre numéro de téléphone (profil) pour utiliser Mobile Money.",
+        "pay.success":"Merci ! Paiement réussi.",
+        "pay.failed":"Paiement échoué",
         "pill.secure":"Le paiement se fait chez un prestataire certifié (checkout sécurisé)",
         "footer.brand":"Famille Les NGANYIRA","footer.where":"Kigali & dans le monde","footer.email":"Email","footer.phone":"Tél.","footer.terms":"Conditions & Politiques","footer.contribute":"Contribuer"
       }
