@@ -52,13 +52,17 @@
   </footer>
 
   <script>
-    // ===== Auth guard =====
+    // ===== Public Terms (ntitukora redirect) =====
     const email = localStorage.getItem("lng_current_user");
-    if (!email) { window.location.href = "index.html"; }
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("lng_current_user");
-      window.location.href = "index.html";
-    });
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (!email) {
+      if (logoutBtn) logoutBtn.style.display = "none";
+    } else {
+      logoutBtn?.addEventListener("click", () => {
+        localStorage.removeItem("lng_current_user");
+        window.location.href = "index.html";
+      });
+    }
 
     // ===== Terms data =====
     const TERMS = {
@@ -66,7 +70,7 @@
         { h:"Ibyerekeye iyi website", p:"Uru rubuga ni urw’umuryango Les NGANYIRA rugamije gufasha kuzigama, gufashanya no guteza imbere imishinga y’umuryango. Serivisi ziri kuri uru rubuga zikoreshwa n’abanyamuryango gusa cyangwa abafite uburenganzira babiherewe." },
         { h:"Kwiyandikisha no kwinjira", p:"Ukeneye kuba ufite email nyayo, numero ya telephone nyayo, n’ijambo ry’ibanga kugira ngo ubone konti. Uburenganzira bwo gukoresha konti yawe bugomba kuba bwawe gusa; ntukemere kuyisangiza abandi." },
         { h:"Umutekano w’amakuru", p:"Amakuru ubitse kuri uru rubuga (email, numero ya telephone, n’inyandiko z’inkunga) abikwa mu buryo bwizewe kandi ntiyagurishwa cyangwa gutangwa ku bandi hatabanje kubaho uruhushya rwawe. Ntabwo tubika cyangwa gukusanya amakuru y’amafaranga nk’amakarita y’inguzanyo." },
-        { h:"Kohereza umusanzu", p:"Amafaranga yose atanzwe anyuzwa mu buryo bwemewe n’amategeko. Iyo wohereje umusanzu, uba wemeye ko uzakoreshwa mu fund wahisemo. Nta gusubizwa amafaranga keretse mu gihe byemejwe n’ubuyobozi." },
+        { h:"Kohereza umusanzu", p:"Amafaranga yose atanzwe anyuzwa mu buryo bwemewe n’amategeko. Iyo wohereje umusanzu, uba wemeye ko uzakoreshwa mu fund wahisemo. Gusubizwa amafaranga bishobora gukorwa gusa iyo byemejwe n’ubuyobozi." },
         { h:"Ivangura ry’amafaranga", p:"Amafaranga yose ahindurwa mu CAD hakoreshejwe igipimo gikoreshwa icyo gihe, gishobora guhinduka igihe icyo ari cyo cyose." },
         { h:"Inshingano z’umukoresha", p:"Ntukoreshe uru rubuga mu bikorwa bitemewe n’amategeko. Ntukagerageze kwinjira mu makuru atari ayawe cyangwa guhindura sisitemu." },
         { h:"Amategeko agenga", p:"Iyi politiki igengwa n’amategeko ya Canada hamwe n’amategeko agenga umuryango Les NGANYIRA." },
@@ -77,8 +81,8 @@
         { h:"About this website", p:"This site belongs to the Les NGANYIRA family and aims to support savings, mutual aid, and family development projects. Services are for members or authorized persons only." },
         { h:"Registration and login", p:"You must have a valid email, valid phone number, and password to create an account. Access to your account is personal; do not share it with others." },
         { h:"Data security", p:"Information you store here (email, phone number, contribution records) is kept secure and is never sold or shared without your consent. We do not collect or store financial data such as credit card numbers." },
-        { h:"Making a contribution", p:"All funds are transferred via legal methods. By sending a contribution, you agree it will be used for the fund you selected. Refunds are only possible if approved by the administration." },
-        { h:"Currency conversion", p:"All amounts are converted to CAD at the rate in effect at the time, which may change without notice." },
+        { h:"Making a contribution", p:"All funds are transferred via legal methods. By sending a contribution, you agree it will be used for the fund you selected. Refunds are possible only if approved by the administration." },
+        { h:"Currency conversion", p:"All amounts are converted to CAD at the prevailing rate, which may change without notice." },
         { h:"User responsibilities", p:"Do not use this site for illegal purposes. Do not attempt to access data that is not yours or alter the system." },
         { h:"Governing law", p:"This policy is governed by the laws of Canada and the internal regulations of Les NGANYIRA." },
         { h:"Policy changes", p:"The administration may modify these terms at any time, with updates posted on the site." },
@@ -117,6 +121,7 @@
         if (dict[key]) el.textContent = dict[key];
       });
       document.title = dict["title"] || "Les NGANYIRA";
+      document.documentElement.setAttribute("lang", lang);
       localStorage.setItem("lng_lang", lang);
       renderTerms(lang);
     }
