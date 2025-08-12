@@ -164,3 +164,135 @@
 
     const users = getUsers();
     const me = users[email];
+    if (!me) {
+      localStorage.removeItem("lng_current_user");
+      localStorage.removeItem("lng_remember");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("lng_current_user");
+      window.location.href = "index.html";
+    });
+
+    // ===== Language (RW/EN/FR) =====
+    const TR = {
+      rw: {
+        brand: "Les NGANYIRA",
+        "nav.home":"Ahabanza","nav.about":"Ibyerekeye","nav.services":"Serivisi","nav.contribute":"Tanga umusanzu","nav.terms":"Amategeko & Politiki","nav.logout":"Sohoka",
+        "hero.title":"Twunze ubumwe ku hazaza heza","hero.tagline":"Kuzigama. Gufashanya. Gukura hamwe.","hero.ctaContribute":"Tanga umusanzu","hero.ctaServices":"Reba serivisi",
+        "welcome.title":"Murakaza neza",
+        "stats.title":"Imibare yihuse","stats.totalLabel":"Umusanzu wose (CAD)","stats.entries":"Ibyinjijwe:",
+        "ann.title":"Amatangazo","ann.item1":"Kwibutsa kwizigamira: tariki 25 buri kwezi.","ann.item2":"Telephone y’umuryango — Ku cyumweru 7:00 PM Kigali.",
+        "goal.title":"Intego y’umuryango","goal.monthTarget":"Intego y’ukwezi:","goal.raised":"Bimaze gukusanywa:","goal.ofTarget":"by’intego",
+        "how.title":"Uko bikora","how.step1":"Fungura konti ukoresheje email na numero ya telefone.","how.step2":"Tanga umusanzu mu mafaranga ushaka (urahita uhindurwa mu CAD).","how.step3":"Reba aho tugeze ku ntego kuri Dashboard no kuri Ahabanza.",
+        "faq.title":"Ibibazo bikunze kubazwa","faq.q1":"Aho amakuru yanjye abikwa ni hehe?","faq.a1":"Abikwa kuri mudasobwa/telefone ukoresha (LocalStorage). Tuzashyiraho uburyo bwa online kugira ngo bibonekere ku bikoresho byose ukoresheje konti yawe.",
+        "faq.q2":"Ni ubuhe bwoko bw’amafaranga nshobora gukoresha?","faq.a2":"EUR, GBP, CAD, RWF, USD — byose bihindurwa mu CAD ako kanya.","faq.q3":"Nshobora guhindura cyangwa gusiba umusanzu?","faq.a3":"Ubu tubika muri device yawe. Dushobora kongeramo guhindura/gusiba no kubika ku rubuga (cloud) mu byiciro bikurikira.",
+        "recent.title":"Ibyaheruka kwinjizwa","recent.none":"Nta byinjijwe birabikwa.","recent.add":"Ongeraho →",
+        "footer.brand":"Umuryango Les NGANYIRA","footer.where":"Kigali n’ahandi hose","footer.email":"Email","footer.phone":"Tel"
+      },
+      en: {
+        brand:"Les NGANYIRA",
+        "nav.home":"Home","nav.about":"About","nav.services":"Services","nav.contribute":"Make a Contribution","nav.terms":"Terms & Policies","nav.logout":"Log out",
+        "hero.title":"United for our future","hero.tagline":"Save. Support. Grow — together.","hero.ctaContribute":"Make a Contribution","hero.ctaServices":"See Services",
+        "welcome.title":"Welcome",
+        "stats.title":"Quick stats","stats.totalLabel":"Total contributions (CAD)","stats.entries":"Entries:",
+        "ann.title":"Announcements","ann.item1":"Monthly saving reminder: 25th.","ann.item2":"Family call — Sunday 7:00 PM Kigali.",
+        "goal.title":"Family goal","goal.monthTarget":"Monthly target:","goal.raised":"Raised:","goal.ofTarget":"of target",
+        "how.title":"How it works","how.step1":"Create an account with email and phone.","how.step2":"Contribute in any currency (auto-converted to CAD).","how.step3":"Track progress on Dashboard and Home.",
+        "faq.title":"FAQ","faq.q1":"Where is my data stored?","faq.a1":"On your device (LocalStorage). We’ll add online sync so it’s accessible across devices.","faq.q2":"Which currencies can I use?","faq.a2":"EUR, GBP, CAD, RWF, USD — all converted to CAD instantly.","faq.q3":"Can I edit or delete a contribution?","faq.a3":"Currently saved on your device; we can add edit/delete and cloud sync next.",
+        "recent.title":"Recent contributions","recent.none":"No contributions yet.","recent.add":"Add one →",
+        "footer.brand":"Les NGANYIRA Family","footer.where":"Kigali & worldwide","footer.email":"Email","footer.phone":"Phone"
+      },
+      fr: {
+        brand:"Les NGANYIRA",
+        "nav.home":"Accueil","nav.about":"À propos","nav.services":"Services","nav.contribute":"Faire une contribution","nav.terms":"Conditions & Politiques","nav.logout":"Déconnexion",
+        "hero.title":"Unis pour notre avenir","hero.tagline":"Épargner. S’entraider. Grandir ensemble.","hero.ctaContribute":"Contribuer","hero.ctaServices":"Voir les services",
+        "welcome.title":"Bienvenue",
+        "stats.title":"Chiffres clés","stats.totalLabel":"Total des contributions (CAD)","stats.entries":"Entrées :",
+        "ann.title":"Annonces","ann.item1":"Rappel d’épargne mensuel : le 25.","ann.item2":"Appel de famille — Dimanche 19:00 (Kigali).",
+        "goal.title":"Objectif de la famille","goal.monthTarget":"Objectif mensuel :","goal.raised":"Collecté :","goal.ofTarget":"de l’objectif",
+        "how.title":"Comment ça marche","how.step1":"Créez un compte avec e-mail et téléphone.","how.step2":"Contribuez dans n’importe quelle devise (convertie en CAD).","how.step3":"Suivez la progression sur le tableau de bord et l’accueil.",
+        "faq.title":"FAQ","faq.q1":"Où sont stockées mes données ?","faq.a1":"Sur votre appareil (LocalStorage). Nous ajouterons la synchronisation en ligne.","faq.q2":"Quelles devises puis-je utiliser ?","faq.a2":"EUR, GBP, CAD, RWF, USD — converties en CAD instantanément.","faq.q3":"Puis-je modifier ou supprimer une contribution ?","faq.a3":"Actuellement local, nous pouvons ajouter modifier/supprimer et le cloud ensuite.",
+        "recent.title":"Contributions récentes","recent.none":"Aucune contribution pour l’instant.","recent.add":"Ajouter →",
+        "footer.brand":"Famille Les NGANYIRA","footer.where":"Kigali & dans le monde","footer.email":"Email","footer.phone":"Tél."
+      }
+    };
+
+    function applyLang(lang){
+      const dict = TR[lang] || TR.rw;
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+      // Dynamic welcome line
+      const welcome = document.getElementById("welcomeTxt");
+      if (welcome) {
+        if (lang==='en') welcome.textContent = me ? `Logged in as ${email} — Phone: ${me.phone}` : `Logged in as ${email}`;
+        else if (lang==='fr') welcome.textContent = me ? `Connecté en tant que ${email} — Tél.: ${me.phone}` : `Connecté en tant que ${email}`;
+        else welcome.textContent = me ? `Mwinjiye nka ${email} — Telefone: ${me.phone}` : `Mwinjiye nka ${email}`;
+      }
+      document.documentElement.setAttribute("lang", lang);
+    }
+
+    const langSel = document.getElementById("langSel");
+    const savedLang = localStorage.getItem("lng_lang") || "rw";
+    langSel.value = savedLang;
+    applyLang(savedLang);
+    langSel.addEventListener("change", ()=>{
+      const lg = langSel.value;
+      localStorage.setItem("lng_lang", lg);
+      applyLang(lg);
+    });
+
+    // ===== Stats & Recent & Goal =====
+    function renderStats() {
+      const db = getContribs();
+      const rows = (db[email] || []);
+      const totalCad = rows.reduce((sum, r) => sum + (Number(r.amountCAD)||0), 0);
+      document.getElementById("totalCad").textContent = fmtMoney(totalCad);
+      document.getElementById("totalCount").textContent = rows.length;
+    }
+
+    function renderRecent() {
+      const db = getContribs();
+      const rows = (db[email] || []).slice().reverse();
+      const recent = rows.slice(0, 5);
+      const box = document.getElementById("recentList");
+      if (!recent.length) {
+        box.innerHTML = `<span data-i18n="recent.none">${TR[langSel.value]['recent.none']}</span> <a href="contribute.html" data-i18n="recent.add">${TR[langSel.value]['recent.add']}</a>`;
+        return;
+      }
+      let html = '<div style="overflow:auto;"><table class="simple">';
+      html += '<thead><tr><th>Date</th><th>Original</th><th>CAD</th><th>Note</th></tr></thead><tbody>';
+      recent.forEach(r => {
+        const d = new Date(r.at).toLocaleString();
+        html += `<tr>
+          <td>${d}</td>
+          <td>${fmtMoney(r.amountOriginal)} ${r.currency}</td>
+          <td>${fmtMoney(r.amountCAD)} CAD</td>
+          <td>${r.note || ""}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+      box.innerHTML = html;
+    }
+
+    const GOAL_TARGET_CAD = 1000; // hindura hano ukoresheje intego y’ukwezi
+    function renderGoal() {
+      const db = getContribs();
+      const rows = (db[email] || []);
+      const totalCad = rows.reduce((sum, r) => sum + (Number(r.amountCAD)||0), 0);
+      const pct = Math.min(100, (totalCad / GOAL_TARGET_CAD) * 100 || 0);
+      document.getElementById("goalTargetLabel").textContent = fmtMoney(GOAL_TARGET_CAD) + " CAD";
+      document.getElementById("goalRaised").textContent = fmtMoney(totalCad) + " CAD";
+      document.getElementById("goalPct").textContent = pct.toFixed(0) + "%";
+      document.getElementById("goalBar").style.width = pct + "%";
+    }
+
+    renderStats();
+    renderRecent();
+    renderGoal();
+  </script>
+</body>
+</html>
