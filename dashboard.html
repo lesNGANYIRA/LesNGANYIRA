@@ -32,6 +32,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 m-0" data-i18n="title_dashboard">Family Dashboard</h1>
       <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary d-none" id="enterSiteBtn"><span data-i18n="btn_enter_site">Enter Site</span></button>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createAccountModal" id="openCreateAccountBtn">
           <span data-i18n="btn_create_account">Create Account</span>
         </button>
@@ -41,7 +42,7 @@
     <!-- Welcome Image Banner -->
     <div class="card shadow-sm mb-4 banner-card">
       <a href="https://www.google.com/imgres?q=welcome%20to%20our%20family%20pictures&imgurl=https%3A%2F%2Fi.pinimg.com%2F736x%2Fc3%2F40%2F09%2Fc34009ee2f5c69979feb276449a3c57f.jpg&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F737675613948318521%2F&docid=VuXRMGwV_E0WjM&tbnid=wmYYsJkI476hYM&vet=12ahUKEwj7nba1qoaPAxULmYkEHQ9JPb0QM3oECDYQAA..i&w=601&h=601&hcb=2&ved=2ahUKEwj7nba1qoaPAxULmYkEHQ9JPb0QM3oECDYQAA" target="_blank" rel="noopener" class="text-decoration-none">
-        $1card-img-top banner-img$2 alt="Welcome banner" />
+        <img src="https://i.pinimg.com/736x/c3/40/09/c34009ee2f5c69979feb276449a3c57f.jpg" class="card-img-top banner-img" alt="Welcome banner" />
       </a>
       <div class="card-body text-center">
         <span class="fw-semibold" data-i18n="welcome_banner">Welcome to our family!</span>
@@ -110,13 +111,43 @@
               <input type="text" id="lastName" name="lastName" class="form-control" required />
               <div class="invalid-feedback" data-i18n="error_last_name">Last name is required.</div>
             </div>
-            <div class="mb-3">
-              <label for="idNumber" class="form-label" data-i18n="label_id_number">ID Number (Access Code)</label>
-              <input type="text" id="idNumber" name="idNumber" class="form-control" />
-              <div class="form-text" data-i18n="help_id_number">Used for login if enabled by admins.</div>
+            $1<div class="mb-3">
+              <label for="email" class="form-label" data-i18n="label_email">Email</label>
+              <input type="email" id="email" name="email" class="form-control" required />
+              <div class="invalid-feedback" data-i18n="error_email">A valid email is required.</div>
             </div>
             <div class="mb-3">
-              <label for="email" class="form-label" data-i18n="label_email">Email</label>
+              <label for="phone" class="form-label" data-i18n="label_phone">Phone</label>
+              <input type="tel" id="phone" name="phone" class="form-control" />
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <span data-i18n="btn_submit">Submit</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Sent Modal -->
+  <div class="modal fade" id="sentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="modal_sent_title">Check your email</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0" data-i18n="modal_sent_body">We sent you a verification link. Please open your inbox and click the link to verify.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script> class="form-label" data-i18n="label_email">Email</label>
               <input type="email" id="email" name="email" class="form-control" />
             </div>
             <div class="mb-3">
@@ -129,6 +160,23 @@
               </button>
             </div>
           </form>
+        </div>
+</div>
+</div>
+</div>
+
+  <!-- Verification Modal (simulated email) -->
+  <div class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="modal_verify_title">Verify your email</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2" data-i18n="verify_email_intro">Welcome to family Les Nganyira. This email is for verifying if it's really you.</p>
+          <a href="#" id="verifyLink" class="btn btn-primary w-100 mb-3" data-i18n="link_click_to_verify">Click here to verify</a>
+          <div class="text-muted small" data-i18n="verify_note_simulated">(Simulated email for now — we will plug in a real email service next.)</div>
         </div>
       </div>
     </div>
@@ -156,8 +204,15 @@
         btn_submit: "Submit",
         error_first_name: "First name is required.",
         error_last_name: "Last name is required.",
-        welcome_banner: "Welcome to our family!",
-      }
+        error_email: "A valid email is required.",
+        modal_sent_title: "Check your email",
+        modal_sent_body: "We sent you a verification link. Please open your inbox and click the link to verify.",
+        btn_enter_site: "Enter Site",
+        modal_verify_title: "Verify your email",
+        verify_email_intro: "Welcome to family Les Nganyira. This email is for verifying if it's really you.",
+        link_click_to_verify: "Click here to verify",
+        verify_note_simulated: "(Simulated email for now — we will plug in a real email service next.)",
+        $1,
       fr: {
         title_dashboard: "Tableau de bord familial",
         btn_create_account: "Créer un compte",
@@ -177,6 +232,14 @@
         btn_submit: "Envoyer",
         error_first_name: "Le prénom est obligatoire.",
         error_last_name: "Le nom est obligatoire.",
+        error_email: "Un e-mail valide est requis.",
+        modal_sent_title: "Vérifiez votre e-mail",
+        modal_sent_body: "Nous vous avons envoyé un lien de vérification. Ouvrez votre boîte de réception et cliquez sur le lien pour vérifier.",
+        btn_enter_site: "Entrer sur le site",
+        modal_verify_title: "Vérifiez votre e-mail",
+        verify_email_intro: "Bienvenue dans la famille Les Nganyira. Cet e-mail sert à vérifier que c'est bien vous.",
+        link_click_to_verify: "Cliquez ici pour vérifier",
+        verify_note_simulated: "(E-mail simulé pour l'instant — nous brancherons un vrai service ensuite.)",
         welcome_banner: "Bienvenue dans notre famille !",
       },
       rw: {
@@ -198,6 +261,14 @@
         btn_submit: "Ohereza",
         error_first_name: "Izina ry'itangira rirakenewe.",
         error_last_name: "Izina ry'ubuse rirakenewe.",
+        error_email: "Imeli yemewe irakenewe.",
+        modal_sent_title: "Reba imeli yawe",
+        modal_sent_body: "Twoherereje ihuriro ryo kwemeza. Funga imeli yawe ukande kuri link yo kwemeza.",
+        btn_enter_site: "Injira ku rubuga",
+        modal_verify_title: "Emeza imeli yawe",
+        verify_email_intro: "Murakaza neza mu muryango Les Nganyira. Ubu butumwa ni ugusuzuma niba ari wowe koko.",
+        link_click_to_verify: "Kanda hano wemeze",
+        verify_note_simulated: "(Ubu ni ubutumwa bumeze nk'ubwo — tuzahuza serivisi y'ubutumwa bwa email nyuma.)",
         welcome_banner: "Murakaza neza mu muryango wacu!",
       },
     };
@@ -261,8 +332,12 @@
           event.stopPropagation();
         } else {
           event.preventDefault();
-          // TODO: Replace with your real submit logic (e.g., send to backend or save to GitHub Pages data file)
-          alert('✓ ' + (lang==='fr' ? 'Compte créé !' : lang==='rw' ? 'Konti irakozwe!' : 'Account created!'));
+          // Simulate sending email with a verification link via a modal
+          const verifyModalEl = document.getElementById('verifyModal');
+          const verifyModal = new bootstrap.Modal(verifyModalEl);
+          // Stash user info
+          localStorage.setItem('pendingUser', JSON.stringify({ firstName: form.firstName.value.trim(), lastName: form.lastName.value.trim(), email: form.email.value.trim(), phone: form.phone.value.trim() }));
+          verifyModal.show();
           form.reset();
           const modalEl = document.getElementById('createAccountModal');
           const modal = bootstrap.Modal.getInstance(modalEl);
@@ -273,9 +348,28 @@
       }, false);
     })();
 
-    // Init
+    // Init + verification logic
+    function onVerifyClick(e){
+      e.preventDefault();
+      const pending = JSON.parse(localStorage.getItem('pendingUser') || '{}');
+      if (pending && pending.email) {
+        localStorage.setItem('verified', 'true');
+        localStorage.setItem('memberName', `${pending.firstName} ${pending.lastName}`.trim());
+      }
+      const verifyModalEl = document.getElementById('verifyModal');
+      const verifyModal = bootstrap.Modal.getInstance(verifyModalEl);
+      verifyModal.hide();
+      document.getElementById('enterSiteBtn')?.classList.remove('d-none');
+      alert((localStorage.getItem('lng')==='fr' ? 'Vérifié ! Bienvenue.' : localStorage.getItem('lng')==='rw' ? 'Byemejwe! Murakaza neza.' : 'Verified! Welcome.'));
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       applyI18n(DEFAULT_LANG);
+      document.getElementById('verifyLink')?.addEventListener('click', onVerifyClick);
+      if (localStorage.getItem('verified') === 'true') {
+        document.getElementById('enterSiteBtn')?.classList.remove('d-none');
+      }
+    });
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
