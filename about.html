@@ -1,36 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="rw">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Les NGANYIRA — About</title>
+  <title data-i18n="about.title">Les NGANYIRA — Ibyerekeye</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    .section { background:#fff; border:1px solid #eef1f7; border-radius:14px; padding:14px; margin-top:12px; }
+    .kpi-grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); }
+    .kpi { background:#fff; border:1px solid #eef1f7; border-radius:12px; padding:12px; text-align:center; }
+    .timeline { border-left:3px solid #eef1f7; margin-left:6px; padding-left:12px; }
+    .timeline .item { margin:10px 0; }
+    .team { display:grid; gap:12px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+    .member { background:#fff; border:1px solid #eef1f7; border-radius:12px; padding:12px; }
+    .partner-logos { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .partner-logos img { height:34px; object-fit:contain; }
+    .lang-switch { position:fixed; top:10px; right:10px; z-index:999; }
+    .lang-switch button { margin-left:4px; padding:4px 8px; }
+  </style>
 </head>
 <body>
+  <!-- Language Switch -->
+  <div class="lang-switch">
+    <button onclick="setLang('rw')">Kiny</button>
+    <button onclick="setLang('en')">Eng</button>
+    <button onclick="setLang('fr')">Fra</button>
+  </div>
+
+  <!-- NAV -->
   <header class="nav">
     <div class="nav-left">Les NGANYIRA</div>
     <nav class="nav-right">
-      <a href="home.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="services.html">Services</a>
-      <a href="contribute.html">Make a Contribution</a>
-      <a href="terms.html">Terms & Policies</a>
-      <button id="logoutBtn" class="nav-btn">Log out</button>
+      <a href="home.html" data-i18n="nav.home">Ahabanza</a>
+      <a href="about.html" data-i18n="nav.about">Ibyerekeye</a>
+      <a href="services.html" data-i18n="nav.services">Serivisi</a>
+      <a href="contribute.html" data-i18n="nav.contribute">Tanga umusanzu</a>
+      <a href="terms.html" data-i18n="nav.terms">Amategeko & Politiki</a>
+      <button id="logoutBtn" class="nav-btn" data-i18n="nav.logout">Sohoka</button>
     </nav>
   </header>
 
   <div class="auth-card" style="margin-top:24px;">
-    <h1>About</h1>
-    <p>Les NGANYIRA is a family platform for savings and mutual support.</p>
+    <h1 data-i18n="about.heading">Ibyerekeye Umuryango Les NGANYIRA</h1>
+    <p class="muted" data-i18n="about.subtitle">Twiyemeje kuzigama, gufashanya no kubaka ejo hazaza heza hamwe.</p>
+
+    <!-- Mission & Vision -->
+    <div class="section">
+      <h2 data-i18n="about.missionTitle">Intego n’Icyerekezo</h2>
+      <p><b data-i18n="about.missionLabel">Intego:</b> <span data-i18n="about.missionText">Guhuza imbaraga z’umuryango mu kwizigamira no gufashanya.</span></p>
+      <p><b data-i18n="about.visionLabel">Icyerekezo:</b> <span data-i18n="about.visionText">Kuba umuryango uhamye wiyubakira iterambere binyuze mu bwizigame n’ubufatanye.</span></p>
+    </div>
+
+    <!-- Impact in numbers -->
+    <div class="section">
+      <h2 data-i18n="about.impactTitle">Ibimenyetso by’ingaruka</h2>
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="muted" data-i18n="about.members">Abagize</div>
+          <div id="kpiMembers" style="font-size:20px;font-weight:700;">—</div>
+        </div>
+        <div class="kpi">
+          <div class="muted" data-i18n="about.total">Umusanzu wose (CAD)</div>
+          <div id="kpiTotal" style="font-size:20px;font-weight:700;">0.00</div>
+        </div>
+        <div class="kpi">
+          <div class="muted" data-i18n="about.projects">Imishinga y’ubufasha</div>
+          <div id="kpiProjects" style="font-size:20px;font-weight:700;">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Our Story -->
+    <div class="section">
+      <h2 data-i18n="about.storyTitle">Amateka yacu</h2>
+      <p data-i18n="about.story">
+        Umuryango Les NGANYIRA watangiye mu 1920. Papa mukuru, Nganyira, ari we watanze izina ry’umuryango, yashakanye na Mama mukuru Victoria Nganyira. Babyegetse abana umunani: Clemantine, Clement, Agnes, Louis na Louise, Immacule, Ngabire, na Jean Pierre. Umuryango wakuze utekereza gukora ikimina cyo guteranya amafaranga, hagamijwe kuzashora mu mishinga ikomeye izageza ku rubyaro n'abazabakomokaho.
+      </p>
+    </div>
+
+    <!-- Values -->
+    <div class="section">
+      <h2 data-i18n="about.valuesTitle">Indangagaciro</h2>
+      <ul class="muted" style="margin-left:18px;">
+        <li data-i18n="about.value1">Ubumwe n’Ubwuzuzanye</li>
+        <li data-i18n="about.value2">Ukwizigamira n’Ubunyangamugayo</li>
+        <li data-i18n="about.value3">Gufashanya no Kwita ku muntu</li>
+        <li data-i18n="about.value4">Gutangiza no Gukorera mu mucyo</li>
+      </ul>
+    </div>
+
+    <!-- Contact / CTA -->
+    <div class="section">
+      <h2 data-i18n="about.contactTitle">Twandikire</h2>
+      <p class="muted"><span data-i18n="about.contactEmail">Email</span>: example@lesnganyira.org · <span data-i18n="about.contactPhone">Tel</span>: +250 7xx xxx xxx</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="contribute.html" class="btn" data-i18n="about.contactContribute">Tanga umusanzu</a>
+        <a href="services.html" class="btn secondary" data-i18n="about.contactServices">Reba serivisi</a>
+      </div>
+    </div>
   </div>
 
+  <!-- Footer -->
+  <footer style="max-width:1100px;margin:16px auto 8px;padding:12px;background:#fff;border:1px solid #eef1f7;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.04);">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+      <div class="muted">
+        <b data-i18n="footer.brand">Umuryango Les NGANYIRA</b> · 
+        <span data-i18n="footer.where">Kigali n’ahandi hose</span>
+        <br/><small><span data-i18n="footer.email">Email</span>: example@lesnganyira.org · <span data-i18n="footer.phone">Tel</span>: +250 7xx xxx xxx</small>
+      </div>
+      <div>
+        <a href="terms.html" class="btn secondary" style="padding:8px 10px;" data-i18n="footer.terms">Amategeko & Politiki</a>
+        <a href="contribute.html" class="btn" style="padding:8px 10px;" data-i18n="footer.contribute">Tanga umusanzu</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
+    // Language data
+    const translations = {
+      rw: {
+        "about.story": "Umuryango Les NGANYIRA watangiye mu 1920. Papa mukuru, Nganyira, ari we watanze izina ry’umuryango, yashakanye na Mama mukuru Victoria Nganyira. Babyegetse abana umunani: Clemantine, Clement, Agnes, Louis na Louise, Immacule, Ngabire, na Jean Pierre. Umuryango wakuze utekereza gukora ikimina cyo guteranya amafaranga, hagamijwe kuzashora mu mishinga ikomeye izageza ku rubyaro n'abazabakomokaho."
+      },
+      en: {
+        "about.story": "The Les NGANYIRA family began in 1920. The patriarch, Nganyira, whose name the family bears, married the matriarch Victoria Nganyira. They had eight children: Clemantine, Clement, Agnes, Louis and Louise, Immacule, Ngabire, and Jean Pierre. Over time, the family decided to start a savings group to pool funds for major projects that would benefit children, grandchildren, and future generations."
+      },
+      fr: {
+        "about.story": "La famille Les NGANYIRA a vu le jour en 1920. Le patriarche, Nganyira, dont la famille porte le nom, a épousé la matriarche Victoria Nganyira. Ils ont eu huit enfants : Clemantine, Clement, Agnes, Louis et Louise, Immacule, Ngabire et Jean Pierre. Avec le temps, la famille a décidé de créer une tontine afin de réunir des fonds pour des projets majeurs qui profiteraient aux enfants, petits-enfants et aux générations futures."
+      }
+    };
+
+    function setLang(lang) {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        let text = translations[lang]?.[key] || translations['rw']?.[key] || el.textContent;
+        if (text) el.textContent = text;
+      });
+      localStorage.setItem("site_lang", lang);
+    }
+
+    // Load preferred language
+    setLang(localStorage.getItem("site_lang") || "rw");
+
+    // Auth guard
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
+
+    // Fill KPIs
+    function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
+    function fmt(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
+    const db = getContribs();
+    const myRows = (db[email] || []);
+    const totalCad = myRows.reduce((s,r)=>s+(Number(r.amountCAD)||0),0);
+    document.getElementById("kpiTotal").textContent = fmt(totalCad);
+    document.getElementById("kpiMembers").textContent = "—";
+    document.getElementById("kpiProjects").textContent = "—";
   </script>
 </body>
 </html>
