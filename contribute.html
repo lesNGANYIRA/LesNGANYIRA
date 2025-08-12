@@ -22,6 +22,11 @@
     .kpi { background:#fff; border:1px solid #eef1f7; border-radius:12px; padding:12px; }
     .kpi .lbl { font-size:12px; color:#6b7280; }
     .kpi .val { font-size:18px; font-weight:700; }
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#eef3ff; color:#1f3fb3; font-weight:600; }
+    .pay-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .pay-btn { border:1px solid #d8deea; background:#fff; border-radius:10px; padding:10px 12px; cursor:pointer; font-weight:700; }
+    .pay-btn.primary { background:var(--accent); color:#fff; border:0; }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
@@ -45,7 +50,7 @@
 
   <div class="auth-card" style="margin-top:16px;">
     <h1 data-i18n="page.h1">Tanga umusanzu</h1>
-    <p class="muted" data-i18n="page.lead">Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo.</p>
+    <p class="muted" data-i18n="page.lead">Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo. Hanyuma uhitamo uburyo bwo kwishyura.</p>
 
     <div class="grid">
       <!-- Form -->
@@ -95,6 +100,7 @@
         <div class="row" style="margin-top:12px;">
           <button class="btn" id="saveBtn" data-i18n="form.save">Bika umusanzu</button>
           <a href="home.html" class="btn secondary" data-i18n="form.backHome">Subira ku Ahabanza</a>
+          <span class="pill">🔒 <span data-i18n="pill.secure">Kwishyura bikorerwa ku rubuga rw’umucuruzi wemewe (secure checkout)</span></span>
         </div>
 
         <div class="muted" style="margin-top:8px;">
@@ -102,12 +108,41 @@
         </div>
       </div>
 
+      <!-- Payment options -->
+      <div class="card">
+        <h2 data-i18n="pay.title">Hitamo aho uri n’uburyo bwo kwishyura</h2>
+
+        <div class="row">
+          <div style="flex:1 1 220px;">
+            <label for="where" data-i18n="pay.where">Uritangaho he?</label>
+            <select id="where">
+              <option value="rwanda" data-i18n="pay.where.rw">Mu Rwanda</option>
+              <option value="abroad" data-i18n="pay.where.abroad">Hanze y’u Rwanda</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Rwanda methods -->
+        <div id="methodsRw" class="pay-row" style="margin-top:8px;">
+          <button class="pay-btn" id="btnMtn">MTN MoMo</button>
+          <button class="pay-btn" id="btnAirtel">Airtel Money</button>
+          <button class="pay-btn primary" id="btnCardRw">Visa / Mastercard</button>
+        </div>
+
+        <!-- Abroad methods -->
+        <div id="methodsAbroad" class="pay-row hidden" style="margin-top:8px;">
+          <button class="pay-btn primary" id="btnCardAbroad">Pay with Card</button>
+        </div>
+
+        <p class="muted" style="margin-top:10px;">
+          <small data-i18n="pay.note">Uzasunikwa ku rupapuro rw’umucuruzi (Flutterwave/DPO) kugira ngo wuzuze umutekano wose.</small>
+        </p>
+      </div>
+
       <!-- Per-fund subtotals -->
       <div class="card">
         <h2 data-i18n="totals.title">Subtotals kuri buri fund (CAD)</h2>
-        <div class="kpi-grid" id="fundTotals">
-          <!-- JS will inject cards per fund -->
-        </div>
+        <div class="kpi-grid" id="fundTotals"></div>
       </div>
 
       <!-- Recent list -->
@@ -154,6 +189,9 @@
     const fundEl = document.getElementById("fund");
     const previewEl = document.getElementById("preview");
     const okMsg = document.getElementById("okMsg");
+    const whereEl = document.getElementById("where");
+    const methodsRw = document.getElementById("methodsRw");
+    const methodsAbroad = document.getElementById("methodsAbroad");
 
     function renderPreview(){
       const amt = parseFloat(amountEl.value || "0");
@@ -166,8 +204,13 @@
     amountEl.addEventListener("input", renderPreview);
     currencyEl.addEventListener("change", renderPreview);
     fundEl.addEventListener("change", renderPreview);
+    whereEl.addEventListener("change", ()=>{
+      const isRw = whereEl.value === "rwanda";
+      methodsRw.classList.toggle("hidden", !isRw);
+      methodsAbroad.classList.toggle("hidden", isRw);
+    });
 
-    // Save contribution
+    // Save contribution (local record)
     document.getElementById("saveBtn").addEventListener("click", () => {
       const amt = parseFloat(amountEl.value || "0");
       const cur = currencyEl.value;
@@ -178,7 +221,7 @@
       const db = getContribs();
       db[email] = db[email] || [];
       db[email].push({
-        fund,                    // <— twongeyemo fund
+        fund,
         amountOriginal: amt,
         currency: cur,
         amountCAD: cad,
@@ -196,6 +239,39 @@
       setTimeout(()=> okMsg.style.display = "none", 1800);
     });
 
+    // ===== Hosted checkout links (REPLACE these with your provider links) =====
+    // Flutterwave / DPO paylinks; ushobora gushyiramo endpoint imwe ukongeraho query params zikenewe
+    const PAYLINK_CARD = "https://your-card-checkout.example/";      // Card (Visa/Mastercard) — both Rwanda & Abroad
+    const PAYLINK_MTN  = "https://your-mtn-momo-checkout.example/"; // MTN MoMo (Rwanda)
+    const PAYLINK_AIR  = "https://your-airtel-money-checkout.example/"; // Airtel Money (Rwanda)
+
+    function buildQuery(obj){
+      return Object.entries(obj)
+        .map(([k,v])=> `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join("&");
+    }
+    function redirectPay(base){
+      const amt = parseFloat(document.getElementById("amount").value||"0");
+      const cur = document.getElementById("currency").value;
+      const fund = document.getElementById("fund").value;
+      const users = JSON.parse(localStorage.getItem("lng_users")||"{}");
+      const me = users[email] || {};
+      const phone = me.phone || "";
+      if (!amt || amt <= 0) { alert(TR[langSel.value]["pay.missAmt"]); return; }
+      const txRef = "LNG-" + Date.now();
+      const q = buildQuery({
+        amount: amt, currency: cur, email: email, phone: phone, fund: fund, tx_ref: txRef
+      });
+      window.location.href = base + (base.includes("?") ? "&" : "?") + q;
+    }
+
+    // Rwanda buttons
+    document.getElementById("btnMtn").addEventListener("click", ()=> redirectPay(PAYLINK_MTN));
+    document.getElementById("btnAirtel").addEventListener("click", ()=> redirectPay(PAYLINK_AIR));
+    document.getElementById("btnCardRw").addEventListener("click", ()=> redirectPay(PAYLINK_CARD));
+    // Abroad button
+    document.getElementById("btnCardAbroad").addEventListener("click", ()=> redirectPay(PAYLINK_CARD));
+
     // Per-fund totals
     const FUNDS = ["savings","emergency","education","health","events","projects"];
     function labelOfFund(code){
@@ -210,7 +286,6 @@
       };
       return map[code] || code;
     }
-
     function renderFundTotals(){
       const db = getContribs(); const rows = (db[email]||[]);
       const totals = FUNDS.reduce((o,k)=> (o[k]=0, o), {});
@@ -262,7 +337,7 @@
         title:"Les NGANYIRA — Tanga umusanzu",
         "nav.home":"Ahabanza","nav.about":"Ibyerekeye","nav.services":"Serivisi","nav.contribute":"Tanga umusanzu","nav.terms":"Amategeko & Politiki","nav.logout":"Sohoka",
         "page.h1":"Tanga umusanzu",
-        "page.lead":"Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo.",
+        "page.lead":"Hitamo fund, shyiramo umubare n’ifaranga; tuzahita duhinduza mu CAD tukabika ku fund wahisemo. Hanyuma uhitamo uburyo bwo kwishyura.",
         "form.ok":"Byacungiwe neza!",
         "form.fund":"Fund",
         "fund.savings":"Kwigomwa & Kuzigamira",
@@ -286,6 +361,13 @@
         "tbl.original":"Byatangirijweho",
         "tbl.cad":"Mu CAD",
         "tbl.note":"Ibisobanuro",
+        "pay.title":"Hitamo aho uri n’uburyo bwo kwishyura",
+        "pay.where":"Uritangaho he?",
+        "pay.where.rw":"Mu Rwanda",
+        "pay.where.abroad":"Hanze y’u Rwanda",
+        "pay.note":"Uzasunikwa ku rupapuro rw’umucuruzi (Flutterwave/DPO) kugira ngo wuzuze umutekano wose.",
+        "pay.missAmt":"Shyiramo umubare wemewe mbere yo kwishyura.",
+        "pill.secure":"Kwishyura bikorerwa ku rubuga rw’umucuruzi wemewe (secure checkout)",
         "footer.brand":"Umuryango Les NGANYIRA","footer.where":"Kigali n’ahandi hose","footer.email":"Email","footer.phone":"Tel","footer.terms":"Amategeko & Politiki","footer.contribute":"Tanga umusanzu"
       },
       en: {
@@ -293,7 +375,7 @@
         title:"Les NGANYIRA — Make a Contribution",
         "nav.home":"Home","nav.about":"About","nav.services":"Services","nav.contribute":"Make a Contribution","nav.terms":"Terms & Policies","nav.logout":"Log out",
         "page.h1":"Make a Contribution",
-        "page.lead":"Choose a fund, enter amount and currency; we convert to CAD and save to that fund.",
+        "page.lead":"Choose a fund, enter amount and currency; we convert to CAD and save to that fund. Then pick a payment method.",
         "form.ok":"Saved successfully!",
         "form.fund":"Fund",
         "fund.savings":"Saving & Contributions",
@@ -317,6 +399,13 @@
         "tbl.original":"Original",
         "tbl.cad":"In CAD",
         "tbl.note":"Note",
+        "pay.title":"Where are you paying from & method",
+        "pay.where":"Where are you?",
+        "pay.where.rw":"In Rwanda",
+        "pay.where.abroad":"Outside Rwanda",
+        "pay.note":"You’ll be redirected to the provider’s secure checkout (Flutterwave/DPO).",
+        "pay.missAmt":"Please enter a valid amount before paying.",
+        "pill.secure":"Payment happens on a certified provider (secure checkout)",
         "footer.brand":"Les NGANYIRA Family","footer.where":"Kigali & worldwide","footer.email":"Email","footer.phone":"Phone","footer.terms":"Terms & Policies","footer.contribute":"Contribute"
       },
       fr: {
@@ -324,7 +413,7 @@
         title:"Les NGANYIRA — Faire une contribution",
         "nav.home":"Accueil","nav.about":"À propos","nav.services":"Services","nav.contribute":"Faire une contribution","nav.terms":"Conditions & Politiques","nav.logout":"Déconnexion",
         "page.h1":"Faire une contribution",
-        "page.lead":"Choisissez un fonds, saisissez le montant et la devise ; nous convertissons en CAD et l’enregistrons dans ce fonds.",
+        "page.lead":"Choisissez un fonds, saisissez le montant et la devise ; nous convertissons en CAD et l’enregistrons dans ce fonds. Puis choisissez une méthode de paiement.",
         "form.ok":"Enregistré avec succès !",
         "form.fund":"Fonds",
         "fund.savings":"Épargne & Contributions",
@@ -348,6 +437,13 @@
         "tbl.original":"Original",
         "tbl.cad":"En CAD",
         "tbl.note":"Note",
+        "pay.title":"Où payez-vous et méthode",
+        "pay.where":"Vous êtes où ?",
+        "pay.where.rw":"Au Rwanda",
+        "pay.where.abroad":"Hors du Rwanda",
+        "pay.note":"Vous serez redirigé vers le paiement sécurisé du fournisseur (Flutterwave/DPO).",
+        "pay.missAmt":"Veuillez saisir un montant valide avant de payer.",
+        "pill.secure":"Le paiement se fait chez un prestataire certifié (checkout sécurisé)",
         "footer.brand":"Famille Les NGANYIRA","footer.where":"Kigali & dans le monde","footer.email":"Email","footer.phone":"Tél.","footer.terms":"Conditions & Politiques","footer.contribute":"Contribuer"
       }
     };
