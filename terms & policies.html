@@ -1,41 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="rw">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Les NGANYIRA — Terms & Policies</title>
+  <title data-i18n="title">Amategeko & Politiki — Les NGANYIRA</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    .lang-select { padding:8px 10px; border-radius:8px; border:1px solid #d8deea; background:#fff; }
+    .card { background:#fff; border:1px solid #eef1f7; border-radius:14px; padding:14px; margin-bottom:14px; }
+    h2 { margin-top:14px; }
+    .muted small { color: var(--muted); }
+  </style>
 </head>
 <body>
+  <!-- NAV -->
   <header class="nav">
-    <div class="nav-left">Les NGANYIRA</div>
+    <div class="nav-left" data-i18n="brand">Les NGANYIRA</div>
     <nav class="nav-right">
-      <a href="home.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="services.html">Services</a>
-      <a href="contribute.html">Make a Contribution</a>
-      <a href="terms.html">Terms & Policies</a>
-      <button id="logoutBtn" class="nav-btn">Log out</button>
+      <a href="home.html" data-i18n="nav.home">Ahabanza</a>
+      <a href="about.html" data-i18n="nav.about">Ibyerekeye</a>
+      <a href="services.html" data-i18n="nav.services">Serivisi</a>
+      <a href="contribute.html" data-i18n="nav.contribute">Tanga umusanzu</a>
+      <a href="terms.html" data-i18n="nav.terms">Amategeko & Politiki</a>
+      <select id="langSel" class="lang-select" title="Language">
+        <option value="rw">Kinyarwanda</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+      <button id="logoutBtn" class="nav-btn" data-i18n="nav.logout">Sohoka</button>
     </nav>
   </header>
 
-  <div class="auth-card" style="margin-top:24px;">
-    <h1>Terms & Policies</h1>
-    <p>These demo terms describe usage of this family website.</p>
-    <ul>
-      <li>Privacy: data saved on this device (LocalStorage) only.</li>
-      <li>Security: do not share your password; we’ll add server-side auth later.</li>
-      <li>Contributions: for demo only; not real payments yet.</li>
-    </ul>
+  <div style="max-width:1100px;margin:16px auto;padding:0 12px;">
+    <h1 data-i18n="page.h1">Amategeko & Politiki</h1>
+    <p class="muted" data-i18n="page.lead">Aya mategeko asobanura uburyo uru rubuga rukoreshwa n’uko amakuru y’abakoresha acungwa.</p>
+
+    <div id="termsContent"></div>
   </div>
 
+  <footer style="max-width:1100px;margin:16px auto 8px;padding:12px;background:#fff;border:1px solid #eef1f7;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.04);">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+      <div class="muted">
+        <b data-i18n="footer.brand">Umuryango Les NGANYIRA</b> · <span data-i18n="footer.where">Kigali n’ahandi hose</span>
+        <br/><small><span data-i18n="footer.email">Email</span>: example@lesnganyira.org · <span data-i18n="footer.phone">Tel</span>: +250 7xx xxx xxx</small>
+      </div>
+      <div>
+        <a href="terms.html" class="btn secondary" style="padding:8px 10px;" data-i18n="footer.terms">Amategeko & Politiki</a>
+        <a href="contribute.html" class="btn" style="padding:8px 10px;" data-i18n="footer.contribute">Tanga umusanzu</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
+    // ===== Auth guard =====
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
+
+    // ===== Terms data =====
+    const TERMS = {
+      rw: [
+        { h:"Ibyerekeye iyi website", p:"Uru rubuga ni urw’umuryango Les NGANYIRA rugamije gufasha kuzigama, gufashanya no guteza imbere imishinga y’umuryango. Serivisi ziri kuri uru rubuga zikoreshwa n’abanyamuryango gusa cyangwa abafite uburenganzira babiherewe." },
+        { h:"Kwiyandikisha no kwinjira", p:"Ukeneye kuba ufite email nyayo, numero ya telephone nyayo, n’ijambo ry’ibanga kugira ngo ubone konti. Uburenganzira bwo gukoresha konti yawe bugomba kuba bwawe gusa; ntukemere kuyisangiza abandi." },
+        { h:"Umutekano w’amakuru", p:"Amakuru ubitse kuri uru rubuga (email, numero ya telephone, n’inyandiko z’inkunga) abikwa mu buryo bwizewe kandi ntiyagurishwa cyangwa gutangwa ku bandi hatabanje kubaho uruhushya rwawe. Ntabwo tubika cyangwa gukusanya amakuru y’amafaranga nk’amakarita y’inguzanyo." },
+        { h:"Kohereza umusanzu", p:"Amafaranga yose atanzwe anyuzwa mu buryo bwemewe n’amategeko. Iyo wohereje umusanzu, uba wemeye ko uzakoreshwa mu fund wahisemo. Nta gusubizwa amafaranga keretse mu gihe byemejwe n’ubuyobozi." },
+        { h:"Ivangura ry’amafaranga", p:"Amafaranga yose ahindurwa mu CAD hakoreshejwe igipimo gikoreshwa icyo gihe, gishobora guhinduka igihe icyo ari cyo cyose." },
+        { h:"Inshingano z’umukoresha", p:"Ntukoreshe uru rubuga mu bikorwa bitemewe n’amategeko. Ntukagerageze kwinjira mu makuru atari ayawe cyangwa guhindura sisitemu." },
+        { h:"Amategeko agenga", p:"Iyi politiki igengwa n’amategeko ya Canada hamwe n’amategeko agenga umuryango Les NGANYIRA." },
+        { h:"Guhindura politiki", p:"Ubuyobozi bufite uburenganzira bwo guhindura aya mategeko igihe icyo ari cyo cyose, kandi impinduka zigaragarizwa ku rubuga." },
+        { h:"Uduhuzanyo", p:"Niba ufite ikibazo cyangwa igitekerezo, twandikire kuri example@lesnganyira.org cyangwa uduhamagare kuri +250 7xx xxx xxx." }
+      ],
+      en: [
+        { h:"About this website", p:"This site belongs to the Les NGANYIRA family and aims to support savings, mutual aid, and family development projects. Services are for members or authorized persons only." },
+        { h:"Registration and login", p:"You must have a valid email, valid phone number, and password to create an account. Access to your account is personal; do not share it with others." },
+        { h:"Data security", p:"Information you store here (email, phone number, contribution records) is kept secure and is never sold or shared without your consent. We do not collect or store financial data such as credit card numbers." },
+        { h:"Making a contribution", p:"All funds are transferred via legal methods. By sending a contribution, you agree it will be used for the fund you selected. Refunds are only possible if approved by the administration." },
+        { h:"Currency conversion", p:"All amounts are converted to CAD at the rate in effect at the time, which may change without notice." },
+        { h:"User responsibilities", p:"Do not use this site for illegal purposes. Do not attempt to access data that is not yours or alter the system." },
+        { h:"Governing law", p:"This policy is governed by the laws of Canada and the internal regulations of Les NGANYIRA." },
+        { h:"Policy changes", p:"The administration may modify these terms at any time, with updates posted on the site." },
+        { h:"Contact", p:"For any questions or feedback, email us at example@lesnganyira.org or call +250 7xx xxx xxx." }
+      ],
+      fr: [
+        { h:"À propos de ce site", p:"Ce site appartient à la famille Les NGANYIRA et vise à soutenir l’épargne, l’entraide et les projets de développement familial. Les services sont réservés aux membres ou aux personnes autorisées." },
+        { h:"Inscription et connexion", p:"Vous devez avoir un email valide, un numéro de téléphone valide et un mot de passe pour créer un compte. L’accès à votre compte est personnel ; ne le partagez pas." },
+        { h:"Sécurité des données", p:"Les informations que vous enregistrez ici (email, numéro de téléphone, contributions) sont conservées en sécurité et ne sont jamais vendues ou partagées sans votre accord. Nous ne collectons pas d’informations financières telles que les numéros de carte bancaire." },
+        { h:"Faire une contribution", p:"Tous les fonds sont transférés par des moyens légaux. En envoyant une contribution, vous acceptez qu’elle soit utilisée pour le fonds choisi. Les remboursements ne sont possibles qu’avec l’accord de l’administration." },
+        { h:"Conversion des devises", p:"Tous les montants sont convertis en CAD au taux en vigueur au moment du paiement, taux susceptible de changer à tout moment." },
+        { h:"Responsabilités de l’utilisateur", p:"N’utilisez pas ce site à des fins illégales. N’essayez pas d’accéder à des données qui ne sont pas les vôtres ou de modifier le système." },
+        { h:"Loi applicable", p:"Cette politique est régie par les lois du Canada et les règlements internes de Les NGANYIRA." },
+        { h:"Modifications de la politique", p:"L’administration peut modifier ces conditions à tout moment, avec mise à jour sur le site." },
+        { h:"Contact", p:"Pour toute question ou commentaire, écrivez-nous à example@lesnganyira.org ou appelez le +250 7xx xxx xxx." }
+      ]
+    };
+
+    function renderTerms(lang){
+      const box = document.getElementById("termsContent");
+      const arr = TERMS[lang] || TERMS.rw;
+      box.innerHTML = arr.map(sec=> `<div class="card"><h2>${sec.h}</h2><p>${sec.p}</p></div>`).join("");
+    }
+
+    // ===== i18n =====
+    const TR = {
+      rw: { brand:"Les NGANYIRA", title:"Amategeko & Politiki — Les NGANYIRA", "nav.home":"Ahabanza","nav.about":"Ibyerekeye","nav.services":"Serivisi","nav.contribute":"Tanga umusanzu","nav.terms":"Amategeko & Politiki","nav.logout":"Sohoka", "page.h1":"Amategeko & Politiki","page.lead":"Aya mategeko asobanura uburyo uru rubuga rukoreshwa n’uko amakuru y’abakoresha acungwa.", "footer.brand":"Umuryango Les NGANYIRA","footer.where":"Kigali n’ahandi hose","footer.email":"Email","footer.phone":"Tel","footer.terms":"Amategeko & Politiki","footer.contribute":"Tanga umusanzu" },
+      en: { brand:"Les NGANYIRA", title:"Terms & Policies — Les NGANYIRA", "nav.home":"Home","nav.about":"About","nav.services":"Services","nav.contribute":"Make a Contribution","nav.terms":"Terms & Policies","nav.logout":"Log out", "page.h1":"Terms & Policies","page.lead":"These terms explain how this site is used and how user data is managed.", "footer.brand":"Les NGANYIRA Family","footer.where":"Kigali & worldwide","footer.email":"Email","footer.phone":"Phone","footer.terms":"Terms & Policies","footer.contribute":"Contribute" },
+      fr: { brand:"Les NGANYIRA", title:"Conditions & Politiques — Les NGANYIRA", "nav.home":"Accueil","nav.about":"À propos","nav.services":"Services","nav.contribute":"Faire une contribution","nav.terms":"Conditions & Politiques","nav.logout":"Déconnexion", "page.h1":"Conditions & Politiques","page.lead":"Ces conditions expliquent comment ce site est utilisé et comment les données des utilisateurs sont gérées.", "footer.brand":"Famille Les NGANYIRA","footer.where":"Kigali & dans le monde","footer.email":"Email","footer.phone":"Tél.","footer.terms":"Conditions & Politiques","footer.contribute":"Contribuer" }
+    };
+
+    function applyLang(lang){
+      const dict = TR[lang] || TR.rw;
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+      document.title = dict["title"] || "Les NGANYIRA";
+      localStorage.setItem("lng_lang", lang);
+      renderTerms(lang);
+    }
+
+    const langSel = document.getElementById("langSel");
+    const savedLang = localStorage.getItem("lng_lang") || "rw";
+    langSel.value = savedLang;
+    langSel.addEventListener("change", ()=> applyLang(langSel.value));
+    applyLang(savedLang);
   </script>
 </body>
 </html>
