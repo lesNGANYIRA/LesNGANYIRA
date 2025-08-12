@@ -3,24 +3,243 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Les Nganyira - Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Les Nganyira — Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    .card { border-radius:18px; }
+    :root{
+      --card-radius: 18px;
+      --hero-max: 820px;
+    }
+    body{ background:#f7f7fb; }
+    .card{ border-radius:var(--card-radius); }
+    .nav-brand{ font-weight:700; }
+
+    /* HERO IMAGE: nicely balanced width & height */
+    .hero-wrap{ width:100%; max-width:var(--hero-max); margin: 0 auto 24px auto; }
+    .hero-frame{
+      position: relative;
+      width: 100%;
+      /* Balanced aspect ratio so height & width look proportional */
+      aspect-ratio: 3 / 2; /* change to 1/1 for perfect square if you prefer */
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,.08);
+      background:#e9ecef;
+    }
+    .hero-frame img{
+      position: absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block;
+    }
+
+    .lang-switch .btn{ border-radius:999px; }
+    .stat{
+      display:flex; align-items:center; gap:12px;
+      padding:16px; border-radius:16px; background:#fff; box-shadow:0 6px 22px rgba(0,0,0,.06);
+    }
+    .stat h4{ font-size:1rem; margin:0; }
+    .muted{ color:#6c757d; }
   </style>
 </head>
 <body class="container py-4">
-  <nav class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h4 m-0">Les Nganyira — Dashboard</h1>
-    <button id="logoutBtn" class="btn btn-outline-danger btn-sm">Sohoka</button>
+  <!-- TOP NAV -->
+  <nav class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div class="d-flex align-items-center gap-3">
+      <span class="nav-brand h4 m-0">Les Nganyira — <span data-i18n="dashboard">Dashboard</span></span>
+      <span class="badge text-bg-light" id="userEmail">…</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 lang-switch">
+      <button class="btn btn-sm btn-outline-secondary" data-lang="en">ENG</button>
+      <button class="btn btn-sm btn-outline-secondary" data-lang="fr">FRA</button>
+      <button class="btn btn-sm btn-outline-secondary" data-lang="rw">KINY</button>
+      <button id="logoutBtn" class="btn btn-sm btn-outline-danger ms-1" data-i18n="logout">Sohoka</button>
+    </div>
   </nav>
 
-  <div id="content" class="card shadow-sm p-4">
-    <div id="hello" class="mb-1 fw-semibold">Murakaza neza!</div>
-    <div id="info" class="text-muted">Tegereza gato…</div>
-  </div>
+  <!-- HERO IMAGE (from your provided link; displayed cleanly & responsively) -->
+  <section class="hero-wrap">
+    <div class="hero-frame">
+      <img src="https://i.pinimg.com/736x/c3/40/09/c34009ee266d0ff4d1ef30dfb1e6a5d6.jpg" alt="Welcome to our family" />
+    </div>
+  </section>
 
+  <!-- WELCOME CARD -->
+  <section class="card shadow-sm p-4 mb-4">
+    <h2 class="h4 mb-1" id="hello">Murakaza neza!</h2>
+    <p class="muted" id="memberInfo">Tegereza gato…</p>
+  </section>
+
+  <!-- QUICK STATS (placeholders; keep simple like original style) -->
+  <section class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="stat">
+        <div>
+          <h4 data-i18n="totalMembers">Abanyamuryango</h4>
+          <div class="muted" id="membersCount">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="stat">
+        <div>
+          <h4 data-i18n="status">Imimerere</h4>
+          <div class="muted" id="verifiedState">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="stat">
+        <div>
+          <h4 data-i18n="lastUpdate">Igihe giheruka kuvugururwa</h4>
+          <div class="muted" id="lastUpdated">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINKS / ACTIONS (example, feel free to adapt) -->
+  <section class="card shadow-sm p-4">
+    <h3 class="h5 mb-3" data-i18n="quickActions">Ibikorwa byihuse</h3>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-primary" href="#" data-i18n="viewProfile">Reba Profuli</a>
+      <a class="btn btn-outline-primary" href="#" data-i18n="contribute">Gutanga umusanzu</a>
+      <a class="btn btn-outline-secondary" href="#" data-i18n="terms">Amategeko & Politiki</a>
+    </div>
+  </section>
+
+  <!-- FIREBASE + LOGIC -->
   <script type="module">
+    // ================= Firebase =================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFire
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ---- TODO: REPLACE WITH YOUR PROJECT ----
+    const firebaseConfig = {
+      apiKey: "<YOUR_FIREBASE_API_KEY>",
+      authDomain: "<YOUR_FIREBASE_PROJECT_ID>.firebaseapp.com",
+      projectId: "<YOUR_FIREBASE_PROJECT_ID>",
+      appId: "<YOUR_FIREBASE_APP_ID>"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const hello = document.getElementById('hello');
+    const memberInfo = document.getElementById('memberInfo');
+    const userEmail = document.getElementById('userEmail');
+    const verifiedState = document.getElementById('verifiedState');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const membersCount = document.getElementById('membersCount');
+
+    // Simple demo count (replace with real count if you store it elsewhere)
+    membersCount.textContent = "—"; // keep like original minimal dashboard
+
+    // Guard: require logged-in & verified
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "https://<username>.github.io/<repo>/index.html"; // project site path
+        return;
+      }
+      userEmail.textContent = user.email || "—";
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists() || !snap.data().verified) {
+          window.location.href = "https://<username>.github.io/<repo>/index.html";
+          return;
+        }
+        const data = snap.data();
+        hello.textContent = `${t('welcome')}, ${data.fullName || 'Member'}!`;
+        memberInfo.textContent = `${t('email')}: ${data.email} | ${t('phone')}: ${data.phone || '-'}`;
+        verifiedState.textContent = t('verified');
+        lastUpdated.textContent = new Date().toLocaleString();
+      } catch (e) {
+        console.error(e);
+        memberInfo.textContent = t('couldNotFetch');
+        verifiedState.textContent = t('unknown');
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "https://<username>.github.io/<repo>/index.html";
+    });
+
+    // =================== i18n (ENG / FRA / KINY) ===================
+    const dict = {
+      en: {
+        dashboard: 'Dashboard',
+        logout: 'Log out',
+        totalMembers: 'Members',
+        status: 'Status',
+        lastUpdate: 'Last updated',
+        quickActions: 'Quick actions',
+        viewProfile: 'View profile',
+        contribute: 'Contribute',
+        terms: 'Terms & Policies',
+        welcome: 'Welcome',
+        email: 'Email',
+        phone: 'Phone',
+        verified: 'Verified',
+        unknown: 'Unknown',
+        couldNotFetch: 'Could not fetch your info.'
+      },
+      fr: {
+        dashboard: 'Tableau de bord',
+        logout: 'Déconnexion',
+        totalMembers: 'Membres',
+        status: 'Statut',
+        lastUpdate: 'Dernière mise à jour',
+        quickActions: 'Actions rapides',
+        viewProfile: 'Voir le profil',
+        contribute: 'Contribuer',
+        terms: 'Termes & Politiques',
+        welcome: 'Bienvenue',
+        email: 'Email',
+        phone: 'Téléphone',
+        verified: 'Vérifié',
+        unknown: 'Inconnu',
+        couldNotFetch: "Impossible de récupérer vos informations."
+      },
+      rw: {
+        dashboard: 'Dashboard',
+        logout: 'Sohoka',
+        totalMembers: 'Abanyamuryango',
+        status: 'Imimerere',
+        lastUpdate: 'Igihe giheruka kuvugururwa',
+        quickActions: 'Ibikorwa byihuse',
+        viewProfile: 'Reba Profuli',
+        contribute: 'Gutanga umusanzu',
+        terms: 'Amategeko & Politiki',
+        welcome: 'Murakaza neza',
+        email: 'Email',
+        phone: 'Phone',
+        verified: 'Byemejwe',
+        unknown: 'Kitazwi',
+        couldNotFetch: 'Ntitwabashije kubona amakuru yawe.'
+      }
+    };
+
+    function currentLang(){ return localStorage.getItem('ng_lang') || 'rw'; }
+    function setLang(lang){ localStorage.setItem('ng_lang', lang); applyLang(); }
+    function t(key){ return (dict[currentLang()] && dict[currentLang()][key]) || key; }
+
+    function applyLang(){
+      // data-i18n text nodes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+      // dynamic lines already set at runtime (hello/info) will be refreshed on auth change
+    }
+
+    // Bind language buttons
+    document.querySelectorAll('[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+    });
+
+    // First load
+    applyLang();
+  </script>
+</body>
+</html>
