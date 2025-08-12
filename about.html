@@ -83,7 +83,10 @@
     <!-- Contact / CTA -->
     <div class="section">
       <h2 data-i18n="about.contactTitle">Twandikire</h2>
-      <p class="muted"><span data-i18n="about.contactEmail">Email</span>: example@lesnganyira.org · <span data-i18n="about.contactPhone">Tel</span>: +250 7xx xxx xxx</p>
+      <p class="muted">
+        <span data-i18n="about.contactEmail">Email</span>: example@lesnganyira.org ·
+        <span data-i18n="about.contactPhone">Tel</span>: +250 7xx xxx xxx
+      </p>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <a href="contribute.html" class="btn" data-i18n="about.contactContribute">Tanga umusanzu</a>
         <a href="services.html" class="btn secondary" data-i18n="about.contactServices">Reba serivisi</a>
@@ -121,10 +124,10 @@
     const myRows = (db[email] || []);
     const totalCad = myRows.reduce((s,r)=>s+(Number(r.amountCAD)||0),0);
     document.getElementById("kpiTotal").textContent = fmt(totalCad);
-    document.getElementById("kpiMembers").textContent = "—";   // Shyiramo umubare nyawo niboneka
-    document.getElementById("kpiProjects").textContent = "—";  // Shyiramo umubare nyawo niboneka
+    document.getElementById("kpiMembers").textContent = "—";
+    document.getElementById("kpiProjects").textContent = "—";
 
-    // ===== Translations (RW/EN/FR) — keys zose ukoreshejwe =====
+    // ===== Translations (RW/EN/FR) — all keys used on this page =====
     const TR = {
       rw: {
         brand:"Les NGANYIRA",
@@ -174,7 +177,7 @@
         "about.subtitle":"Nous nous engageons à épargner, à nous entraider et à bâtir ensemble un avenir meilleur.",
         "about.missionTitle":"Mission & Vision",
         "about.missionLabel":"Mission :","about.missionText":"Rassembler la famille par l’épargne et l’entraide.",
-        "about.visionLabel":"Vision :","about.visionText":"Une famille résiliente, bâtissant la prospérité par l’épargne et la coopération.",
+        "about.visionLabel":"Vision :","about.visionText":"Une famille résiliente, construisant la prospérité par l’épargne et la coopération.",
         "about.impactTitle":"Impact en chiffres",
         "about.members":"Membres","about.total":"Total des contributions (CAD)","about.projects":"Projets d’appui",
         "about.storyTitle":"Notre histoire",
@@ -194,6 +197,7 @@
         const key = el.getAttribute("data-i18n");
         if (dict[key]) el.textContent = dict[key];
       });
+      // head title too
       document.title = dict["about.title"] || "Les NGANYIRA — About";
       document.documentElement.setAttribute("lang", lang);
       localStorage.setItem("lng_lang", lang);
