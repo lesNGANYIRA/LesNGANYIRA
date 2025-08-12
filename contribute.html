@@ -211,21 +211,29 @@
     });
 
     // ===== WRITE ONLY AFTER PAID =====
-    function addPaidContribution({fund, amount, currency, note, tx_ref}){
-      const cad = amount * (RATES_TO_CAD[currency] || 1);
-      const rec = {
-        fund, amountOriginal: amount, currency, amountCAD: cad,
-        note: (noteEl.value||"").trim(),
-        at: Date.now(),
-        status: "paid",
-        tx_ref
-      };
-      const db = getContribs();
-      db[email] = db[email] || [];
-      db[email].push(rec);
-      setContribs(db);
-      renderList(); renderFundTotals(); renderPreview();
-    }
+    <script>
+// ===== WRITE ONLY AFTER PAID =====
+function addPaidContribution({fund, amount, currency, note, tx_ref}){
+  const cad = amount * (RATES_TO_CAD[currency] || 1);
+  const rec = {
+    fund,
+    amountOriginal: amount,
+    currency,
+    amountCAD: cad,
+    note: (noteEl.value||"").trim(),
+    at: Date.now(),
+    status: "paid",
+    approved: false,      // 🔴 Nshyizeho: bizagaragara ari uko byemejwe
+    tx_ref
+  };
+  const db = getContribs();
+  db[email] = db[email] || [];
+  db[email].push(rec);
+  setContribs(db);
+  renderList(); renderFundTotals(); renderPreview();
+}
+</script>
+
 
     // ===== FLUTTERWAVE INLINE (Card & Mobile Money Rwanda) =====
     // Public Key yawe (SANDBOX):
