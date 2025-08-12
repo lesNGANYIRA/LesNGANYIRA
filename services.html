@@ -1,40 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="rw">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Les NGANYIRA — Services</title>
+  <title data-i18n="title">Les NGANYIRA — Serivisi</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    .lang-select{padding:8px 10px;border-radius:8px;border:1px solid #d8deea;background:#fff;}
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
+    .card{background:#fff;border:1px solid #eef1f7;border-radius:14px;padding:14px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef3ff;color:#1f3fb3;font-size:12px;font-weight:600}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #d8deea;border-radius:10px}
+    .btn{padding:10px 12px;border-radius:10px;background:var(--accent);color:#fff;border:0;font-weight:700;text-decoration:none;cursor:pointer}
+    .btn.secondary{background:#eef3ff;color:#1f3fb3}
+    .muted small{color:var(--muted)}
+    ul.clean{padding-left:18px;margin:6px 0}
+    table.simple{width:100%;border-collapse:collapse}
+    table.simple th,table.simple td{padding:8px;border-bottom:1px solid #eef1f7;text-align:left}
+    .icon{font-size:22px}
+  </style>
 </head>
 <body>
+  <!-- NAV -->
   <header class="nav">
-    <div class="nav-left">Les NGANYIRA</div>
+    <div class="nav-left" data-i18n="brand">Les NGANYIRA</div>
     <nav class="nav-right">
-      <a href="home.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="services.html">Services</a>
-      <a href="contribute.html">Make a Contribution</a>
-      <a href="terms.html">Terms & Policies</a>
-      <button id="logoutBtn" class="nav-btn">Log out</button>
+      <a href="home.html" data-i18n="nav.home">Ahabanza</a>
+      <a href="about.html" data-i18n="nav.about">Ibyerekeye</a>
+      <a href="services.html" data-i18n="nav.services">Serivisi</a>
+      <a href="contribute.html" data-i18n="nav.contribute">Tanga umusanzu</a>
+      <a href="terms.html" data-i18n="nav.terms">Amategeko & Politiki</a>
+      <select id="langSel" class="lang-select" title="Language">
+        <option value="rw">Kinyarwanda</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+      <button id="logoutBtn" class="nav-btn" data-i18n="nav.logout">Sohoka</button>
     </nav>
   </header>
 
-  <div class="auth-card" style="margin-top:24px;">
-    <h1>Services</h1>
-    <ul>
-      <li>Family savings coordination</li>
-      <li>Contribution tracking</li>
-      <li>Announcements & events</li>
-    </ul>
+  <div class="auth-card" style="margin-top:16px;">
+    <h1 data-i18n="h1">Serivisi dutanga</h1>
+    <p class="muted" data-i18n="lead">Dufasha kuzigama, gufashanya mu bihe bikomeye, no kubaka imishinga iteza imbere urugo n’umuryango.</p>
+
+    <!-- Service cards -->
+    <div class="grid" style="margin-top:10px;">
+      <div class="card">
+        <div class="icon">💰</div>
+        <h2 data-i18n="s1.title">Kwigomwa & Kuzigamira</h2>
+        <p class="muted" data-i18n="s1.desc">Gahunda yo kubitsa buri kwezi/icyumweru; raporo isobanutse ku musanzu wawe.</p>
+        <span class="badge" data-i18n="s.badge.core">Serivisi shingiro</span>
+      </div>
+      <div class="card">
+        <div class="icon">⛑️</div>
+        <h2 data-i18n="s2.title">Inkunga y’ihutirwa</h2>
+        <p class="muted" data-i18n="s2.desc">Gufasha mu byago/by’urukingo (indwara, ishyano, ibindi by’ingenzi).</p>
+        <span class="badge" data-i18n="s.badge.support">Inkunga</span>
+      </div>
+      <div class="card">
+        <div class="icon">🎓</div>
+        <h2 data-i18n="s3.title">Fonds y’Uburezi</h2>
+        <p class="muted" data-i18n="s3.desc">Gufasha mu mafaranga y’ishuri, ibikoresho, amahugurwa.</p>
+        <span class="badge" data-i18n="s.badge.future">Ejo hazaza</span>
+      </div>
+      <div class="card">
+        <div class="icon">🩺</div>
+        <h2 data-i18n="s4.title">Inkunga y’Ubuvuzi</h2>
+        <p class="muted" data-i18n="s4.desc">Gutera inkunga imiti/ibitaro mu buryo bwumvikanyweho.</p>
+        <span class="badge" data-i18n="s.badge.support">Inkunga</span>
+      </div>
+      <div class="card">
+        <div class="icon">🎉</div>
+        <h2 data-i18n="s5.title">Inkunga y’ibirori</h2>
+        <p class="muted" data-i18n="s5.desc">Gusaranganya umutwaro mu bukwe, ubatisimu, n’ibindi birori by’umuryango.</p>
+        <span class="badge" data-i18n="s.badge.community">Ubufatanye</span>
+      </div>
+      <div class="card">
+        <div class="icon">🏗️</div>
+        <h2 data-i18n="s6.title">Imishinga y’iterambere</h2>
+        <p class="muted" data-i18n="s6.desc">Kuzamura imishinga migari y’ishoramari y’igihe kirekire ku rubyaro n’abazaza.</p>
+        <span class="badge" data-i18n="s.badge.future">Ejo hazaza</span>
+      </div>
+    </div>
+
+    <!-- How we deliver -->
+    <div class="card" style="margin-top:12px;">
+      <h2 data-i18n="how.title">Uko dutanga serivisi</h2>
+      <ul class="clean">
+        <li data-i18n="how.item1">Kuganira no gusuzuma icyifuzo.</li>
+        <li data-i18n="how.item2">Kureba uko bikwiranye n’amabwiriza y’umuryango.</li>
+        <li data-i18n="how.item3">Kwemeza ingano n’uburyo bwo gutanga inkunga/serivisi.</li>
+        <li data-i18n="how.item4">Raporo no gukurikirana umusaruro.</li>
+      </ul>
+    </div>
+
+    <!-- Request service form -->
+    <div class="grid" style="margin-top:12px;">
+      <div class="card">
+        <h2 data-i18n="form.title">Saba serivisi</h2>
+        <div class="row">
+          <div style="flex:1 1 220px">
+            <label for="stype" data-i18n="form.type">Hitamo serivisi</label>
+            <select id="stype">
+              <option value="savings" data-i18n="s1.title">Kwigomwa & Kuzigamira</option>
+              <option value="emergency" data-i18n="s2.title">Inkunga y’ihutirwa</option>
+              <option value="education" data-i18n="s3.title">Fonds y’Uburezi</option>
+              <option value="health" data-i18n="s4.title">Inkunga y’Ubuvuzi</option>
+              <option value="events" data-i18n="s5.title">Inkunga y’ibirori</option>
+              <option value="projects" data-i18n="s6.title">Imishinga y’iterambere</option>
+            </select>
+          </div>
+          <div style="flex:1 1 180px">
+            <label for="amount" data-i18n="form.amount">Ingano (CAD)</label>
+            <input id="amount" type="number" step="0.01" placeholder="0.00"/>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <label for="details" data-i18n="form.details">Sobanura muri make</label>
+          <textarea id="details" rows="3" placeholder=""></textarea>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button id="btnSubmit" class="btn" data-i18n="form.submit">Ohereza icyifuzo</button>
+          <span id="okMsg" class="badge" style="display:none" data-i18n="form.ok">Byakiriwe!</span>
+        </div>
+        <p class="muted" style="margin-top:6px"><small data-i18n="form.note">Ibyo usabye bibikwa muri mudasobwa ukoresha (LocalStorage); tuzashyiraho uburyo bwo kubisangiza komite online.</small></p>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="recent.title">Ibyifuzo biheruka</h2>
+        <div id="reqList" class="muted">—</div>
+      </div>
+    </div>
   </div>
 
+  <!-- Footer -->
+  <footer style="max-width:1100px;margin:16px auto 8px;padding:12px;background:#fff;border:1px solid #eef1f7;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.04);">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+      <div class="muted">
+        <b data-i18n="footer.brand">Umuryango Les NGANYIRA</b> · <span data-i18n="footer.where">Kigali n’ahandi hose</span>
+        <br/><small><span data-i18n="footer.email">Email</span>: example@lesnganyira.org · <span data-i18n="footer.phone">Tel</span>: +250 7xx xxx xxx</small>
+      </div>
+      <div>
+        <a href="terms.html" class="btn secondary" style="padding:8px 10px;" data-i18n="footer.terms">Amategeko & Politiki</a>
+        <a href="contribute.html" class="btn" style="padding:8px 10px;" data-i18n="footer.contribute">Tanga umusanzu</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
+    // ===== Auth guard =====
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
     });
+
+    // ===== Storage helpers =====
+    function getReq(){ try { return JSON.parse(localStorage.getItem("lng_service_requests")||"{}"); } catch { return {}; } }
+    function setReq(db){ localStorage.setItem("lng_service_requests", JSON.stringify(db)); }
+
+    // ===== Submit request =====
+    const btn = document.getElementById("btnSubmit");
+    const ok = document.getElementById("okMsg");
+    btn.addEventListener("click", () => {
+      const stype = document.getElementById("stype").value;
+      const amount = parseFloat(document.getElementById("amount").value||"0");
+      const details = (document.getElementById("details").value||"").trim();
+      if (!stype) { document.getElementById("stype").focus(); return; }
+      if (!amount || amount<=0) { document.getElementById("amount").focus(); return; }
+
+      const db = getReq();
+      db[email] = db[email] || [];
+      db[email].push({stype, amount, details, at: Date.now()});
+      setReq(db);
+
+      ok.style.display = "inline-block";
+      renderList();
+      document.getElementById("amount").value="";
+      document.getElementById("details").value="";
+      setTimeout(()=> ok.style.display="none", 1600);
+    });
+
+    function renderList(){
+      const db = getReq();
+      const rows = (db[email]||[]).slice().reverse();
+      const box = document.getElementById("reqList");
+      const L = TR[langSel.value];
+      if (!rows.length) { box.textContent = L["recent.empty"]; return; }
+      let html = '<div style="overflow:auto;"><table class="simple">';
+      html += `<thead><tr>
+        <th>${L["tbl.date"]}</th>
+        <th>${L["tbl.type"]}</th>
+        <th>${L["tbl.amount"]}</th>
+        <th>${L["tbl.details"]}</th>
+      </tr></thead><tbody>`;
+      rows.slice(0,10).forEach(r=>{
+        const d = new Date(r.at).toLocaleString();
+        html += `<tr>
+          <td>${d}</td>
+          <td>${labelOfType(r.stype)}</td>
+          <td>${new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(r.amount)} CAD</td>
+          <td>${r.details||""}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+      box.innerHTML = html;
+    }
+
+    function labelOfType(val){
+      const L = TR[langSel.value];
+      switch(val){
+        case "savings": return L["s1.title"];
+        case "emergency": return L["s2.title"];
+        case "education": return L["s3.title"];
+        case "health": return L["s4.title"];
+        case "events": return L["s5.title"];
+        case "projects": return L["s6.title"];
+        default: return val;
+      }
+    }
+
+    // ===== i18n =====
+    const TR = {
+      rw: {
+        brand:"Les NGANYIRA",
+        title:"Les NGANYIRA — Serivisi",
+        "nav.home":"Ahabanza","nav.about":"Ibyerekeye","nav.services":"Serivisi","nav.contribute":"Tanga umusanzu","nav.terms":"Amategeko & Politiki","nav.logout":"Sohoka",
+        h1:"Serivisi dutanga",
+        lead:"Dufasha kuzigama, gufashanya mu bihe bikomeye, no kubaka imishinga iteza imbere urugo n’umuryango.",
+        "s.badge.core":"Serivisi shingiro","s.badge.support":"Inkunga","s.badge.future":"Ejo hazaza","s.badge.community":"Ubufatanye",
+        "s1.title":"Kwigomwa & Kuzigamira","s1.desc":"Gahunda yo kubitsa buri kwezi/icyumweru; raporo isobanutse ku musanzu wawe.",
+        "s2.title":"Inkunga y’ihutirwa","s2.desc":"Gufasha mu byago/by’urukingo (indwara, ishyano, ibindi by’ingenzi).",
+        "s3.title":"Fonds y’Uburezi","s3.desc":"Gufasha mu mafaranga y’ishuri, ibikoresho, amahugurwa.",
+        "s4.title":"Inkunga y’Ubuvuzi","s4.desc":"Gutera inkunga imiti/ibitaro mu buryo bwumvikanyweho.",
+        "s5.title":"Inkunga y’ibirori","s5.desc":"Gusaranganya umutwaro mu bukwe, ubatisimu, n’ibindi birori by’umuryango.",
+        "s6.title":"Imishinga y’iterambere","s6.desc":"Kuzamura imishinga migari y’ishoramari y’igihe kirekire ku rubyaro n’abazaza.",
+        "how.title":"Uko dutanga serivisi",
+        "how.item1":"Kuganira no gusuzuma icyifuzo.",
+        "how.item2":"Kureba uko bikwiranye n’amabwiriza y’umuryango.",
+        "how.item3":"Kwemeza ingano n’uburyo bwo gutanga inkunga/serivisi.",
+        "how.item4":"Raporo no gukurikirana umusaruro.",
+        "form.title":"Saba serivisi",
+        "form.type":"Hitamo serivisi",
+        "form.amount":"Ingano (CAD)",
+        "form.details":"Sobanura muri make",
+        "form.submit":"Ohereza icyifuzo",
+        "form.ok":"Byakiriwe!",
+        "form.note":"Ibyo usabye bibikwa muri mudasobwa ukoresha (LocalStorage); tuzashyiraho uburyo bwo kubisangiza komite online.",
+        "recent.title":"Ibyifuzo biheruka",
+        "recent.empty":"Nta cyifuzo kirabikwa.",
+        "tbl.date":"Itariki",
+        "tbl.type":"Ubwoko",
+        "tbl.amount":"Ingano",
+        "tbl.details":"Ibisobanuro",
+        "footer.brand":"Umuryango Les NGANYIRA","footer.where":"Kigali n’ahandi hose","footer.email":"Email","footer.phone":"Tel","footer.terms":"Amategeko & Politiki","footer.contribute":"Tanga umusanzu"
+      },
+      en: {
+        brand:"Les NGANYIRA",
+        title:"Les NGANYIRA — Services",
+        "nav.home":"Home","nav.about":"About","nav.services":"Services","nav.contribute":"Make a Contribution","nav.terms":"Terms & Policies","nav.logout":"Log out",
+        h1:"Our Services",
+        lead:"We help members save, support one another in tough times, and build long-term family projects.",
+        "s.badge.core":"Core service","s.badge.support":"Support","s.badge.future":"Future","s.badge.community":"Community",
+        "s1.title":"Saving & Contributions","s1.desc":"Weekly/monthly deposits with clear statements.",
+        "s2.title":"Emergency Support","s2.desc":"Assistance for urgent needs (health, bereavement, other essentials).",
+        "s3.title":"Education Fund","s3.desc":"Support for school fees, supplies, and trainings.",
+        "s4.title":"Health Support","s4.desc":"Partial help for medication/hospital as approved.",
+        "s5.title":"Events Support","s5.desc":"Share the cost of family events: weddings, baptisms, etc.",
+        "s6.title":"Development Projects","s6.desc":"Grow long-term investment initiatives for future generations.",
+        "how.title":"How we deliver",
+        "how.item1":"Intake & needs assessment.",
+        "how.item2":"Eligibility vs. family guidelines.",
+        "how.item3":"Approval of amount & disbursement method.",
+        "how.item4":"Reporting & follow-up.",
+        "form.title":"Request a service",
+        "form.type":"Choose a service",
+        "form.amount":"Amount (CAD)",
+        "form.details":"Describe briefly",
+        "form.submit":"Submit request",
+        "form.ok":"Received!",
+        "form.note":"Your request is stored on this device (LocalStorage). Online sharing with committee will be added later.",
+        "recent.title":"Recent requests",
+        "recent.empty":"No requests yet.",
+        "tbl.date":"Date",
+        "tbl.type":"Type",
+        "tbl.amount":"Amount",
+        "tbl.details":"Details",
+        "footer.brand":"Les NGANYIRA Family","footer.where":"Kigali & worldwide","footer.email":"Email","footer.phone":"Phone","footer.terms":"Terms & Policies","footer.contribute":"Contribute"
+      },
+      fr: {
+        brand:"Les NGANYIRA",
+        title:"Les NGANYIRA — Services",
+        "nav.home":"Accueil","nav.about":"À propos","nav.services":"Services","nav.contribute":"Faire une contribution","nav.terms":"Conditions & Politiques","nav.logout":"Déconnexion",
+        h1:"Nos services",
+        lead:"Nous aidons à épargner, à s’entraider en cas de besoin et à bâtir des projets familiaux durables.",
+        "s.badge.core":"Service clé","s.badge.support":"Soutien","s.badge.future":"Avenir","s.badge.community":"Communauté",
+        "s1.title":"Épargne & Contributions","s1.desc":"Versements hebdomadaires/mensuels avec relevés clairs.",
+        "s2.title":"Soutien d’urgence","s2.desc":"Aide pour les besoins urgents (santé, deuil, essentiels).",
+        "s3.title":"Fonds Éducation","s3.desc":"Aide pour frais scolaires, fournitures et formations.",
+        "s4.title":"Soutien Santé","s4.desc":"Participation aux frais de médicaments/hôpital selon accord.",
+        "s5.title":"Soutien Événements","s5.desc":"Partage des coûts d’événements familiaux : mariages, baptêmes, etc.",
+        "s6.title":"Projets de développement","s6.desc":"Développer des initiatives d’investissement à long terme pour les générations futures.",
+        "how.title":"Notre démarche",
+        "how.item1":"Accueil & évaluation des besoins.",
+        "how.item2":"Adéquation avec les règles familiales.",
+        "how.item3":"Validation du montant & modalité de soutien.",
+        "how.item4":"Rapport & suivi.",
+        "form.title":"Demander un service",
+        "form.type":"Choisissez un service",
+        "form.amount":"Montant (CAD)",
+        "form.details":"Décrivez brièvement",
+        "form.submit":"Envoyer la demande",
+        "form.ok":"Reçu !",
+        "form.note":"Votre demande est stockée sur cet appareil (LocalStorage). Le partage en ligne avec le comité sera ajouté.",
+        "recent.title":"Demandes récentes",
+        "recent.empty":"Aucune demande.",
+        "tbl.date":"Date",
+        "tbl.type":"Type",
+        "tbl.amount":"Montant",
+        "tbl.details":"Détails",
+        "footer.brand":"Famille Les NGANYIRA","footer.where":"Kigali & dans le monde","footer.email":"Email","footer.phone":"Tél.","footer.terms":"Conditions & Politiques","footer.contribute":"Contribuer"
+      }
+    };
+
+    function applyLang(lang){
+      const dict = TR[lang] || TR.rw;
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+      document.title = dict["title"] || "Les NGANYIRA — Services";
+      document.documentElement.setAttribute("lang", lang);
+      localStorage.setItem("lng_lang", lang);
+      renderList();
+    }
+
+    // Load preferred language
+    const langSel = document.getElementById("langSel");
+    const savedLang = localStorage.getItem("lng_lang") || "rw";
+    langSel.value = savedLang;
+    langSel.addEventListener("change", ()=> applyLang(langSel.value));
+    applyLang(savedLang);
+
+    // Initial render
+    renderList();
   </script>
 </body>
 </html>
