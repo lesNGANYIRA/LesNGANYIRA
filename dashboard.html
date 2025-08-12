@@ -1,260 +1,280 @@
 <!DOCTYPE html>
-<html lang="rw">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard — Les NGANYIRA</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les NGANYIRA – Dashboard & Create Account</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    .wrap{max-width:1100px;margin:16px auto;padding:0 12px}
-    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-    .card{background:#fff;border:1px solid #eef1f7;border-radius:14px;padding:14px}
-    .kpi{display:flex;flex-direction:column;gap:6px}
-    .kpi .lbl{font-size:12px;color:#6b7280}
-    .kpi .val{font-size:22px;font-weight:800}
-    table.simple{width:100%;border-collapse:collapse}
-    table.simple th,table.simple td{padding:8px;border-bottom:1px solid #eef1f7;text-align:left}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#eef3ff;color:#1f3fb3;font-weight:600}
-    .btn{padding:8px 10px;border-radius:10px;background:var(--accent);color:#fff;border:0;font-weight:700;text-decoration:none;cursor:pointer}
-    .btn.secondary{background:#eef3ff;color:#1f3fb3}
-    .btn.ghost{background:#fff;border:1px solid #d8deea;color:#1f2a4a}
-    .muted{color:#6b7280}
-    .danger{color:#b91c1c}
+    body { background-color: #f8f9fa; }
+    .lang-switch { position: fixed; top: 12px; right: 12px; z-index: 1040; }
+    .card { border-radius: 1rem; }
   </style>
 </head>
 <body>
-  <header class="nav">
-    <div class="nav-left">Les NGANYIRA</div>
-    <nav class="nav-right">
-      <a href="home.html">Ahabanza</a>
-      <a href="about.html">Ibyerekeye</a>
-      <a href="services.html">Serivisi</a>
-      <a href="contribute.html">Tanga umusanzu</a>
-      <a href="terms.html">Amategeko & Politiki</a>
-      <button id="logoutBtn" class="nav-btn">Sohoka</button>
-    </nav>
-  </header>
+  <!-- Language Switcher -->
+  <div class="lang-switch">
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="currentLangBtn">EN</button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><button class="dropdown-item" data-lang="en">English</button></li>
+        <li><button class="dropdown-item" data-lang="fr">Français</button></li>
+        <li><button class="dropdown-item" data-lang="rw">Kinyarwanda</button></li>
+      </ul>
+    </div>
+  </div>
 
-  <main class="wrap">
-    <h1>Dashboard</h1>
-    <p class="pill">🔒 Tugaragaza **PAID + APPROVED gusa**</p>
-
-    <!-- KPIs (PAID + APPROVED only) -->
-    <div class="grid" id="kpis">
-      <div class="card kpi">
-        <div class="lbl">Ibyishuwe byemejwe (CAD)</div>
-        <div class="val" id="kpiTotal">0.00</div>
-      </div>
-      <div class="card kpi">
-        <div class="lbl">Umubare w’inyandiko zemejwe</div>
-        <div class="val" id="kpiCount">0</div>
-      </div>
-      <div class="card kpi">
-        <div class="lbl">Fund yagezweho cyane</div>
-        <div class="val" id="kpiTopFund">—</div>
+  <div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 m-0" data-i18n="title_dashboard">Family Dashboard</h1>
+      <div class="d-flex gap-2">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createAccountModal" id="openCreateAccountBtn">
+          <span data-i18n="btn_create_account">Create Account</span>
+        </button>
       </div>
     </div>
 
-    <!-- Per-fund subtotals -->
-    <div class="card" style="margin-top:12px;">
-      <h2>Subtotals kuri buri fund (PAID + APPROVED, CAD)</h2>
-      <div class="grid" id="fundTotals"></div>
+    <!-- Welcome Image Banner -->
+    <div class="card shadow-sm mb-4">
+      <a href="https://www.google.com/imgres?q=welcome%20to%20our%20family%20pictures&imgurl=https%3A%2F%2Fi.pinimg.com%2F736x%2Fc3%2F40%2F09%2Fc34009ee2f5c69979feb276449a3c57f.jpg&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F737675613948318521%2F&docid=VuXRMGwV_E0WjM&tbnid=wmYYsJkI476hYM&vet=12ahUKEwj7nba1qoaPAxULmYkEHQ9JPb0QM3oECDYQAA..i&w=601&h=601&hcb=2&ved=2ahUKEwj7nba1qoaPAxULmYkEHQ9JPb0QM3oECDYQAA" target="_blank" rel="noopener" class="text-decoration-none">
+        <img src="https://i.pinimg.com/736x/c3/40/09/c34009ee2f5c69979feb276449a3c57f.jpg" class="card-img-top" alt="Welcome banner" />
+      </a>
+      <div class="card-body text-center">
+        <span class="fw-semibold" data-i18n="welcome_banner">Welcome to our family!</span>
+      </div>
     </div>
 
-    <!-- History (PAID + APPROVED only) -->
-    <div class="card" style="margin-top:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-        <h2>Contribution history (PAID + APPROVED)</h2>
-        <div>
-          <button class="btn secondary" id="btnExport">Export CSV</button>
+    <!-- Quick Stats -->
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 text-muted" data-i18n="stat_total_contributions">Total Contributions</h2>
+            <p class="display-6 m-0" id="totalContributions">0</p>
+            <small class="text-muted" data-i18n="note_paid_only">Shows paid & approved only</small>
+          </div>
         </div>
       </div>
-      <div id="historyBox" class="muted">—</div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 text-muted" data-i18n="stat_total_members">Total Members</h2>
+            <p class="display-6 m-0" id="totalMembers">0</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 text-muted" data-i18n="stat_last_payment">Last Payment</h2>
+            <p class="h4 m-0" id="lastPayment">—</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Admin approvals -->
-    <div id="adminBox" class="card" style="margin-top:12px;display:none;">
-      <h2>Pending approvals (PAID ariko ntibyemejwe)</h2>
-      <div id="pendingBox" class="muted">—</div>
-      <p class="muted" style="margin-top:8px;">💡 Uyu mwanya ugaragara kuri **admins** gusa.</p>
+    <!-- Contribution History Table (placeholder) -->
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-white">
+        <strong data-i18n="table_contrib_history">Contribution History</strong>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info m-0" role="alert">
+          <span data-i18n="msg_history_paid_only">Only appears after a verified payment.</span>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
+
+  <!-- Create Account Modal -->
+  <div class="modal fade" id="createAccountModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="modal_create_title">Create Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createAccountForm" novalidate>
+            <div class="mb-3">
+              <label for="firstName" class="form-label" data-i18n="label_first_name">First Name</label>
+              <input type="text" id="firstName" name="firstName" class="form-control" required />
+              <div class="invalid-feedback" data-i18n="error_first_name">First name is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="lastName" class="form-label" data-i18n="label_last_name">Last Name</label>
+              <input type="text" id="lastName" name="lastName" class="form-control" required />
+              <div class="invalid-feedback" data-i18n="error_last_name">Last name is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="idNumber" class="form-label" data-i18n="label_id_number">ID Number (Access Code)</label>
+              <input type="text" id="idNumber" name="idNumber" class="form-control" />
+              <div class="form-text" data-i18n="help_id_number">Used for login if enabled by admins.</div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label" data-i18n="label_email">Email</label>
+              <input type="email" id="email" name="email" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label" data-i18n="label_phone">Phone</label>
+              <input type="tel" id="phone" name="phone" class="form-control" />
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <span data-i18n="btn_submit">Submit</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // ===== Auth =====
-    const email = localStorage.getItem("lng_current_user");
-    if (!email) { window.location.href = "index.html"; }
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("lng_current_user");
-      window.location.href = "index.html";
-    });
-
-    // ===== Helpers =====
-    function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
-    function setContribs(db){ localStorage.setItem("lng_contribs", JSON.stringify(db)); }
-    function fmt(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0); }
-    const FUNDS = ["savings","emergency","education","health","events","projects"];
-    const FUND_LABELS = {
-      savings:"Kwigomwa & Kuzigamira",
-      emergency:"Inkunga y’ihutirwa",
-      education:"Fonds y’Uburezi",
-      health:"Inkunga y’Ubuvuzi",
-      events:"Inkunga y’ibirori",
-      projects:"Imishinga y’iterambere"
+    // --- Simple i18n dictionary ---
+    const I18N = {
+      en: {
+        title_dashboard: "Family Dashboard",
+        btn_create_account: "Create Account",
+        stat_total_contributions: "Total Contributions",
+        stat_total_members: "Total Members",
+        stat_last_payment: "Last Payment",
+        table_contrib_history: "Contribution History",
+        msg_history_paid_only: "Only appears after a verified payment.",
+        note_paid_only: "Shows paid & approved only",
+        modal_create_title: "Create Account",
+        label_first_name: "First Name",
+        label_last_name: "Last Name",
+        label_id_number: "ID Number (Access Code)",
+        help_id_number: "Used for login if enabled by admins.",
+        label_email: "Email",
+        label_phone: "Phone",
+        btn_submit: "Submit",
+        error_first_name: "First name is required.",
+        error_last_name: "Last name is required.",
+        welcome_banner: "Welcome to our family!",
+      }
+      fr: {
+        title_dashboard: "Tableau de bord familial",
+        btn_create_account: "Créer un compte",
+        stat_total_contributions: "Contributions totales",
+        stat_total_members: "Membres au total",
+        stat_last_payment: "Dernier paiement",
+        table_contrib_history: "Historique des contributions",
+        msg_history_paid_only: "N'apparaît qu'après un paiement vérifié.",
+        note_paid_only: "Affiche seulement les paiements validés",
+        modal_create_title: "Créer un compte",
+        label_first_name: "Prénom",
+        label_last_name: "Nom",
+        label_id_number: "Numéro d'identité (Code d'accès)",
+        help_id_number: "Utilisé pour la connexion si activé par les admins.",
+        label_email: "E-mail",
+        label_phone: "Téléphone",
+        btn_submit: "Envoyer",
+        error_first_name: "Le prénom est obligatoire.",
+        error_last_name: "Le nom est obligatoire.",
+        welcome_banner: "Bienvenue dans notre famille !",
+      },
+      rw: {
+        title_dashboard: "Dashibodi y'Umuryango",
+        btn_create_account: "Fungura Konti",
+        stat_total_contributions: "Umusanzu Wose",
+        stat_total_members: "Umubare w'Abanyamuryango",
+        stat_last_payment: "Ubwishyu bwa Nyuma",
+        table_contrib_history: "Amateka y'Imisanzu",
+        msg_history_paid_only: "Bigaragara ari uko ubwishyu bwemejwe.",
+        note_paid_only: "Hagaragaza ubwishyu bwemejwe gusa",
+        modal_create_title: "Kurema Konti",
+        label_first_name: "Izina ry'Itangira",
+        label_last_name: "Izina ry'Ubuse",
+        label_id_number: "Nimero y'Indangamuntu (Kode yo Kwinjira)",
+        help_id_number: "Ikoreshwa mu kwinjira niba byemejwe n'abayobozi.",
+        label_email: "Imeli",
+        label_phone: "Telefone",
+        btn_submit: "Ohereza",
+        error_first_name: "Izina ry'itangira rirakenewe.",
+        error_last_name: "Izina ry'ubuse rirakenewe.",
+        welcome_banner: "Murakaza neza mu muryango wacu!",
+      },
     };
 
-    // ===== Roles (admin?) =====
-    // 1) niba users[email].role === "admin" -> admin
-    // 2) cyangwa email irangirana na @lesnganyira.org -> admin (fallback yoroheje)
-    const users = JSON.parse(localStorage.getItem("lng_users")||"{}");
-    const me = users[email] || {};
-    const isAdmin = (me.role === "admin") || /@lesnganyira\.org$/i.test(email);
+    const DEFAULT_LANG = localStorage.getItem('lng') || 'en';
 
-    // ===== Filters =====
-    function getRowsAllMine(){
-      const db = getContribs();
-      return (db[email]||[]);
-    }
-    function getRowsPaidApproved(){
-      return getRowsAllMine().filter(r => (r.status||"").toLowerCase()==="paid" && r.approved===true);
-    }
-    function getRowsPending(){
-      return getRowsAllMine().filter(r => (r.status||"").toLowerCase()==="paid" && r.approved!==true);
-    }
-
-    // ===== Render KPIs (paid+approved) =====
-    function renderKPIs(){
-      const rows = getRowsPaidApproved();
-      const total = rows.reduce((s,r)=> s + Number(r.amountCAD||0), 0);
-      document.getElementById("kpiTotal").textContent = fmt(total);
-      document.getElementById("kpiCount").textContent = rows.length;
-
-      const agg = {};
-      rows.forEach(r=>{
-        const k = r.fund || "savings";
-        agg[k] = (agg[k]||0) + Number(r.amountCAD||0);
+    function applyI18n(lang) {
+      const dict = I18N[lang] || I18N.en;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          if (el.placeholder !== undefined && el.tagName === 'INPUT') {
+            el.placeholder = dict[key];
+          } else {
+            el.textContent = dict[key];
+          }
+        }
       });
-      let top = "—", topVal = -1;
-      Object.keys(agg).forEach(k=>{ if (agg[k]>topVal){ top=k; topVal=agg[k]; }});
-      document.getElementById("kpiTopFund").textContent = top==="—" ? "—" : (FUND_LABELS[top]||top);
-    }
+      document.getElementById('currentLangBtn').textContent = lang.toUpperCase();
+      document.documentElement.lang = lang;
+      localStorage.setItem('lng', lang);
 
-    // ===== Per-fund (paid+approved) =====
-    function renderFundTotals(){
-      const rows = getRowsPaidApproved();
-      const totals = FUNDS.reduce((o,k)=> (o[k]=0,o),{});
-      rows.forEach(r=>{ totals[r.fund||"savings"] += Number(r.amountCAD||0); });
-      const box = document.getElementById("fundTotals");
-      box.innerHTML = FUNDS.map(k=>`
-        <div class="card kpi">
-          <div class="lbl">${FUND_LABELS[k]}</div>
-          <div class="val">${fmt(totals[k])} CAD</div>
-        </div>
-      `).join("");
-    }
-
-    // ===== History (paid+approved) =====
-    function renderHistory(){
-      const rows = getRowsPaidApproved().slice().reverse();
-      const box = document.getElementById("historyBox");
-      if (!rows.length){ box.textContent = "Nta byemejwe biragaragara."; return; }
-      let html = '<div style="overflow:auto;"><table class="simple">';
-      html += `<thead><tr>
-        <th>Itariki</th>
-        <th>Fund</th>
-        <th>Byatangirijweho</th>
-        <th>Mu CAD</th>
-        <th>Ibisobanuro</th>
-        <th>Ref</th>
-      </tr></thead><tbody>`;
-      rows.forEach(r=>{
-        const d = new Date(r.at||Date.now()).toLocaleString();
-        html += `<tr>
-          <td>${d}</td>
-          <td>${FUND_LABELS[r.fund||"savings"]||r.fund}</td>
-          <td>${fmt(r.amountOriginal)} ${r.currency||""}</td>
-          <td>${fmt(r.amountCAD)} CAD</td>
-          <td>${(r.note||"")}</td>
-          <td>${r.tx_ref||""}</td>
-        </tr>`;
-      });
-      html += '</tbody></table></div>';
-      box.innerHTML = html;
-    }
-
-    // ===== Admin Approvals (paid but not approved) =====
-    function approveTx(tx_ref){
-      const db = getContribs();
-      const arr = db[email] || [];
-      const rec = arr.find(r=> r.tx_ref===tx_ref);
-      if (rec){ rec.approved = true; setContribs(db); renderAll(); }
-    }
-    function rejectTx(tx_ref){
-      if (!confirm("Uremeza kwanga (gusiba) iyi nyandiko?")) return;
-      const db = getContribs();
-      db[email] = (db[email]||[]).filter(r=> r.tx_ref!==tx_ref);
-      setContribs(db);
-      renderAll();
-    }
-    function renderPending(){
-      const box = document.getElementById("pendingBox");
-      const rows = getRowsPending().slice().reverse();
-      if (!isAdmin){
-        document.getElementById("adminBox").style.display = "none";
-        return;
+      // Update validation messages for required fields
+      const form = document.getElementById('createAccountForm');
+      if (form) {
+        form.querySelector('#firstName')?.setCustomValidity('');
+        form.querySelector('#lastName')?.setCustomValidity('');
       }
-      document.getElementById("adminBox").style.display = "block";
-      if (!rows.length){ box.textContent = "Nta byategereje kwemezwa."; return; }
-      let html = '<div style="overflow:auto;"><table class="simple">';
-      html += `<thead><tr>
-        <th>Itariki</th>
-        <th>Fund</th>
-        <th>Byatangirijweho</th>
-        <th>Mu CAD</th>
-        <th>Ref</th>
-        <th>Actions</th>
-      </tr></thead><tbody>`;
-      rows.forEach(r=>{
-        const d = new Date(r.at||Date.now()).toLocaleString();
-        html += `<tr>
-          <td>${d}</td>
-          <td>${FUND_LABELS[r.fund||"savings"]||r.fund}</td>
-          <td>${fmt(r.amountOriginal)} ${r.currency||""}</td>
-          <td>${fmt(r.amountCAD)} CAD</td>
-          <td>${r.tx_ref||""}</td>
-          <td>
-            <button class="btn" onclick="approveTx('${r.tx_ref||''}')">Approve</button>
-            <button class="btn ghost danger" onclick="rejectTx('${r.tx_ref||''}')">Reject</button>
-          </td>
-        </tr>`;
-      });
-      html += '</tbody></table></div>';
-      box.innerHTML = html;
     }
 
-    // ===== Export CSV (approved only) =====
-    document.getElementById("btnExport").addEventListener("click", ()=>{
-      const rows = getRowsPaidApproved();
-      if (!rows.length){ alert("Nta byemejwe byo kohereza."); return; }
-      const header = ["date","fund","amountOriginal","currency","amountCAD","note","tx_ref"];
-      const csv = [header.join(",")].concat(rows.map(r=>{
-        const d = new Date(r.at||Date.now()).toISOString();
-        return [d, r.fund||"", r.amountOriginal||0, r.currency||"", r.amountCAD||0, (r.note||"").replace(/,/g,";"), r.tx_ref||""].join(",");
-      })).join("\n");
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "les-nganyira_paid_approved_contributions.csv";
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    function setLang(lang) { applyI18n(lang); }
+
+    // Handle dropdown language selection
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-lang]');
+      if (btn) {
+        setLang(btn.getAttribute('data-lang'));
+      }
     });
 
-    function renderAll(){
-      renderKPIs(); renderFundTotals(); renderHistory(); renderPending();
-    }
+    // Bootstrap validation + i18n-aware messages
+    (function() {
+      const form = document.getElementById('createAccountForm');
+      form.addEventListener('submit', function(event) {
+        const lang = localStorage.getItem('lng') || 'en';
+        const dict = I18N[lang] || I18N.en;
 
-    // First paint
-    renderAll();
+        // Clear custom validity first
+        form.firstName.setCustomValidity('');
+        form.lastName.setCustomValidity('');
+
+        if (!form.firstName.value.trim()) {
+          form.firstName.setCustomValidity(dict.error_first_name);
+        }
+        if (!form.lastName.value.trim()) {
+          form.lastName.setCustomValidity(dict.error_last_name);
+        }
+
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        } else {
+          event.preventDefault();
+          // TODO: Replace with your real submit logic (e.g., send to backend or save to GitHub Pages data file)
+          alert('✓ ' + (lang==='fr' ? 'Compte créé !' : lang==='rw' ? 'Konti irakozwe!' : 'Account created!'));
+          form.reset();
+          const modalEl = document.getElementById('createAccountModal');
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal.hide();
+        }
+
+        form.classList.add('was-validated');
+      }, false);
+    })();
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      applyI18n(DEFAULT_LANG);
+    });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
