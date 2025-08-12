@@ -1,10 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="rw">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Les NGANYIRA — Dashboard</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Welcome banner */
+    .welcome {
+      position: relative;
+      background: linear-gradient(135deg, #e8f0ff, #fff);
+      border: 1px solid #e6ecfb;
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(31,63,179,.08);
+    }
+    .avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #1f3fb3; color: #fff; display:flex; align-items:center; justify-content:center;
+      font-weight: 700; letter-spacing: .5px;
+      box-shadow: 0 6px 14px rgba(31,63,179,.25);
+      user-select: none;
+    }
+    .w-text h2 { margin:0; font-size: 20px; }
+    .w-text p  { margin:4px 0 0; color:#4b5563; }
+    .wave { font-size: 28px; display:inline-block; transform-origin: 70% 70%; }
+    .wave.animate { animation: wave 1.6s ease-in-out 2; }
+    @keyframes wave {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(18deg); }
+      40% { transform: rotate(-10deg); }
+      60% { transform: rotate(12deg); }
+      80% { transform: rotate(-6deg); }
+      100%{ transform: rotate(0deg); }
+    }
+    .w-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip {
+      background:#eef3ff; color:#1f3fb3; border-radius:999px; padding:6px 10px; font-size:12px;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn.primary { background:#1f3fb3; color:#fff; border:0; border-radius:10px; padding:10px 12px; text-decoration:none; font-weight:600; }
+    .btn.ghost { background:#fff; color:#1f3fb3; border:1px solid #d8deea; border-radius:10px; padding:10px 12px; text-decoration:none; font-weight:600; }
+
+    /* Confetti */
+    .confetti { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+    .confetti span {
+      position:absolute; top:-10px; font-size:14px; opacity:.9; animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(140%); opacity: .95; }
+    }
+
+    /* Stats boxes */
+    .kpis { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+    .kpi { background:#fff; border:1px solid #eef1f7; border-radius:12px; padding:14px; }
+    .kpi .lbl { font-size:13px; color:#4b5563; }
+    .kpi .val { font-size:20px; font-weight:700; }
+
+    /* Table */
+    table.simple { width:100%; border-collapse:collapse; }
+    table.simple th, table.simple td { padding:8px; border-bottom:1px solid #eef1f7; text-align:left; }
+  </style>
 </head>
 <body>
   <!-- NAVBAR -->
@@ -20,31 +80,45 @@
     </nav>
   </header>
 
-  <div class="auth-card" style="margin-top:24px;">
-    <h1>Family Dashboard</h1>
-
-    <p id="welcome"></p>
-    <p id="contact"></p>
-
-    <hr style="margin:14px 0; border:0; height:1px; background:#eef1f7;"/>
+  <div class="auth-card" style="margin-top:16px;">
+    <!-- WELCOME BANNER -->
+    <section class="welcome" id="welcomeBanner">
+      <div class="avatar" id="avatar">LN</div>
+      <div class="w-text">
+        <h2 id="greet">Welcome!</h2>
+        <p id="welcomeLine">Glad to see you here.</p>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <a href="contribute.html" class="btn primary">Make a Contribution</a>
+          <a href="home.html" class="btn ghost">Go to Home</a>
+          <a href="services.html" class="btn ghost">See Services</a>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="chip">📅 Reminder: 25th saving day</span>
+          <span class="chip">🌍 Multi-currency → CAD</span>
+          <span class="chip">🔒 Local data on your device</span>
+        </div>
+      </div>
+      <div class="wave animate" aria-hidden="true">👋</div>
+      <div class="confetti" id="confetti"></div>
+    </section>
 
     <!-- Quick stats -->
-    <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
-      <div style="background:#fff;border:1px solid #eef1f7;border-radius:12px;padding:14px;">
-        <div style="font-size:13px;color:#4b5563;">Total contributions (CAD)</div>
-        <div id="totalCad" style="font-size:20px;font-weight:700;">0.00</div>
+    <div class="kpis" style="margin-top:14px;">
+      <div class="kpi">
+        <div class="lbl">Total contributions (CAD)</div>
+        <div class="val" id="totalCad">0.00</div>
       </div>
-      <div style="background:#fff;border:1px solid #eef1f7;border-radius:12px;padding:14px;">
-        <div style="font-size:13px;color:#4b5563;">Entries</div>
-        <div id="totalCount" style="font-size:20px;font-weight:700;">0</div>
+      <div class="kpi">
+        <div class="lbl">Entries</div>
+        <div class="val" id="totalCount">0</div>
       </div>
     </div>
 
     <!-- Recent contributions -->
-    <div style="margin-top:18px;">
+    <section style="margin-top:18px;">
       <h2>Recent contributions</h2>
       <div id="recentList" class="muted">No contributions yet. <a href="contribute.html">Add one →</a></div>
-    </div>
+    </section>
 
     <div style="display:flex; gap:10px; margin-top:18px;">
       <button id="forgetDevice" style="background:#9ca3af;">Forget this device</button>
@@ -55,6 +129,7 @@
     // ---------- Auth guard ----------
     function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
     function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
+    function fmtMoney(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
 
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
@@ -67,11 +142,7 @@
       window.location.href = "index.html";
     }
 
-    // Header info
-    document.getElementById("welcome").textContent = `Welcome, ${email}`;
-    document.getElementById("contact").textContent = `Phone: ${me.phone}`;
-
-    // Logout / Forget
+    // Navbar actions
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("lng_current_user");
       window.location.href = "index.html";
@@ -82,9 +153,46 @@
       window.location.href = "index.html";
     });
 
-    // ---------- Stats & recent list ----------
-    function fmtMoney(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
+    // ---------- Welcome content ----------
+    // Avatar initials from email
+    const avatar = document.getElementById("avatar");
+    const initials = email.split("@")[0].split(/[._-]/).slice(0,2).map(s=>s[0]?.toUpperCase()||"").join("").slice(0,2);
+    avatar.textContent = initials || "LN";
 
+    // Greeting by time
+    const hour = new Date().getHours();
+    let greet = "Welcome";
+    if (hour < 12) greet = "Good morning";
+    else if (hour < 18) greet = "Good afternoon";
+    else greet = "Good evening";
+    document.getElementById("greet").textContent = `${greet}, ${email}!`;
+    document.getElementById("welcomeLine").textContent = me?.phone ? `Phone on file: ${me.phone}` : "Glad to see you here.";
+
+    // Confetti once per day
+    (function confettiOnce(){
+      const todayKey = new Date().toISOString().slice(0,10);
+      const seen = localStorage.getItem("lng_welcome_seen_date");
+      if (seen === todayKey) return;
+      localStorage.setItem("lng_welcome_seen_date", todayKey);
+
+      const holder = document.getElementById("confetti");
+      const EMOJIS = ["🎉","✨","🎊","🟦","🟨","🟥","🟪","🟩"];
+      const count = 36;
+      const w = holder.clientWidth || 600;
+      for (let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+        s.style.left = Math.random()*w + "px";
+        const dur = 1.8 + Math.random()*1.2;
+        const delay = Math.random()*0.6;
+        s.style.animationDuration = dur+"s";
+        s.style.animationDelay = delay+"s";
+        holder.appendChild(s);
+        setTimeout(()=> holder.removeChild(s), (dur+delay)*1000 + 200);
+      }
+    })();
+
+    // ---------- Stats & recent ----------
     function renderStats() {
       const db = getContribs();
       const rows = (db[email] || []);
@@ -95,7 +203,7 @@
 
     function renderRecent() {
       const db = getContribs();
-      const rows = (db[email] || []).slice().reverse(); // newest first
+      const rows = (db[email] || []).slice().reverse();
       const recent = rows.slice(0, 5);
 
       const box = document.getElementById("recentList");
@@ -104,26 +212,18 @@
         return;
       }
 
-      let html = '<div style="overflow:auto;"><table style="width:100%; border-collapse:collapse;">';
-      html += '<thead><tr>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Date</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Original</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">In CAD</th>' +
-              '<th style="text-align:left; padding:8px; border-bottom:1px solid #eef1f7;">Note</th>' +
-              '</tr></thead><tbody>';
-
+      let html = '<div style="overflow:auto;"><table class="simple">';
+      html += '<thead><tr><th>Date</th><th>Original</th><th>In CAD</th><th>Note</th></tr></thead><tbody>';
       recent.forEach(r => {
         const d = new Date(r.at).toLocaleString();
         html += `<tr>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${d}</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmtMoney(r.amountOriginal)} ${r.currency}</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${fmtMoney(r.amountCAD)} CAD</td>
-          <td style="padding:8px; border-bottom:1px solid #f2f4f8;">${r.note || ""}</td>
+          <td>${d}</td>
+          <td>${fmtMoney(r.amountOriginal)} ${r.currency}</td>
+          <td>${fmtMoney(r.amountCAD)} CAD</td>
+          <td>${r.note || ""}</td>
         </tr>`;
       });
-
       html += '</tbody></table></div>';
-      html += '<div class="muted" style="margin-top:8px;">See more on <a href="contribute.html">Make a Contribution</a>.</div>';
       box.innerHTML = html;
     }
 
