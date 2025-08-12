@@ -112,22 +112,25 @@
     // ===== Auth guard =====
     const email = localStorage.getItem("lng_current_user");
     if (!email) { window.location.href = "index.html"; }
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("lng_current_user");
-      window.location.href = "index.html";
-    });
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("lng_current_user");
+        window.location.href = "index.html";
+      });
+    }
 
-    // ===== Local stats fill from contributions =====
+    // ===== Local stats from contributions =====
     function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
     function fmt(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
-    const db = getContribs();
-    const myRows = (db[email] || []);
-    const totalCad = myRows.reduce((s,r)=>s+(Number(r.amountCAD)||0),0);
-    document.getElementById("kpiTotal").textContent = fmt(totalCad);
-    document.getElementById("kpiMembers").textContent = "—";
-    document.getElementById("kpiProjects").textContent = "—";
+    (function fillKPIs(){
+      const db = getContribs();
+      const rows = (db[email] || []);
+      const totalCad = rows.reduce((s,r)=>s+(Number(r.amountCAD)||0),0);
+      const t = document.getElementById("kpiTotal"); if (t) t.textContent = fmt(totalCad);
+    })();
 
-    // ===== Translations (RW/EN/FR) — all keys used on this page =====
+    // ===== Translations (RW/EN/FR) — keys used on this page =====
     const TR = {
       rw: {
         brand:"Les NGANYIRA",
@@ -197,18 +200,19 @@
         const key = el.getAttribute("data-i18n");
         if (dict[key]) el.textContent = dict[key];
       });
-      // head title too
       document.title = dict["about.title"] || "Les NGANYIRA — About";
       document.documentElement.setAttribute("lang", lang);
       localStorage.setItem("lng_lang", lang);
     }
 
-    // Load preferred language + hook dropdown
+    // ===== Load preferred language + hook dropdown =====
     const langSel = document.getElementById("langSel");
     const savedLang = localStorage.getItem("lng_lang") || "rw";
-    langSel.value = savedLang;
+    if (langSel) {
+      langSel.value = savedLang;
+      langSel.addEventListener("change", ()=> applyLang(langSel.value));
+    }
     applyLang(savedLang);
-    langSel.addEventListener("change", ()=> applyLang(langSel.value));
   </script>
 </body>
 </html>
