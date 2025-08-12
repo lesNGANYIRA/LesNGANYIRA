@@ -35,4 +35,132 @@
     <nav class="nav-right">
       <a href="home.html" data-i18n="nav.home">Ahabanza</a>
       <a href="about.html" data-i18n="nav.about">Ibyerekeye</a>
-      <a href="se
+      <a href="services.html" data-i18n="nav.services">Serivisi</a>
+      <a href="contribute.html" data-i18n="nav.contribute">Tanga umusanzu</a>
+      <a href="terms.html" data-i18n="nav.terms">Amategeko & Politiki</a>
+      <select id="langSel" class="lang-select" title="Language">
+        <option value="rw">Kinyarwanda</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+      <button id="logoutBtn" class="nav-btn" data-i18n="nav.logout">Sohoka</button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- Shyira iyi foto muri repo yawe: /images/EIDS5199.JPG -->
+    <img src="./images/EIDS5199.JPG" alt="Les NGANYIRA hero"/>
+    <div class="overlay">
+      <h1 data-i18n="hero.title">Twunze ubumwe ku hazaza heza</h1>
+      <p data-i18n="hero.tagline">Kuzigama. Gufashanya. Gukura hamwe.</p>
+      <div class="btn-row">
+        <a href="contribute.html" class="btn" data-i18n="hero.ctaContribute">Tanga umusanzu</a>
+        <a href="services.html" class="btn secondary" data-i18n="hero.ctaServices">Reba serivisi</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="auth-card" style="margin-top:16px;">
+    <!-- Quick intro & stats -->
+    <div class="quick">
+      <div class="card">
+        <h2 data-i18n="welcome.title">Murakaza neza</h2>
+        <p id="welcomeTxt" class="muted"></p>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="stats.title">Imibare yihuse</h2>
+        <div class="muted"><small data-i18n="stats.totalLabel">Umusanzu wose (CAD)</small></div>
+        <div id="totalCad" style="font-size:20px;font-weight:700;">0.00</div>
+        <div class="muted" style="margin-top:6px;">
+          <small><span data-i18n="stats.entries">Ibyinjijwe:</span> <span id="totalCount">0</span></small>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="ann.title">Amatangazo</h2>
+        <ul class="muted" style="margin:6px 0 0 18px;" id="annList">
+          <li data-i18n="ann.item1">Kwibutsa kwizigamira: tariki 25 buri kwezi.</li>
+          <li data-i18n="ann.item2">Telephone y’umuryango — Ku cyumweru 7:00 PM Kigali.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Family goal -->
+    <div class="card" style="margin-top:12px;">
+      <h2 data-i18n="goal.title">Intego y’umuryango</h2>
+      <p class="muted"><small data-i18n="goal.monthTarget">Intego y’ukwezi:</small> <b id="goalTargetLabel"></b></p>
+      <div style="height:12px;background:#eef1f7;border-radius:999px;overflow:hidden;">
+        <div id="goalBar" style="height:100%;width:0%;background:#2f6bff;"></div>
+      </div>
+      <p class="muted" style="margin-top:6px;">
+        <small><span data-i18n="goal.raised">Bimaze gukusanywa:</span> <b id="goalRaised"></b> — <span id="goalPct"></span> <span data-i18n="goal.ofTarget">by’intego</span></small>
+      </p>
+    </div>
+
+    <!-- How it works -->
+    <div class="card" style="margin-top:12px;">
+      <h2 data-i18n="how.title">Uko bikora</h2>
+      <ol class="muted" style="margin:6px 0 0 18px;">
+        <li data-i18n="how.step1">Fungura konti ukoresheje email na numero ya telefone.</li>
+        <li data-i18n="how.step2">Tanga umusanzu mu mafaranga ushaka (urahita uhindurwa mu CAD).</li>
+        <li data-i18n="how.step3">Reba aho tugeze ku ntego kuri Dashboard no kuri Ahabanza.</li>
+      </ol>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card" style="margin-top:12px;">
+      <h2 data-i18n="faq.title">Ibibazo bikunze kubazwa</h2>
+
+      <details>
+        <summary data-i18n="faq.q1">Aho amakuru yanjye abikwa ni hehe?</summary>
+        <p class="muted" data-i18n="faq.a1">Abikwa kuri mudasobwa/telefone ukoresha (LocalStorage). Tuzashyiraho uburyo bwa online kugira ngo bibonekere ku bikoresho byose ukoresheje konti yawe.</p>
+      </details>
+
+      <details>
+        <summary data-i18n="faq.q2">Ni ubuhe bwoko bw’amafaranga nshobora gukoresha?</summary>
+        <p class="muted" data-i18n="faq.a2">EUR, GBP, CAD, RWF, USD — byose bihindurwa mu CAD ako kanya.</p>
+      </details>
+
+      <details>
+        <summary data-i18n="faq.q3">Nshobora guhindura cyangwa gusiba umusanzu?</summary>
+        <p class="muted" data-i18n="faq.a3">Ubu tubika muri device yawe. Dushobora kongeramo guhindura/gusiba no kubika ku rubuga (cloud) mu byiciro bikurikira.</p>
+      </details>
+    </div>
+
+    <!-- Recent contributions -->
+    <div class="card" style="margin-top:12px;">
+      <h2 data-i18n="recent.title">Ibyaheruka kwinjizwa</h2>
+      <div id="recentList" class="muted">
+        <span data-i18n="recent.none">Nta byinjijwe birabikwa.</span>
+        <a href="contribute.html" data-i18n="recent.add">Ongeraho →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="max-width:1100px;margin:16px auto 8px;padding:12px;background:#fff;border:1px solid #eef1f7;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.04);">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+      <div class="muted">
+        <b data-i18n="footer.brand">Umuryango Les NGANYIRA</b> · <span data-i18n="footer.where">Kigali n’ahandi hose</span>
+        <br/><small><span data-i18n="footer.email">Email</span>: example@lesnganyira.org · <span data-i18n="footer.phone">Tel</span>: +250 7xx xxx xxx</small>
+      </div>
+      <div>
+        <a href="terms.html" class="btn secondary" style="padding:8px 10px;" data-i18n="footer.terms">Amategeko & Politiki</a>
+        <a href="contribute.html" class="btn" style="padding:8px 10px;" data-i18n="footer.contribute">Tanga umusanzu</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Auth guard & helpers =====
+    function getUsers(){ try { return JSON.parse(localStorage.getItem("lng_users")||"{}"); } catch { return {}; } }
+    function getContribs(){ try { return JSON.parse(localStorage.getItem("lng_contribs")||"{}"); } catch { return {}; } }
+    function fmtMoney(n){ return new Intl.NumberFormat(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n); }
+
+    const email = localStorage.getItem("lng_current_user");
+    if (!email) { window.location.href = "index.html"; }
+
+    const users = getUsers();
+    const me = users[email];
