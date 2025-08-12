@@ -239,29 +239,46 @@
       setTimeout(()=> okMsg.style.display = "none", 1800);
     });
 
-    // ===== Hosted checkout links (REPLACE these with your provider links) =====
-    // Flutterwave / DPO paylinks; ushobora gushyiramo endpoint imwe ukongeraho query params zikenewe
-    const PAYLINK_CARD = "https://your-card-checkout.example/";      // Card (Visa/Mastercard) — both Rwanda & Abroad
-    const PAYLINK_MTN  = "https://your-mtn-momo-checkout.example/"; // MTN MoMo (Rwanda)
-    const PAYLINK_AIR  = "https://your-airtel-money-checkout.example/"; // Airtel Money (Rwanda)
+    // ===== Hosted checkout links (SANDBOX DEMO — shaka gusimbuza izawe za production) =====
+    // Flutterwave Hosted Pay links (DEMO IDs); uzasimbuza n’izo uhabwa muri dashboard yawe:
+    const PAYLINK_CARD = "https://checkout.flutterwave.com/v3/hosted/pay/pl_test_card_demo_12345";
+    const PAYLINK_MTN  = "https://checkout.flutterwave.com/v3/hosted/pay/pl_test_mtnrw_demo_67890";
+    const PAYLINK_AIR  = "https://checkout.flutterwave.com/v3/hosted/pay/pl_test_airtelrw_demo_24680";
 
     function buildQuery(obj){
       return Object.entries(obj)
         .map(([k,v])=> `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
         .join("&");
     }
+
+    // Optional: auto-save mbere yo kwishyura (kugira ngo utazibagirwa gukanda "Bika umusanzu")
+    function saveCurrentContribution(){
+      const amt = parseFloat(amountEl.value||"0");
+      if (!amt || amt<=0) return false;
+      const cur  = currencyEl.value;
+      const fund = fundEl.value;
+      const note = (noteEl.value||"").trim();
+      const cad  = amt * (RATES_TO_CAD[cur] || 1);
+      const db = getContribs();
+      db[email] = db[email] || [];
+      db[email].push({ fund, amountOriginal: amt, currency: cur, amountCAD: cad, note, at: Date.now() });
+      setContribs(db);
+      renderList(); renderFundTotals();
+      return true;
+    }
+
     function redirectPay(base){
+      if (!saveCurrentContribution()) { alert(TR[langSel.value]["pay.missAmt"]); return; }
       const amt = parseFloat(document.getElementById("amount").value||"0");
       const cur = document.getElementById("currency").value;
       const fund = document.getElementById("fund").value;
       const users = JSON.parse(localStorage.getItem("lng_users")||"{}");
       const me = users[email] || {};
       const phone = me.phone || "";
-      if (!amt || amt <= 0) { alert(TR[langSel.value]["pay.missAmt"]); return; }
       const txRef = "LNG-" + Date.now();
-      const q = buildQuery({
-        amount: amt, currency: cur, email: email, phone: phone, fund: fund, tx_ref: txRef
-      });
+
+      // NB: Abatanga serivisi baba bafite amazina y’ibi bintu ashobora gutandukana (amount/currency/email/phone/tx_ref…)
+      const q = buildQuery({ amount: amt, currency: cur, email: email, phone: phone, fund: fund, tx_ref: txRef });
       window.location.href = base + (base.includes("?") ? "&" : "?") + q;
     }
 
