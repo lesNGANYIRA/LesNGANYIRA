@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verifying...</title>
+</head>
+<body>
+  Verifying your email... please wait.
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      isSignInWithEmailLink,
+      signInWithEmailLink
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    (async () => {
+      try {
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+          // Shaka email niba iri muri localStorage; niba itahari, saba user kuyinjiza
+          let email = window.localStorage.getItem("pendingEmail");
+          if (!email) {
+            email = window.prompt("Injiza email wakoresheje kwiyandikisha:");
+          }
+
+          // Sign in ukoresheje email link
+          const result = await signInWithEmailLink(auth, email, window.location.href);
+
+          // Bika profile muri Firestore
+          const fullName = localStorage.getItem("pendingFullName") || "";
+          const phone = localStorage.getItem("pendingPhone") || "";
+          const uid = result.user.uid;
+
+          await setDoc(doc(db, "users", uid), {
+            fullName,
+            phone,
+            email,
+            verified: true,
+            createdAt: new Date().toISOString()
+          }, { merge: true });
+
+          // Siba temporary local data
+          localStorage.removeItem("pendingEmail");
+          localStorage.removeItem("pendingFullName");
+          localStorage.removeItem("pendingPhone");
+
+          // Redirect kuri dashboard yawe nyuma yo kuba verified
+          window.location.href = "/yourrepo/dashboard.html"; // hindura iyi path
+        } else {
+          document.body.textContent = "Verification link siyo cyangwa yararengeje igihe.";
+        }
+      } catch (err) {
+        console.error(err);
+        document.body.textContent = "Verification byanze. Ongera ugerageze.";
+      }
+    })();
+  </script>
+</body>
+</html>
