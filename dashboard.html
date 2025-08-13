@@ -1,261 +1,152 @@
 <!DOCTYPE html>
-<html lang="rw">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Les Nganyira — Injira & Kwiyandikisha</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>Dashboard • Les NGANYIRA</title>
   <style>
-    body{ background:#f7f7fb; }
-    .card{ border-radius:18px; box-shadow:0 10px 36px rgba(0,0,0,.06); }
-    .lang-switch .btn{ border-radius:999px; }
-    .pw-meter{ height:8px; border-radius:8px; background:#e9ecef; overflow:hidden; }
-    .pw-meter > div{ height:100%; width:0; transition:width .25s ease; }
-    .rule.ok{ color:#198754; }
-    .rule.bad{ color:#dc3545; }
-    .input-eye{ cursor:pointer; user-select:none; }
+    :root { --bg:#f8f9fa; --ink:#111; --muted:#6b7280; --brand:#111; --danger:#b91c1c; }
+    *{box-sizing:border-box} body{font-family:Arial, sans-serif; background:var(--bg); margin:0;}
+    header{background:var(--brand); color:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between}
+    .brand{font-weight:800}
+    .controls{display:flex; gap:8px; align-items:center}
+    .btn{border:1px solid var(--ink); background:#fff; color:var(--ink); padding:8px 12px; border-radius:10px; cursor:pointer}
+    .btn.danger{background:var(--danger); color:#fff; border-color:var(--danger)}
+    main{max-width:980px; margin:24px auto; padding:0 16px; text-align:center}
+    .hero{background:#fff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    .hero img{width:100%; height:auto; display:block}
+    .pad{padding:16px}
+    .muted{color:var(--muted)}
+    footer{margin-top:24px; background:var(--brand); color:#fff; text-align:center; padding:12px}
+    .row{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
   </style>
 </head>
-<body class="container py-4">
-  <nav class="d-flex justify-content-between align-items-center mb-4">
-    <div class="h4 m-0">Les Nganyira — <span data-i18n="authTitle">Kwinjira</span></div>
-    <div class="lang-switch d-flex gap-2">
-      <button class="btn btn-sm btn-outline-secondary" data-lang="en">ENG</button>
-      <button class="btn btn-sm btn-outline-secondary" data-lang="fr">FRA</button>
-      <button class="btn btn-sm btn-outline-secondary" data-lang="rw">KINY</button>
-    </div>
-  </nav>
+<body>
 
-  <div class="row justify-content-center">
-    <div class="col-lg-7">
-      <div class="card p-3 p-md-4 mb-3">
-        <ul class="nav nav-tabs" id="authTabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="signin-tab" data-bs-toggle="tab" data-bs-target="#signin" type="button" role="tab" aria-controls="signin" aria-selected="true" data-i18n="signIn">Injira</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab" aria-controls="signup" aria-selected="false" data-i18n="createAccount">Hanga konti</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="forgot-tab" data-bs-toggle="tab" data-bs-target="#forgot" type="button" role="tab" aria-controls="forgot" aria-selected="false" data-i18n="forgot">Wibagiwe ijambobanga?</button>
-          </li>
-        </ul>
+<header>
+  <div class="brand" id="title">Welcome to Les NGANYIRA</div>
+  <div class="controls">
+    <span id="userName" class="muted" style="color:#fff;opacity:.9"></span>
+    <button id="langBtn" class="btn">Kinyarwanda</button>
+    <button id="logoutBtn" class="btn danger">Logout</button>
+  </div>
+</header>
 
-        <div class="tab-content pt-3">
-          <!-- SIGN IN -->
-          <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
-            <form id="signInForm" novalidate>
-              <div class="mb-3">
-                <label class="form-label" for="siEmail" data-i18n="email">Email</label>
-                <input class="form-control" id="siEmail" type="email" placeholder="ex: name@gmail.com" required/>
-              </div>
-              <div class="mb-2">
-                <label class="form-label" for="siPassword" data-i18n="password">Ijambobanga</label>
-                <div class="input-group">
-                  <input class="form-control" id="siPassword" type="password" required/>
-                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="siPassword">👁</button>
-                </div>
-              </div>
-              <div class="mb-3 d-flex justify-content-between align-items-center">
-                <a href="#" data-bs-toggle="tab" data-bs-target="#forgot" class="small" data-i18n="forgot">Wibagiwe ijambobanga?</a>
-              </div>
-              <button id="btnSignIn" class="btn btn-primary w-100" type="submit" data-i18n="signIn">Injira</button>
-              <div id="siMsg" class="mt-3 small"></div>
-            </form>
-          </div>
-
-          <!-- SIGN UP -->
-          <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
-            <form id="signUpForm" novalidate>
-              <div class="mb-3">
-                <label class="form-label" for="suFullName" data-i18n="fullName">Amazina</label>
-                <input class="form-control" id="suFullName" type="text" required />
-              </div>
-              <div class="mb-3">
-                <label class="form-label" for="suPhone" data-i18n="phone">Phone</label>
-                <input class="form-control" id="suPhone" type="tel" placeholder="+2507..." required />
-              </div>
-              <div class="mb-3">
-                <label class="form-label" for="suEmail" data-i18n="email">Email</label>
-                <input class="form-control" id="suEmail" type="email" placeholder="ex: name@gmail.com" required />
-              </div>
-              <div class="mb-2">
-                <label class="form-label" for="suPassword" data-i18n="password">Ijambobanga</label>
-                <div class="input-group">
-                  <input class="form-control" id="suPassword" type="password" required />
-                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="suPassword">👁</button>
-                </div>
-              </div>
-              <div class="mb-2">
-                <label class="form-label" for="suPassword2" data-i18n="confirmPassword">Emeza ijambobanga</label>
-                <div class="input-group">
-                  <input class="form-control" id="suPassword2" type="password" required />
-                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="suPassword2">👁</button>
-                </div>
-              </div>
-
-              <!-- Password rules + meter -->
-              <div class="mb-2">
-                <div class="pw-meter mb-2"><div id="pwBar" class="bg-danger"></div></div>
-                <ul class="small m-0 ps-3">
-                  <li id="ruleLen" class="rule bad" data-i18n="ruleLen">Nibura inyuguti 8</li>
-                  <li id="ruleUpper" class="rule bad" data-i18n="ruleUpper">Nibura inyuguti nini 1 (A‑Z)</li>
-                  <li id="ruleLower" class="rule bad" data-i18n="ruleLower">Nibura inyuguti nto 1 (a‑z)</li>
-                  <li id="ruleNum" class="rule bad" data-i18n="ruleNum">Nibura umubare 1 (0‑9)</li>
-                  <li id="ruleSpec" class="rule bad" data-i18n="ruleSpec">Nibura ikimenyetso 1 (!@#$…)</li>
-                </ul>
-              </div>
-
-              <button id="btnSignUp" class="btn btn-success w-100" type="submit" data-i18n="createAccount">Hanga konti</button>
-              <div id="suMsg" class="mt-3 small"></div>
-            </form>
-          </div>
-
-          <!-- FORGOT (email reset link) -->
-          <div class="tab-pane fade" id="forgot" role="tabpanel" aria-labelledby="forgot-tab">
-            <form id="forgotForm" novalidate>
-              <div class="mb-3">
-                <label class="form-label" for="fpEmail" data-i18n="email">Email</label>
-                <input class="form-control" id="fpEmail" type="email" placeholder="ex: name@gmail.com" required />
-              </div>
-              <button id="btnForgot" class="btn btn-outline-primary w-100" type="submit" data-i18n="sendReset">Ohereza email yo guhindura ijambobanga</button>
-              <div id="fpMsg" class="mt-3 small"></div>
-            </form>
-
-            <div class="alert alert-secondary mt-3 mb-0">
-              <div class="small" data-i18n="otpNote">
-                Icyitonderwa ku OTP: kuri GitHub Pages (static), **OTP ya reset** isaba gukoresha **Firebase Phone Auth (SMS)** cyangwa backend (Cloud Functions) yo kohereza code kuri email. Niba ushaka SMS OTP, dushobora kongeramo *Phone Auth* hanyuma umuntu agahindura password nyuma yo kwemeza nomero ye.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center small text-muted">
-        <span data-i18n="haveAccount">Usanzwe ufite konti?</span>
-        <a href="#" data-bs-toggle="tab" data-bs-target="#signin" data-i18n="signIn">Injira</a>
+<main>
+  <div class="hero">
+    <!-- Shyira foto muri repo: assets/family.jpg (cyangwa uhindure iyi path) -->
+    <img src="assets/family.jpg" alt="Les Nganyira family dinner photo" />
+    <div class="pad">
+      <h2 id="welcomeHeading">We are glad to have you in our family.</h2>
+      <p id="welcomeText" class="muted">
+        Explore your dashboard and stay connected with the family.
+      </p>
+      <div class="row">
+        <a class="btn" href="index.html" id="homeBtn">Home</a>
+        <a class="btn" href="contribute.html" id="contribBtn">Contribute</a>
+        <a class="btn" href="profile.html" id="profileBtn">Profile</a>
       </div>
     </div>
   </div>
+</main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<footer>
+  <p id="footerText">© 2025 Les NGANYIRA. All rights reserved.</p>
+</footer>
 
-    // ---- HINDURA ibi na project URLs ----
-    const firebaseConfig = {
-      apiKey: "<YOUR_FIREBASE_API_KEY>",
-      authDomain: "<YOUR_FIREBASE_PROJECT_ID>.firebaseapp.com",
-      projectId: "<YOUR_FIREBASE_PROJECT_ID>",
-      appId: "<YOUR_FIREBASE_APP_ID>"
-    };
-    const DASHBOARD_URL = "./dashboard.html"; // relative path works on GitHub Pages
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  // Firebase config (yawe nyayo)
+  const firebaseConfig = {
+    apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
+    authDomain: "lesnganyira.firebaseapp.com",
+    projectId: "lesnganyira",
+    storageBucket: "lesnganyira.firebasestorage.app",
+    messagingSenderId: "456037694600",
+    appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d",
+    measurementId: "G-TWBDL05VYZ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // ------------- i18n -------------
-    const dict = {
-      en: { authTitle:'Sign in', signIn:'Sign in', createAccount:'Create account', email:'Email', password:'Password', confirmPassword:'Confirm password', forgot:'Forgot password?', fullName:'Full name', phone:'Phone', haveAccount:'Already have an account?', createdCheckEmail:'Account created. Check your email to verify.', verifyFirst:'Please verify your email first. We sent you a new link.', resetSent:'Password reset email sent.', passwordsNoMatch:'Passwords do not match.', weakPassword:'Password does not meet the rules.', unknown:'Unknown error.', sendReset:'Send password reset email', ruleLen:'At least 8 characters', ruleUpper:'At least 1 uppercase (A-Z)', ruleLower:'At least 1 lowercase (a-z)', ruleNum:'At least 1 digit (0-9)', ruleSpec:'At least 1 symbol (!@#$…)', otpNote:'Note on OTP: on static GitHub Pages, a reset OTP requires Firebase Phone Auth (SMS) or a backend (Cloud Functions) to email a code. If you want SMS OTP, we can add Phone Auth and let users change the password after verifying their number.' },
-      fr: { authTitle:"Se connecter", signIn:"Se connecter", createAccount:"Créer un compte", email:"Email", password:"Mot de passe", confirmPassword:"Confirmez le mot de passe", forgot:"Mot de passe oublié ?", fullName:"Nom complet", phone:"Téléphone", haveAccount:"Vous avez déjà un compte ?", createdCheckEmail:"Compte créé. Vérifiez votre e-mail pour valider.", verifyFirst:"Veuillez d'abord vérifier votre e-mail. Nous venons d'envoyer un nouveau lien.", resetSent:"E-mail de réinitialisation envoyé.", passwordsNoMatch:"Les mots de passe ne correspondent pas.", weakPassword:"Le mot de passe ne respecte pas les règles.", unknown:"Erreur inconnue.", sendReset:"Envoyer l'e-mail de réinitialisation", ruleLen:"Au moins 8 caractères", ruleUpper:"Au moins 1 majuscule (A-Z)", ruleLower:"Au moins 1 minuscule (a-z)", ruleNum:"Au moins 1 chiffre (0-9)", ruleSpec:"Au moins 1 symbole (!@#$…)", otpNote:"Remarque OTP : sur un site statique (GitHub Pages), un OTP de réinitialisation nécessite Firebase Phone Auth (SMS) ou un backend (Cloud Functions) pour envoyer un code. Si vous voulez le SMS OTP, on peut ajouter Phone Auth puis l'utilisateur change son mot de passe après vérification." },
-      rw: { authTitle:'Kwinjira', signIn:'Injira', createAccount:'Hanga konti', email:'Email', password:'Ijambobanga', confirmPassword:'Emeza ijambobanga', forgot:'Wibagiwe ijambobanga?', fullName:'Amazina', phone:'Phone', haveAccount:'Usanzwe ufite konti?', createdCheckEmail:'Konti yashyizweho. Reba email ugire ngo wemeze.', verifyFirst:'Banza wemeze email. Twohereje indi link.', resetSent:'Twakohereje email yo guhindura ijambobanga.', passwordsNoMatch:'Amagambo y\'ibanga ntahuje.', weakPassword:'Ijambobanga ntiryujuje amabwiriza.', unknown:'Ikosa ritazwi.', sendReset:'Ohereza email yo guhindura ijambobanga', ruleLen:'Nibura inyuguti 8', ruleUpper:'Nibura inyuguti nini 1 (A‑Z)', ruleLower:'Nibura inyuguti nto 1 (a‑z)', ruleNum:'Nibura umubare 1 (0‑9)', ruleSpec:'Nibura ikimenyetso 1 (!@#$…)', otpNote:'Icyitonderwa kuri OTP: kuri GitHub Pages (static), OTP ya reset isaba Firebase Phone Auth (SMS) cyangwa backend (Cloud Functions) yo kohereza code kuri email. Niba ushaka SMS OTP, dushobora kongeramo Phone Auth hanyuma ugahindura password nyuma yo kwemeza numero yawe.' }
-    };
-    function currentLang(){ return localStorage.getItem('ng_lang') || 'rw'; }
-    function t(k){ return (dict[currentLang()] && dict[currentLang()][k]) || k; }
-    function setLang(lang){ localStorage.setItem('ng_lang', lang); applyLang(); }
-    function applyLang(){ document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); }); }
-    document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.getAttribute('data-lang'))));
-    applyLang();
-
-    // ------------- Helpers -------------
-    function show(el, message, ok=false){ el.innerHTML = `<span class="${ok? 'text-success':'text-danger'}">${message}</span>`; }
-    function togglePassword(id){ const el = document.getElementById(id); el.type = (el.type === 'password' ? 'text' : 'password'); }
-    document.querySelectorAll('.input-eye').forEach(btn=>btn.addEventListener('click',()=>{ togglePassword(btn.dataset.toggle); }));
-
-    // Password rules
-    const suPassword = document.getElementById('suPassword');
-    const suPassword2 = document.getElementById('suPassword2');
-    const pwBar = document.getElementById('pwBar');
-    const rules = {
-      len:    { el: document.getElementById('ruleLen'),   ok:false },
-      upper:  { el: document.getElementById('ruleUpper'), ok:false },
-      lower:  { el: document.getElementById('ruleLower'), ok:false },
-      num:    { el: document.getElementById('ruleNum'),   ok:false },
-      spec:   { el: document.getElementById('ruleSpec'),  ok:false },
-    };
-    function evalPw(p){
-      rules.len.ok   = p.length >= 8;
-      rules.upper.ok = /[A-Z]/.test(p);
-      rules.lower.ok = /[a-z]/.test(p);
-      rules.num.ok   = /[0-9]/.test(p);
-      rules.spec.ok  = /[^A-Za-z0-9]/.test(p);
-      let score = Object.values(rules).filter(r=>r.ok).length; // 0..5
-      // update UI
-      Object.values(rules).forEach(r=>{ r.el.classList.toggle('ok', r.ok); r.el.classList.toggle('bad', !r.ok); });
-      const widths = ['0%','20%','40%','60%','80%','100%'];
-      pwBar.style.width = widths[score];
-      pwBar.className = score <=2 ? 'bg-danger' : (score<=4 ? 'bg-warning' : 'bg-success');
-      return score === 5;
+  // Texts EN/RW
+  const i18n = {
+    en: {
+      title: "Welcome to Les NGANYIRA",
+      welcomeHeading: "We are glad to have you in our family.",
+      welcomeText: "Explore your dashboard and stay connected with the family.",
+      homeBtn: "Home",
+      contribBtn: "Contribute",
+      profileBtn: "Profile",
+      footerText: "© 2025 Les NGANYIRA. All rights reserved.",
+      langBtn: "Kinyarwanda",
+      logout: "Logout"
+    },
+    rw: {
+      title: "Murakaza neza muri Les NGANYIRA",
+      welcomeHeading: "Twishimiye ko mwinjiye mu muryango wacu.",
+      welcomeText: "Reba dashboard yawe kandi uhorane n’umuryango ku murongo.",
+      homeBtn: "Ahabanza",
+      contribBtn: "Iturize",
+      profileBtn: "Umwirondoro",
+      footerText: "© 2025 Les NGANYIRA. Uburenganzira bwose burabitswe.",
+      langBtn: "English",
+      logout: "Sohoka"
     }
-    suPassword?.addEventListener('input', e=>evalPw(e.target.value));
+  };
 
-    // ------------- Sign Up -------------
-    const signUpForm = document.getElementById('signUpForm');
-    const suMsg = document.getElementById('suMsg');
-    signUpForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const name = document.getElementById('suFullName').value.trim();
-      const phone = document.getElementById('suPhone').value.trim();
-      const email = document.getElementById('suEmail').value.trim();
-      const pw = suPassword.value;
-      const pw2 = suPassword2.value;
-      if(pw !== pw2){ show(suMsg, t('passwordsNoMatch')); return; }
-      if(!evalPw(pw)){ show(suMsg, t('weakPassword')); return; }
-      try{
-        const cred = await createUserWithEmailAndPassword(auth, email, pw);
-        await setDoc(doc(db, 'users', cred.user.uid), { fullName:name, phone, email, verified:false, createdAt: serverTimestamp() }, { merge:true });
-        await sendEmailVerification(cred.user);
-        show(suMsg, t('createdCheckEmail'), true);
-      }catch(err){ console.error(err); show(suMsg, err.message || t('unknown')); }
-    });
+  // Apply language
+  function applyLang(lang) {
+    const t = i18n[lang] || i18n.en;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('welcomeHeading').textContent = t.welcomeHeading;
+    document.getElementById('welcomeText').textContent = t.welcomeText;
+    document.getElementById('homeBtn').textContent = t.homeBtn;
+    document.getElementById('contribBtn').textContent = t.contribBtn;
+    document.getElementById('profileBtn').textContent = t.profileBtn;
+    document.getElementById('footerText').textContent = t.footerText;
+    document.getElementById('langBtn').textContent = t.langBtn;
+    document.getElementById('logoutBtn').textContent = (t.logout);
+    // Save preference
+    localStorage.setItem('les_lang', lang);
+    // Update <html lang="">
+    document.documentElement.setAttribute('lang', lang === 'rw' ? 'rw' : 'en');
+  }
 
-    // ------------- Sign In -------------
-    const signInForm = document.getElementById('signInForm');
-    const siMsg = document.getElementById('siMsg');
-    signInForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const email = document.getElementById('siEmail').value.trim();
-      const pw = document.getElementById('siPassword').value;
-      try{
-        const cred = await signInWithEmailAndPassword(auth, email, pw);
-        if(!cred.user.emailVerified){ await sendEmailVerification(cred.user); show(siMsg, t('verifyFirst')); return; }
-        window.location.href = DASHBOARD_URL;
-      }catch(err){ console.error(err); show(siMsg, err.message || t('unknown')); }
-    });
+  // Init language (remember choice or auto-detect)
+  const saved = localStorage.getItem('les_lang');
+  const initialLang = saved || (navigator.language || '').toLowerCase().startsWith('rw') ? 'rw' : 'en';
+  applyLang(saved ? saved : initialLang);
 
-    // ------------- Forgot Password (email link) -------------
-    const forgotForm = document.getElementById('forgotForm');
-    const fpMsg = document.getElementById('fpMsg');
-    forgotForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const email = document.getElementById('fpEmail').value.trim();
-      try{ await sendPasswordResetEmail(auth, email); show(fpMsg, t('resetSent'), true); }
-      catch(err){ console.error(err); show(fpMsg, err.message || t('unknown')); }
-    });
+  // Toggle language
+  document.getElementById('langBtn').addEventListener('click', () => {
+    const current = localStorage.getItem('les_lang') || 'en';
+    applyLang(current === 'en' ? 'rw' : 'en');
+  });
 
-    // ------------- Activate right tab by URL hash -------------
-    (function(){
-      const hash = (location.hash || '').toLowerCase();
-      const btns = {
-        '#signin': document.querySelector('[data-bs-target="#signin"]'),
-        '#signup': document.querySelector('[data-bs-target="#signup"]'),
-        '#forgot': document.querySelector('[data-bs-target="#forgot"]')
-      };
-      if(btns[hash]) btns[hash].click();
-    })();
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  // Auth check (must be logged in & verified)
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      location.href = 'signin.html';
+      return;
+    }
+    await user.reload();
+    if (!user.emailVerified) {
+      sessionStorage.setItem('verifyEmailHint', user.email || '');
+      location.href = 'verify.html';
+      return;
+    }
+    // Show name
+    document.getElementById('userName').textContent = user.displayName ? `• ${user.displayName}` : `• ${user.email}`;
+  });
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await auth.signOut();
+    location.href = 'signin.html';
+  });
+</script>
 </body>
 </html>
