@@ -1,122 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign in</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in • Les NGANYIRA</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: black;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .link {
-      display: block;
-      text-align: center;
-      margin-top: 10px;
-      color: blue;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .lang {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+    body{font-family:Arial,sans-serif;background:#f6f7fb;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .wrap{width:100%;max-width:460px;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    h1{margin:0 0 12px}
+    label{display:block;margin:12px 0 6px;font-weight:600}
+    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
+    .muted{color:#6b7280;font-size:12px;margin-top:6px}
+    .btn{display:inline-block;text-align:center;width:100%;padding:12px 14px;border-radius:10px;text-decoration:none;cursor:pointer;margin-top:14px}
+    .btn.primary{background:#111;color:#fff;border:1px solid #111}
+    .btn.ghost{background:#fff;color:#111;border:1px solid #111}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    select{padding:8px;border:1px solid #dfe3eb;border-radius:8px;background:#fff}
+    .pwd-wrap{position:relative}
+    .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#374151}
+    .links{display:flex;justify-content:space-between;margin-top:8px}
+    a.link{color:#111;text-decoration:underline}
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="toprow">
+      <h1 id="title">Sign in</h1>
+      <label class="muted" style="margin:0">
+        <span id="langLabel">Language</span>
+        <select id="langSel" aria-label="Language">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="rw">Kinyarwanda</option>
+        </select>
+      </label>
+    </div>
 
-<div class="container">
-  <div class="lang">
-    <button onclick="setLang('en')">ENG</button>
-    <button onclick="setLang('fr')">FRA</button>
-    <button onclick="setLang('rw')">KINY</button>
+    <label for="email" id="emailLabel">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+
+    <label for="password" id="pwdLabel">Password</label>
+    <div class="pwd-wrap">
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <span class="toggle" id="togglePwd">Show</span>
+    </div>
+
+    <!-- NB: HANO Sign in ni LINK ijya kuri app.html -->
+    <a class="btn primary" id="btnSignin" href="app.html">Sign in</a>
+
+    <div class="links">
+      <a id="forgotLink" class="link" href="forgot.html">Forgot password?</a>
+      <a id="signupLink" class="link" href="signup.html">Create account</a>
+    </div>
+
+    <p class="muted" style="margin-top:14px" id="termsText">
+      By continuing, you agree to our Terms & Policies.
+    </p>
   </div>
 
-  <h2 id="title">Sign in</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="signIn()" id="signinBtn">Sign in</button>
-
-  <span class="link" onclick="forgotPassword()" id="forgotText">Forgot password?</span>
-</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  function signIn() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => alert("Signed in successfully"))
-      .catch((error) => alert(error.message));
-  }
-
-  function forgotPassword() {
-    const email = document.getElementById("email").value.trim();
-    if (!email) {
-      alert("Please enter your email first.");
-      return;
-    }
-    sendPasswordResetEmail(auth, email)
-      .then(() => alert("Password reset email sent. Check your inbox."))
-      .catch((error) => alert(error.message));
-  }
-
-  function setLang(lang) {
-    const translations = {
-      en: { title: "Sign in", signinBtn: "Sign in", forgotText: "Forgot password?" },
-      fr: { title: "Se connecter", signinBtn: "Connexion", forgotText: "Mot de passe oublié ?" },
-      rw: { title: "Injira", signinBtn: "Injira", forgotText: "Wibagiwe ijambobanga?" }
+  <script>
+    // I18N
+    const T = {
+      en:{title:"Sign in",email:"Email",pwd:"Password",show:"Show",hide:"Hide",
+          signin:"Sign in",forgot:"Forgot password?",signup:"Create account",
+          terms:"By continuing, you agree to our Terms & Policies.",lang:"Language"},
+      fr:{title:"Se connecter",email:"E-mail",pwd:"Mot de passe",show:"Afficher",hide:"Masquer",
+          signin:"Se connecter",forgot:"Mot de passe oublié ?",signup:"Créer un compte",
+          terms:"En continuant, vous acceptez nos Conditions et Politiques.",lang:"Langue"},
+      rw:{title:"Injira",email:"Imeli",pwd:"Ijambobanga",show:"Erekana",hide:"Hisha",
+          signin:"Injira",forgot:"Wibagiwe ijambobanga?",signup:"Fungura konti",
+          terms:"Ukomereje aha wemeye Amasezerano n’Amabwiriza.",lang:"Ururimi"}
     };
-    document.getElementById("title").innerText = translations[lang].title;
-    document.getElementById("signinBtn").innerText = translations[lang].signinBtn;
-    document.getElementById("forgotText").innerText = translations[lang].forgotText;
-  }
-</script>
 
+    const $ = id => document.getElementById(id);
+    const sel = $('langSel'), pwd = $('password'), toggle = $('togglePwd');
+
+    function setText(lang){
+      const t = T[lang] || T.en;
+      $('title').textContent = t.title;
+      $('emailLabel').textContent = t.email;
+      $('pwdLabel').textContent = t.pwd;
+      $('btnSignin').textContent = t.signin;
+      $('forgotLink').textContent = t.forgot;
+      $('signupLink').textContent = t.signup;
+      $('termsText').textContent = t.terms;
+      $('langLabel').textContent = t.lang;
+      toggle.textContent = (pwd.type==='password') ? t.show : t.hide;
+      document.documentElement.setAttribute('lang', lang);
+      localStorage.setItem('les_lang', lang);
+    }
+
+    // init lang
+    const saved = localStorage.getItem('les_lang') || 'en';
+    sel.value = saved; setText(saved);
+    sel.addEventListener('change', ()=> setText(sel.value));
+
+    // show/hide password text sync with lang
+    toggle.addEventListener('click', ()=>{
+      const lang = sel.value;
+      pwd.type = pwd.type==='password' ? 'text' : 'password';
+      toggle.textContent = (pwd.type==='password') ? T[lang].show : T[lang].hide;
+    });
+  </script>
 </body>
 </html>
