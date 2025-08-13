@@ -3,120 +3,145 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Les Nganyira — Dashboard</title>
+  <title>Les Nganyira — Injira & Kwiyandikisha</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    :root{ --card-radius: 18px; --hero-max: 820px; }
     body{ background:#f7f7fb; }
-    .card{ border-radius:var(--card-radius); }
-    .nav-brand{ font-weight:700; }
-    /* HERO IMAGE: balanced width & height */
-    .hero-wrap{ width:100%; max-width:var(--hero-max); margin: 0 auto 24px auto; }
-    .hero-frame{
-      position: relative; width: 100%; aspect-ratio: 3 / 2;
-      border-radius: 22px; overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,.08); background:#e9ecef;
-    }
-    .hero-frame img{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; object-position:center; display:block;
-    }
+    .card{ border-radius:18px; box-shadow:0 10px 36px rgba(0,0,0,.06); }
     .lang-switch .btn{ border-radius:999px; }
-    .stat{
-      display:flex; align-items:center; gap:12px;
-      padding:16px; border-radius:16px; background:#fff; box-shadow:0 6px 22px rgba(0,0,0,.06);
-    }
-    .stat h4{ font-size:1rem; margin:0; }
-    .muted{ color:#6c757d; }
-    .nav-auth a { text-decoration:none; }
+    .pw-meter{ height:8px; border-radius:8px; background:#e9ecef; overflow:hidden; }
+    .pw-meter > div{ height:100%; width:0; transition:width .25s ease; }
+    .rule.ok{ color:#198754; }
+    .rule.bad{ color:#dc3545; }
+    .input-eye{ cursor:pointer; user-select:none; }
   </style>
 </head>
 <body class="container py-4">
-  <!-- TOP NAV -->
-  <nav class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-    <div class="d-flex align-items-center gap-3">
-      <span class="nav-brand h4 m-0">Les Nganyira — <span data-i18n="dashboard">Dashboard</span></span>
-      <span class="badge text-bg-light" id="userEmail">…</span>
-    </div>
-
-    <div class="d-flex align-items-center gap-2">
-      <!-- language -->
-      <div class="lang-switch d-flex align-items-center gap-2 me-2">
-        <button class="btn btn-sm btn-outline-secondary" data-lang="en">ENG</button>
-        <button class="btn btn-sm btn-outline-secondary" data-lang="fr">FRA</button>
-        <button class="btn btn-sm btn-outline-secondary" data-lang="rw">KINY</button>
-      </div>
-      <!-- auth quick links -->
-      <div class="nav-auth d-flex align-items-center gap-3">
-        <a href="./auth.html#signin" data-i18n="signIn">Injira</a>
-        <a href="./auth.html#signup" data-i18n="createAccount">Hanga konti</a>
-        <a href="./auth.html#forgot" class="text-muted small" data-i18n="forgot">Wibagiwe ijambobanga?</a>
-      </div>
-      <button id="logoutBtn" class="btn btn-sm btn-outline-danger ms-1" data-i18n="logout">Sohoka</button>
+  <nav class="d-flex justify-content-between align-items-center mb-4">
+    <div class="h4 m-0">Les Nganyira — <span data-i18n="authTitle">Kwinjira</span></div>
+    <div class="lang-switch d-flex gap-2">
+      <button class="btn btn-sm btn-outline-secondary" data-lang="en">ENG</button>
+      <button class="btn btn-sm btn-outline-secondary" data-lang="fr">FRA</button>
+      <button class="btn btn-sm btn-outline-secondary" data-lang="rw">KINY</button>
     </div>
   </nav>
 
-  <!-- HERO IMAGE -->
-  <section class="hero-wrap">
-    <div class="hero-frame">
-      <!-- Koresha DIRECT URL y’ifoto yawe hano -->
-      <img id="heroImg"
-        src="https://i.pinimg.com/736x/c3/40/09/c34009ee266d0ff4d1ef30dfb1e6a5d6.jpg"
-        alt="Welcome to our family"
-        onerror="this.onerror=null; this.src='./assets/family-hero.jpg';" />
-    </div>
-  </section>
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card p-3 p-md-4 mb-3">
+        <ul class="nav nav-tabs" id="authTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="signin-tab" data-bs-toggle="tab" data-bs-target="#signin" type="button" role="tab" aria-controls="signin" aria-selected="true" data-i18n="signIn">Injira</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab" aria-controls="signup" aria-selected="false" data-i18n="createAccount">Hanga konti</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="forgot-tab" data-bs-toggle="tab" data-bs-target="#forgot" type="button" role="tab" aria-controls="forgot" aria-selected="false" data-i18n="forgot">Wibagiwe ijambobanga?</button>
+          </li>
+        </ul>
 
-  <!-- WELCOME CARD -->
-  <section class="card shadow-sm p-4 mb-4">
-    <h2 class="h4 mb-1" id="hello">Murakaza neza!</h2>
-    <p class="muted" id="memberInfo">Tegereza gato…</p>
-  </section>
+        <div class="tab-content pt-3">
+          <!-- SIGN IN -->
+          <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+            <form id="signInForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="siEmail" data-i18n="email">Email</label>
+                <input class="form-control" id="siEmail" type="email" placeholder="ex: name@gmail.com" required/>
+              </div>
+              <div class="mb-2">
+                <label class="form-label" for="siPassword" data-i18n="password">Ijambobanga</label>
+                <div class="input-group">
+                  <input class="form-control" id="siPassword" type="password" required/>
+                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="siPassword">👁</button>
+                </div>
+              </div>
+              <div class="mb-3 d-flex justify-content-between align-items-center">
+                <a href="#" data-bs-toggle="tab" data-bs-target="#forgot" class="small" data-i18n="forgot">Wibagiwe ijambobanga?</a>
+              </div>
+              <button id="btnSignIn" class="btn btn-primary w-100" type="submit" data-i18n="signIn">Injira</button>
+              <div id="siMsg" class="mt-3 small"></div>
+            </form>
+          </div>
 
-  <!-- QUICK STATS -->
-  <section class="row g-3 mb-4">
-    <div class="col-12 col-md-4">
-      <div class="stat">
-        <div>
-          <h4 data-i18n="totalMembers">Abanyamuryango</h4>
-          <div class="muted" id="membersCount">—</div>
+          <!-- SIGN UP -->
+          <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
+            <form id="signUpForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="suFullName" data-i18n="fullName">Amazina</label>
+                <input class="form-control" id="suFullName" type="text" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="suPhone" data-i18n="phone">Phone</label>
+                <input class="form-control" id="suPhone" type="tel" placeholder="+2507..." required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="suEmail" data-i18n="email">Email</label>
+                <input class="form-control" id="suEmail" type="email" placeholder="ex: name@gmail.com" required />
+              </div>
+              <div class="mb-2">
+                <label class="form-label" for="suPassword" data-i18n="password">Ijambobanga</label>
+                <div class="input-group">
+                  <input class="form-control" id="suPassword" type="password" required />
+                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="suPassword">👁</button>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label" for="suPassword2" data-i18n="confirmPassword">Emeza ijambobanga</label>
+                <div class="input-group">
+                  <input class="form-control" id="suPassword2" type="password" required />
+                  <button class="btn btn-outline-secondary input-eye" type="button" data-toggle="suPassword2">👁</button>
+                </div>
+              </div>
+
+              <!-- Password rules + meter -->
+              <div class="mb-2">
+                <div class="pw-meter mb-2"><div id="pwBar" class="bg-danger"></div></div>
+                <ul class="small m-0 ps-3">
+                  <li id="ruleLen" class="rule bad" data-i18n="ruleLen">Nibura inyuguti 8</li>
+                  <li id="ruleUpper" class="rule bad" data-i18n="ruleUpper">Nibura inyuguti nini 1 (A‑Z)</li>
+                  <li id="ruleLower" class="rule bad" data-i18n="ruleLower">Nibura inyuguti nto 1 (a‑z)</li>
+                  <li id="ruleNum" class="rule bad" data-i18n="ruleNum">Nibura umubare 1 (0‑9)</li>
+                  <li id="ruleSpec" class="rule bad" data-i18n="ruleSpec">Nibura ikimenyetso 1 (!@#$…)</li>
+                </ul>
+              </div>
+
+              <button id="btnSignUp" class="btn btn-success w-100" type="submit" data-i18n="createAccount">Hanga konti</button>
+              <div id="suMsg" class="mt-3 small"></div>
+            </form>
+          </div>
+
+          <!-- FORGOT (email reset link) -->
+          <div class="tab-pane fade" id="forgot" role="tabpanel" aria-labelledby="forgot-tab">
+            <form id="forgotForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="fpEmail" data-i18n="email">Email</label>
+                <input class="form-control" id="fpEmail" type="email" placeholder="ex: name@gmail.com" required />
+              </div>
+              <button id="btnForgot" class="btn btn-outline-primary w-100" type="submit" data-i18n="sendReset">Ohereza email yo guhindura ijambobanga</button>
+              <div id="fpMsg" class="mt-3 small"></div>
+            </form>
+
+            <div class="alert alert-secondary mt-3 mb-0">
+              <div class="small" data-i18n="otpNote">
+                Icyitonderwa ku OTP: kuri GitHub Pages (static), **OTP ya reset** isaba gukoresha **Firebase Phone Auth (SMS)** cyangwa backend (Cloud Functions) yo kohereza code kuri email. Niba ushaka SMS OTP, dushobora kongeramo *Phone Auth* hanyuma umuntu agahindura password nyuma yo kwemeza nomero ye.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="stat">
-        <div>
-          <h4 data-i18n="status">Imimerere</h4>
-          <div class="muted" id="verifiedState">—</div>
-        </div>
+
+      <div class="text-center small text-muted">
+        <span data-i18n="haveAccount">Usanzwe ufite konti?</span>
+        <a href="#" data-bs-toggle="tab" data-bs-target="#signin" data-i18n="signIn">Injira</a>
       </div>
     </div>
-    <div class="col-12 col-md-4">
-      <div class="stat">
-        <div>
-          <h4 data-i18n="lastUpdate">Igihe giheruka kuvugururwa</h4>
-          <div class="muted" id="lastUpdated">—</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
 
-  <!-- QUICK ACTIONS -->
-  <section class="card shadow-sm p-4">
-    <h3 class="h5 mb-3" data-i18n="quickActions">Ibikorwa byihuse</h3>
-    <div class="d-flex flex-wrap gap-2">
-      <a class="btn btn-primary" href="#" data-i18n="viewProfile">Reba Profuli</a>
-      <a class="btn btn-outline-primary" href="#" data-i18n="contribute">Gutanga umusanzu</a>
-      <a class="btn btn-outline-secondary" href="#" data-i18n="terms">Amategeko & Politiki</a>
-    </div>
-  </section>
-
-  <!-- FIREBASE + LOGIC -->
   <script type="module">
-    // ================= Firebase =================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // ---- HINDURA ibi na project URLs ----
     const firebaseConfig = {
@@ -125,126 +150,112 @@
       projectId: "<YOUR_FIREBASE_PROJECT_ID>",
       appId: "<YOUR_FIREBASE_APP_ID>"
     };
-    const INDEX_URL = "https://<username>.github.io/<repo>/index.html";
+    const DASHBOARD_URL = "./dashboard.html"; // relative path works on GitHub Pages
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const hello = document.getElementById('hello');
-    const memberInfo = document.getElementById('memberInfo');
-    const userEmail = document.getElementById('userEmail');
-    const verifiedState = document.getElementById('verifiedState');
-    const lastUpdated = document.getElementById('lastUpdated');
-    const membersCount = document.getElementById('membersCount');
-
-    // Guard: require logged-in & verified
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = INDEX_URL; // ohereza kuri index/landing niba nta login
-        return;
-      }
-      userEmail.textContent = user.email || "—";
-      try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (!snap.exists() || !snap.data().verified) {
-          window.location.href = INDEX_URL;
-          return;
-        }
-        const data = snap.data();
-        hello.textContent = `${t('welcome')}, ${data.fullName || 'Member'}!`;
-        memberInfo.textContent = `${t('email')}: ${data.email} | ${t('phone')}: ${data.phone || '-'}`;
-        verifiedState.textContent = t('verified');
-        lastUpdated.textContent = new Date().toLocaleString();
-        membersCount.textContent = "—"; // placeholder nk'uko byari
-      } catch (e) {
-        console.error(e);
-        memberInfo.textContent = t('couldNotFetch');
-        verifiedState.textContent = t('unknown');
-      }
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = INDEX_URL;
-    });
-
-    // =================== i18n (ENG / FRA / KINY) ===================
+    // ------------- i18n -------------
     const dict = {
-      en: {
-        dashboard: 'Dashboard',
-        logout: 'Log out',
-        totalMembers: 'Members',
-        status: 'Status',
-        lastUpdate: 'Last updated',
-        quickActions: 'Quick actions',
-        viewProfile: 'View profile',
-        contribute: 'Contribute',
-        terms: 'Terms & Policies',
-        welcome: 'Welcome',
-        email: 'Email',
-        phone: 'Phone',
-        verified: 'Verified',
-        unknown: 'Unknown',
-        couldNotFetch: 'Could not fetch your info.',
-        signIn: 'Sign in',
-        createAccount: 'Create account',
-        forgot: 'Forgot password?'
-      },
-      fr: {
-        dashboard: 'Tableau de bord',
-        logout: 'Déconnexion',
-        totalMembers: 'Membres',
-        status: 'Statut',
-        lastUpdate: 'Dernière mise à jour',
-        quickActions: 'Actions rapides',
-        viewProfile: 'Voir le profil',
-        contribute: 'Contribuer',
-        terms: 'Termes & Politiques',
-        welcome: 'Bienvenue',
-        email: 'Email',
-        phone: 'Téléphone',
-        verified: 'Vérifié',
-        unknown: 'Inconnu',
-        couldNotFetch: "Impossible de récupérer vos informations.",
-        signIn: 'Se connecter',
-        createAccount: 'Créer un compte',
-        forgot: 'Mot de passe oublié ?'
-      },
-      rw: {
-        dashboard: 'Dashboard',
-        logout: 'Sohoka',
-        totalMembers: 'Abanyamuryango',
-        status: 'Imimerere',
-        lastUpdate: 'Igihe giheruka kuvugururwa',
-        quickActions: 'Ibikorwa byihuse',
-        viewProfile: 'Reba Profuli',
-        contribute: 'Gutanga umusanzu',
-        terms: 'Amategeko & Politiki',
-        welcome: 'Murakaza neza',
-        email: 'Email',
-        phone: 'Phone',
-        verified: 'Byemejwe',
-        unknown: 'Kitazwi',
-        couldNotFetch: 'Ntitwabashije kubona amakuru yawe.',
-        signIn: 'Injira',
-        createAccount: 'Hanga konti',
-        forgot: 'Wibagiwe ijambobanga?'
-      }
+      en: { authTitle:'Sign in', signIn:'Sign in', createAccount:'Create account', email:'Email', password:'Password', confirmPassword:'Confirm password', forgot:'Forgot password?', fullName:'Full name', phone:'Phone', haveAccount:'Already have an account?', createdCheckEmail:'Account created. Check your email to verify.', verifyFirst:'Please verify your email first. We sent you a new link.', resetSent:'Password reset email sent.', passwordsNoMatch:'Passwords do not match.', weakPassword:'Password does not meet the rules.', unknown:'Unknown error.', sendReset:'Send password reset email', ruleLen:'At least 8 characters', ruleUpper:'At least 1 uppercase (A-Z)', ruleLower:'At least 1 lowercase (a-z)', ruleNum:'At least 1 digit (0-9)', ruleSpec:'At least 1 symbol (!@#$…)', otpNote:'Note on OTP: on static GitHub Pages, a reset OTP requires Firebase Phone Auth (SMS) or a backend (Cloud Functions) to email a code. If you want SMS OTP, we can add Phone Auth and let users change the password after verifying their number.' },
+      fr: { authTitle:"Se connecter", signIn:"Se connecter", createAccount:"Créer un compte", email:"Email", password:"Mot de passe", confirmPassword:"Confirmez le mot de passe", forgot:"Mot de passe oublié ?", fullName:"Nom complet", phone:"Téléphone", haveAccount:"Vous avez déjà un compte ?", createdCheckEmail:"Compte créé. Vérifiez votre e-mail pour valider.", verifyFirst:"Veuillez d'abord vérifier votre e-mail. Nous venons d'envoyer un nouveau lien.", resetSent:"E-mail de réinitialisation envoyé.", passwordsNoMatch:"Les mots de passe ne correspondent pas.", weakPassword:"Le mot de passe ne respecte pas les règles.", unknown:"Erreur inconnue.", sendReset:"Envoyer l'e-mail de réinitialisation", ruleLen:"Au moins 8 caractères", ruleUpper:"Au moins 1 majuscule (A-Z)", ruleLower:"Au moins 1 minuscule (a-z)", ruleNum:"Au moins 1 chiffre (0-9)", ruleSpec:"Au moins 1 symbole (!@#$…)", otpNote:"Remarque OTP : sur un site statique (GitHub Pages), un OTP de réinitialisation nécessite Firebase Phone Auth (SMS) ou un backend (Cloud Functions) pour envoyer un code. Si vous voulez le SMS OTP, on peut ajouter Phone Auth puis l'utilisateur change son mot de passe après vérification." },
+      rw: { authTitle:'Kwinjira', signIn:'Injira', createAccount:'Hanga konti', email:'Email', password:'Ijambobanga', confirmPassword:'Emeza ijambobanga', forgot:'Wibagiwe ijambobanga?', fullName:'Amazina', phone:'Phone', haveAccount:'Usanzwe ufite konti?', createdCheckEmail:'Konti yashyizweho. Reba email ugire ngo wemeze.', verifyFirst:'Banza wemeze email. Twohereje indi link.', resetSent:'Twakohereje email yo guhindura ijambobanga.', passwordsNoMatch:'Amagambo y\'ibanga ntahuje.', weakPassword:'Ijambobanga ntiryujuje amabwiriza.', unknown:'Ikosa ritazwi.', sendReset:'Ohereza email yo guhindura ijambobanga', ruleLen:'Nibura inyuguti 8', ruleUpper:'Nibura inyuguti nini 1 (A‑Z)', ruleLower:'Nibura inyuguti nto 1 (a‑z)', ruleNum:'Nibura umubare 1 (0‑9)', ruleSpec:'Nibura ikimenyetso 1 (!@#$…)', otpNote:'Icyitonderwa kuri OTP: kuri GitHub Pages (static), OTP ya reset isaba Firebase Phone Auth (SMS) cyangwa backend (Cloud Functions) yo kohereza code kuri email. Niba ushaka SMS OTP, dushobora kongeramo Phone Auth hanyuma ugahindura password nyuma yo kwemeza numero yawe.' }
     };
     function currentLang(){ return localStorage.getItem('ng_lang') || 'rw'; }
+    function t(k){ return (dict[currentLang()] && dict[currentLang()][k]) || k; }
     function setLang(lang){ localStorage.setItem('ng_lang', lang); applyLang(); }
-    function t(key){ return (dict[currentLang()] && dict[currentLang()][key]) || key; }
-    function applyLang(){
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        el.textContent = t(key);
-      });
-    }
-    document.querySelectorAll('[data-lang]').forEach(btn => {
-      btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
-    });
+    function applyLang(){ document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); }); }
+    document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.getAttribute('data-lang'))));
     applyLang();
+
+    // ------------- Helpers -------------
+    function show(el, message, ok=false){ el.innerHTML = `<span class="${ok? 'text-success':'text-danger'}">${message}</span>`; }
+    function togglePassword(id){ const el = document.getElementById(id); el.type = (el.type === 'password' ? 'text' : 'password'); }
+    document.querySelectorAll('.input-eye').forEach(btn=>btn.addEventListener('click',()=>{ togglePassword(btn.dataset.toggle); }));
+
+    // Password rules
+    const suPassword = document.getElementById('suPassword');
+    const suPassword2 = document.getElementById('suPassword2');
+    const pwBar = document.getElementById('pwBar');
+    const rules = {
+      len:    { el: document.getElementById('ruleLen'),   ok:false },
+      upper:  { el: document.getElementById('ruleUpper'), ok:false },
+      lower:  { el: document.getElementById('ruleLower'), ok:false },
+      num:    { el: document.getElementById('ruleNum'),   ok:false },
+      spec:   { el: document.getElementById('ruleSpec'),  ok:false },
+    };
+    function evalPw(p){
+      rules.len.ok   = p.length >= 8;
+      rules.upper.ok = /[A-Z]/.test(p);
+      rules.lower.ok = /[a-z]/.test(p);
+      rules.num.ok   = /[0-9]/.test(p);
+      rules.spec.ok  = /[^A-Za-z0-9]/.test(p);
+      let score = Object.values(rules).filter(r=>r.ok).length; // 0..5
+      // update UI
+      Object.values(rules).forEach(r=>{ r.el.classList.toggle('ok', r.ok); r.el.classList.toggle('bad', !r.ok); });
+      const widths = ['0%','20%','40%','60%','80%','100%'];
+      pwBar.style.width = widths[score];
+      pwBar.className = score <=2 ? 'bg-danger' : (score<=4 ? 'bg-warning' : 'bg-success');
+      return score === 5;
+    }
+    suPassword?.addEventListener('input', e=>evalPw(e.target.value));
+
+    // ------------- Sign Up -------------
+    const signUpForm = document.getElementById('signUpForm');
+    const suMsg = document.getElementById('suMsg');
+    signUpForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('suFullName').value.trim();
+      const phone = document.getElementById('suPhone').value.trim();
+      const email = document.getElementById('suEmail').value.trim();
+      const pw = suPassword.value;
+      const pw2 = suPassword2.value;
+      if(pw !== pw2){ show(suMsg, t('passwordsNoMatch')); return; }
+      if(!evalPw(pw)){ show(suMsg, t('weakPassword')); return; }
+      try{
+        const cred = await createUserWithEmailAndPassword(auth, email, pw);
+        await setDoc(doc(db, 'users', cred.user.uid), { fullName:name, phone, email, verified:false, createdAt: serverTimestamp() }, { merge:true });
+        await sendEmailVerification(cred.user);
+        show(suMsg, t('createdCheckEmail'), true);
+      }catch(err){ console.error(err); show(suMsg, err.message || t('unknown')); }
+    });
+
+    // ------------- Sign In -------------
+    const signInForm = document.getElementById('signInForm');
+    const siMsg = document.getElementById('siMsg');
+    signInForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('siEmail').value.trim();
+      const pw = document.getElementById('siPassword').value;
+      try{
+        const cred = await signInWithEmailAndPassword(auth, email, pw);
+        if(!cred.user.emailVerified){ await sendEmailVerification(cred.user); show(siMsg, t('verifyFirst')); return; }
+        window.location.href = DASHBOARD_URL;
+      }catch(err){ console.error(err); show(siMsg, err.message || t('unknown')); }
+    });
+
+    // ------------- Forgot Password (email link) -------------
+    const forgotForm = document.getElementById('forgotForm');
+    const fpMsg = document.getElementById('fpMsg');
+    forgotForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('fpEmail').value.trim();
+      try{ await sendPasswordResetEmail(auth, email); show(fpMsg, t('resetSent'), true); }
+      catch(err){ console.error(err); show(fpMsg, err.message || t('unknown')); }
+    });
+
+    // ------------- Activate right tab by URL hash -------------
+    (function(){
+      const hash = (location.hash || '').toLowerCase();
+      const btns = {
+        '#signin': document.querySelector('[data-bs-target="#signin"]'),
+        '#signup': document.querySelector('[data-bs-target="#signup"]'),
+        '#forgot': document.querySelector('[data-bs-target="#forgot"]')
+      };
+      if(btns[hash]) btns[hash].click();
+    })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
