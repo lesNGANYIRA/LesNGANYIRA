@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Account • Les NGANYIRA</title>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <style>
+    body{font-family:Arial, sans-serif;background:#f6f7fb;margin:0}
+    .wrap{max-width:420px;margin:40px auto;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    h1{margin:0 0 12px}
+    label{display:block;margin:12px 0 6px;font-weight:600}
+    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
+    .row{display:flex;gap:8px}
+    .muted{color:#6b7280;font-size:12px;margin-top:6px}
+    .bar{height:6px;border-radius:6px;background:#e5e7eb;margin-top:6px;overflow:hidden}
+    .bar>span{display:block;height:100%;width:0}
+    .btn{width:100%;padding:12px 14px;border:0;border-radius:10px;background:#111;color:#fff;cursor:pointer;margin-top:14px;font-weight:700}
+    .ghost{background:#fff;border:1px solid #111;color:#111}
+    .actions{display:flex;gap:8px;margin-top:8px}
+    .err{color:#b91c1c;font-size:13px;margin-top:8px;display:none}
+    .ok{color:#065f46;font-size:13px;margin-top:8px;display:none}
+    .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#374151}
+    .pwd-wrap{position:relative}
+    a{color:#111}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Create account</h1>
+    <p class="muted">Injiza amazina yawe, email, na password ihuye n’amabwiriza.</p>
+
+    <label>Full name</label>
+    <div class="row">
+      <input id="firstName" placeholder="First name" autocomplete="given-name" />
+      <input id="lastName" placeholder="Last name" autocomplete="family-name" />
+    </div>
+
+    <label>Email</label>
+    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+
+    <label>Password</label>
+    <div class="pwd-wrap">
+      <input id="password" type="password" placeholder="••••••••" autocomplete="new-password" />
+      <span class="toggle" id="togglePwd">Show</span>
+    </div>
+    <div class="muted">
+      Password rules: ≥ 8 characters, nibura 1 uppercase, 1 lowercase, 1 number, 1 symbol.
+      <div class="bar"><span id="strengthFill"></span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="btnSignup">Create account</button>
+      <a class="btn ghost" href="signin.html">Sign in</a>
+    </div>
+
+    <div id="msgErr" class="err"></div>
+    <div id="msgOk" class="ok"></div>
+    <p class="muted" style="margin-top:14px">By continuing, you agree to our Terms & Policies.</p>
+  </div>
+
+  <!-- Firebase App & Auth (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    // TODO: Shyiramo Firebase config yawe hano (from Firebase console)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    const el = (id)=>document.getElementById(id);
+    const email = el('email'), pwd = el('password'), f=el('firstName'), l=el('lastName');
+    const toggle = el('togglePwd'), err=el('msgErr'), ok=el('msgOk'), strengthFill=el('strengthFill');
+
+    function showErr(t){err.textContent=t;err.style.display='block';ok.style.display='none'}
+    function showOk(t){ok.textContent=t;ok.style.display='block';err.style.display='none'}
+    function clearMsgs(){err.style.display='none';ok.style.display='none'}
+
+    toggle.addEventListener('click', ()=>{
+      pwd.type = pwd.type==='password' ? 'text':'password';
+      toggle.textContent = pwd.type==='password' ? 'Show':'Hide';
+    });
+
+    function scorePassword(p){
+      let s=0;
+      if(p.length>=8) s+=25;
+      if(/[a-z]/.test(p) && /[A-Z]/.test(p)) s+=25;
+      if(/\d/.test(p)) s+=25;
+      if(/[^A-Za-z0-9]/.test(p)) s+=25;
+      return Math.min(s,100);
+    }
+    pwd.addEventListener('input', ()=>{
+      const s = scorePassword(pwd.value);
+      strengthFill.style.width = s+'%';
+      strengthFill.style.background = s<50?'#f87171': s<75?'#f59e0b':'#10b981';
+    });
+
+    function validPassword(p){
+      return p.length>=8 && /[a-z]/.test(p) && /[A-Z]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9]/.test(p);
+    }
+
+    document.getElementById('btnSignup').addEventListener('click', async ()=>{
+      clearMsgs();
+      if(!f.value.trim() || !l.value.trim()) return showErr('Injiza izina rya mbere n’iry’umuryango.');
+      if(!email.value) return showErr('Injiza email.');
+      if(!validPassword(pwd.value)) return showErr('Password ntiyuzuye amategeko.');
+
+      try{
+        const {user} = await auth.createUserWithEmailAndPassword(email.value.trim(), pwd.value);
+        // Save display name
+        await user.updateProfile({ displayName: `${f.value.trim()} ${l.value.trim()}` });
+        // Send verify email
+        await user.sendEmailVerification();
+        // Redirect to verify page with hint
+        sessionStorage.setItem('verifyEmailHint', email.value.trim());
+        location.href = 'verify.html';
+      }catch(e){
+        showErr(e.message || 'Byanze kwiyandikisha.');
+      }
+    });
+  </script>
+</body>
+</html>
