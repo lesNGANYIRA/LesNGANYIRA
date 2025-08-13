@@ -1,194 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign in • Les NGANYIRA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in</title>
   <style>
-    body{font-family:Arial, sans-serif;background:#f6f7fb;margin:0}
-    .wrap{max-width:460px;margin:40px auto;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    h1{margin:0 0 12px}
-    label{display:block;margin:12px 0 6px;font-weight:600}
-    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
-    .muted{color:#6b7280;font-size:12px;margin-top:6px}
-    .btn{width:100%;padding:12px 14px;border:0;border-radius:10px;background:#111;color:#fff;cursor:pointer;margin-top:14px;font-weight:700}
-    .linkrow{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
-    .err{color:#b91c1c;font-size:13px;margin-top:8px;display:none}
-    .info{color:#065f46;font-size:13px;margin-top:8px;display:none}
-    .pwd-wrap{position:relative}
-    .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#374151}
-    a{color:#111}
-    .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    select{padding:8px;border:1px solid #dfe3eb;border-radius:8px;background:#fff}
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: black;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .link {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .lang {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="toprow">
-      <h1 id="title">Sign in</h1>
-      <label class="muted" style="margin:0">
-        <span id="langLabel">Language</span>
-        <select id="langSel" aria-label="Language">
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="rw">Kinyarwanda</option>
-        </select>
-      </label>
-    </div>
 
-    <label for="email" id="emailLabel">Email</label>
-    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
-
-    <label for="password" id="pwdLabel">Password</label>
-    <div class="pwd-wrap">
-      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <span class="toggle" id="togglePwd">Show</span>
-    </div>
-
-    <button class="btn" id="btnSignin">Sign in</button>
-
-    <div class="linkrow">
-      <a id="forgotLink" href="forgot.html">Forgot password?</a>
-      <a id="signupLink" href="signup.html">Create account</a>
-    </div>
-
-    <div id="msgErr" class="err"></div>
-    <div id="msgInfo" class="info"></div>
-
-    <p class="muted" style="margin-top:14px" id="termsText">
-      By continuing, you agree to our Terms & Policies.
-    </p>
+<div class="container">
+  <div class="lang">
+    <button onclick="setLang('en')">ENG</button>
+    <button onclick="setLang('fr')">FRA</button>
+    <button onclick="setLang('rw')">KINY</button>
   </div>
 
-  <!-- Firebase (CDN compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script>
-    // 🔧 Firebase config yawe (yasigaye ari yo dukoresha)
-    const firebaseConfig = {
-      apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
-      authDomain: "lesnganyira.firebaseapp.com",
-      projectId: "lesnganyira",
-      storageBucket: "lesnganyira.firebasestorage.app",
-      messagingSenderId: "456037694600",
-      appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d",
-      measurementId: "G-TWBDL05VYZ"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  <h2 id="title">Sign in</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signIn()" id="signinBtn">Sign in</button>
 
-    // ===== I18N (EN/FR/RW) =====
-    const T = {
-      en: {
-        title:"Sign in", email:"Email", pwd:"Password", show:"Show", hide:"Hide",
-        btn:"Sign in", forgot:"Forgot password?", signup:"Create account",
-        terms:"By continuing, you agree to our Terms & Policies.",
-        lang:"Language",
-        E_REQUIRED:"Please enter your email.",
-        P_REQUIRED:"Please enter your password.",
-        INVALID_CRED:"Email or password is incorrect.",
-        USER_NOT_FOUND:"No account found with this email.",
-        WRONG_PWD:"Incorrect password.",
-        TOO_MANY:"Too many attempts. Try again later.",
-        NETWORK:"Network error. Check your connection.",
-        OTHER:"Sign in failed.",
-        NOT_VERIFIED:"Your email is not verified. We’ve sent a new verification link—check your inbox."
-      },
-      fr: {
-        title:"Se connecter", email:"E-mail", pwd:"Mot de passe", show:"Afficher", hide:"Masquer",
-        btn:"Se connecter", forgot:"Mot de passe oublié ?", signup:"Créer un compte",
-        terms:"En continuant, vous acceptez nos Conditions et Politiques.",
-        lang:"Langue",
-        E_REQUIRED:"Veuillez saisir votre e-mail.",
-        P_REQUIRED:"Veuillez saisir votre mot de passe.",
-        INVALID_CRED:"E-mail ou mot de passe incorrect.",
-        USER_NOT_FOUND:"Aucun compte trouvé avec cet e-mail.",
-        WRONG_PWD:"Mot de passe incorrect.",
-        TOO_MANY:"Trop de tentatives. Réessayez plus tard.",
-        NETWORK:"Erreur réseau. Vérifiez votre connexion.",
-        OTHER:"Échec de la connexion.",
-        NOT_VERIFIED:"Votre e-mail n’est pas vérifié. Nous venons d’envoyer un nouveau lien de vérification."
-      },
-      rw: {
-        title:"Injira", email:"Imeli", pwd:"Ijambobanga", show:"Erekana", hide:"Hisha",
-        btn:"Injira", forgot:"Wibagiwe ijambobanga?", signup:"Fungura konti",
-        terms:"Ukomereje aha wemeye Amasezerano n’Amabwiriza.",
-        lang:"Ururimi",
-        E_REQUIRED:"Injiza imeli.",
-        P_REQUIRED:"Injiza ijambobanga.",
-        INVALID_CRED:"Imeli cyangwa ijambobanga si byo.",
-        USER_NOT_FOUND:"Nta konti yabonetse kuri iyi imeli.",
-        WRONG_PWD:"Ijambobanga si ryo.",
-        TOO_MANY:"Gerageje kenshi cyane. Ongera ugerageze nyuma.",
-        NETWORK:"Ikosa rya murandasi. Saba ugenzure connection.",
-        OTHER:"Kwinjira byanze.",
-        NOT_VERIFIED:"Imeli yawe ntiravérify-ingwa. Twoherereje indi link—reba inbox."
-      }
-    };
+  <span class="link" onclick="forgotPassword()" id="forgotText">Forgot password?</span>
+</div>
 
-    const el = id => document.getElementById(id);
-    const email = el('email'), pwd = el('password'), err = el('msgErr'), info = el('msgInfo');
-    const toggle = el('togglePwd'), sel = el('langSel');
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-    function setText(lang){
-      const t = T[lang] || T.en;
-      el('title').textContent = t.title;
-      el('emailLabel').textContent = t.email;
-      el('pwdLabel').textContent = t.pwd;
-      el('togglePwd').textContent = (pwd.type==='password') ? t.show : t.hide;
-      el('btnSignin').textContent = t.btn;
-      el('forgotLink').textContent = t.forgot;
-      el('signupLink').textContent = t.signup;
-      el('termsText').textContent = t.terms;
-      el('langLabel').textContent = t.lang;
-      document.documentElement.setAttribute('lang', lang);
-      localStorage.setItem('les_lang', lang);
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  function signIn() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => alert("Signed in successfully"))
+      .catch((error) => alert(error.message));
+  }
+
+  function forgotPassword() {
+    const email = document.getElementById("email").value.trim();
+    if (!email) {
+      alert("Please enter your email first.");
+      return;
     }
+    sendPasswordResetEmail(auth, email)
+      .then(() => alert("Password reset email sent. Check your inbox."))
+      .catch((error) => alert(error.message));
+  }
 
-    // init language (remember last)
-    const saved = localStorage.getItem('les_lang') || 'en';
-    sel.value = saved; setText(saved);
-    sel.addEventListener('change', ()=> setText(sel.value));
+  function setLang(lang) {
+    const translations = {
+      en: { title: "Sign in", signinBtn: "Sign in", forgotText: "Forgot password?" },
+      fr: { title: "Se connecter", signinBtn: "Connexion", forgotText: "Mot de passe oublié ?" },
+      rw: { title: "Injira", signinBtn: "Injira", forgotText: "Wibagiwe ijambobanga?" }
+    };
+    document.getElementById("title").innerText = translations[lang].title;
+    document.getElementById("signinBtn").innerText = translations[lang].signinBtn;
+    document.getElementById("forgotText").innerText = translations[lang].forgotText;
+  }
+</script>
 
-    // show/hide password
-    toggle.addEventListener('click', ()=>{
-      const lang = sel.value;
-      pwd.type = pwd.type==='password' ? 'text':'password';
-      toggle.textContent = (pwd.type==='password') ? T[lang].show : T[lang].hide;
-    });
-
-    function showErr(msg){ err.textContent = msg; err.style.display='block'; info.style.display='none'; }
-    function showInfo(msg){ info.textContent = msg; info.style.display='block'; err.style.display='none'; }
-    function clearMsgs(){ err.style.display='none'; info.style.display='none'; }
-
-    // Sign in
-    el('btnSignin').addEventListener('click', async ()=>{
-      clearMsgs();
-      const lang = sel.value, t = T[lang];
-      if(!email.value) return showErr(t.E_REQUIRED);
-      if(!pwd.value)   return showErr(t.P_REQUIRED);
-
-      try{
-        const { user } = await auth.signInWithEmailAndPassword(email.value.trim(), pwd.value);
-        await user.reload();
-        if(!user.emailVerified){
-          await user.sendEmailVerification();
-          sessionStorage.setItem('verifyEmailHint', user.email || email.value.trim());
-          showInfo(t.NOT_VERIFIED);
-          location.href = 'verify.html';
-          return;
-        }
-        location.href = 'dashboard.html';
-      }catch(e){
-        const code = (e && e.code) || '';
-        if(code.includes('user-not-found'))         showErr(t.USER_NOT_FOUND);
-        else if(code.includes('wrong-password'))    showErr(t.WRONG_PWD);
-        else if(code.includes('invalid-credential'))showErr(t.INVALID_CRED);
-        else if(code.includes('too-many-requests')) showErr(t.TOO_MANY);
-        else if(code.includes('network-request-failed')) showErr(t.NETWORK);
-        else showErr(t.OTHER + ` (${code||'unknown'})`);
-      }
-    });
-  </script>
 </body>
 </html>
