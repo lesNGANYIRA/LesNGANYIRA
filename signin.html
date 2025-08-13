@@ -4,86 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign in • Les NGANYIRA</title>
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <style>
-    body{font-family:Arial, sans-serif;background:#f6f7fb;margin:0}
-    .wrap{max-width:420px;margin:40px auto;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    h1{margin:0 0 12px}
-    label{display:block;margin:12px 0 6px;font-weight:600}
-    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
-    .btn{width:100%;padding:12px 14px;border:0;border-radius:10px;background:#111;color:#fff;cursor:pointer;margin-top:14px;font-weight:700}
-    .ghost{background:#fff;border:1px solid #111;color:#111}
-    .err{color:#b91c1c;font-size:13px;margin-top:8px;display:none}
-    .muted{color:#6b7280;font-size:12px;margin-top:8px}
-    .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#374151}
-    .pwd-wrap{position:relative}
-    .row{display:flex;justify-content:space-between;margin-top:8px}
-    a{color:#111}
-  </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Sign in</h1>
-    <label>Email</label>
-    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+  <h1>Sign in</h1>
+  <input id="email" type="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button id="btnSignin">Sign in</button>
+  <div id="msg"></div>
 
-    <label>Password</label>
-    <div class="pwd-wrap">
-      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <span class="toggle" id="togglePwd">Show</span>
-    </div>
-
-    <div class="row">
-      <a href="forgot.html">Forgot password?</a>
-      <a href="signup.html">Create account</a>
-    </div>
-
-    <button class="btn" id="btnSignin">Sign in</button>
-    <div id="msgErr" class="err"></div>
-    <p class="muted" style="margin-top:14px">Niba utaraverify-inga email yawe, uzasabwa kubanza kuyemeza.</p>
-  </div>
-
-  <!-- Firebase -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
-    // SAME CONFIG as signup.html
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      appId: "YOUR_APP_ID",
+      apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
+      authDomain: "lesnganyira.firebaseapp.com",
+      projectId: "lesnganyira",
+      storageBucket: "lesnganyira.firebasestorage.app",
+      messagingSenderId: "456037694600",
+      appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d",
+      measurementId: "G-TWBDL05VYZ"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const el = (id)=>document.getElementById(id);
-    const email = el('email'), pwd = el('password'), err=el('msgErr'), toggle=el('togglePwd');
-    function showErr(t){err.textContent=t;err.style.display='block'}
-    function clearErr(){err.style.display='none'}
-
-    toggle.addEventListener('click', ()=>{
-      pwd.type = pwd.type==='password' ? 'text':'password';
-      toggle.textContent = pwd.type==='password' ? 'Show':'Hide';
-    });
-
-    document.getElementById('btnSignin').addEventListener('click', async ()=>{
-      clearErr();
-      if(!email.value || !pwd.value) return showErr('Injiza email na password.');
-      try{
-        const {user} = await auth.signInWithEmailAndPassword(email.value.trim(), pwd.value);
+    document.getElementById('btnSignin').addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        const { user } = await auth.signInWithEmailAndPassword(email, password);
         await user.reload();
-        if(!user.emailVerified){
-          // Force verification first
+        if (!user.emailVerified) {
           await user.sendEmailVerification();
-          sessionStorage.setItem('verifyEmailHint', email.value.trim());
+          sessionStorage.setItem('verifyEmailHint', email);
           location.href = 'verify.html';
           return;
         }
-        // Success → Dashboard
         location.href = 'dashboard.html';
-      }catch(e){
-        showErr(e.message || 'Kwinjira byanze.');
+      } catch (e) {
+        document.getElementById('msg').textContent = e.message;
       }
     });
   </script>
