@@ -13,7 +13,6 @@
     .muted{color:#6b7280;font-size:12px;margin-top:6px}
     .btn{display:inline-block;text-align:center;width:100%;padding:12px 14px;border-radius:10px;text-decoration:none;cursor:pointer;margin-top:14px}
     .btn.primary{background:#111;color:#fff;border:1px solid #111}
-    .btn.ghost{background:#fff;color:#111;border:1px solid #111}
     .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
     select{padding:8px;border:1px solid #dfe3eb;border-radius:8px;background:#fff}
     .pwd-wrap{position:relative}
@@ -45,12 +44,12 @@
       <span class="toggle" id="togglePwd">Show</span>
     </div>
 
-    <!-- "Sign in" ihita ijyana kuri app.html, JS ikayobora neza kuri root ya repo yawe -->
-    <a class="btn primary" id="btnSignin" href="app.html">Sign in</a>
+    <!-- 🔗 FIX: absolute path kuri repo yawe -->
+    <a class="btn primary" id="btnSignin" href="/LesNGANYIRA/app.html">Sign in</a>
 
     <div class="links">
-      <a id="forgotLink" class="link" href="forgot.html">Forgot password?</a>
-      <a id="signupLink" class="link" href="signup.html">Create account</a>
+      <a id="forgotLink" class="link" href="/LesNGANYIRA/forgot.html">Forgot password?</a>
+      <a id="signupLink" class="link" href="/LesNGANYIRA/signup.html">Create account</a>
     </div>
 
     <p class="muted" style="margin-top:14px" id="termsText">
@@ -59,7 +58,7 @@
   </div>
 
   <script>
-    // --- I18N ---
+    // I18N
     const T = {
       en:{title:"Sign in",email:"Email",pwd:"Password",show:"Show",hide:"Hide",
           signin:"Sign in",forgot:"Forgot password?",signup:"Create account",
@@ -71,6 +70,7 @@
           signin:"Injira",forgot:"Wibagiwe ijambobanga?",signup:"Fungura konti",
           terms:"Ukomereje aha wemeye Amasezerano n’Amabwiriza.",lang:"Ururimi"}
     };
+
     const $ = id => document.getElementById(id);
     const sel=$('langSel'), pwd=$('password'), toggle=$('togglePwd');
 
@@ -95,32 +95,6 @@
       const lang=sel.value;
       pwd.type=(pwd.type==='password')?'text':'password';
       toggle.textContent=(pwd.type==='password')?T[lang].show:T[lang].hide;
-    });
-
-    // --- NAVIGATION FIX for GitHub Pages / subfolders ---
-    // Ibi bikora n'iyo signin.html iba muri folder (nko: /auth/signin.html)
-    // Byohereza kuri "root ya repo" + app.html (urugero: /REPO_NAME/app.html)
-    function repoRoot() {
-      const host = location.hostname;
-      const parts = location.pathname.split('/').filter(Boolean);
-      // Ku project pages: username.github.io/REPO_NAME/...
-      if (host.endsWith('github.io') && parts.length>0) return '/' + parts[0] + '/';
-      // Ku custom domain cyangwa user site: /  gusa
-      return '/';
-    }
-    document.getElementById('btnSignin').addEventListener('click', function(e){
-      e.preventDefault();
-      // 1) Gerageza ku root ya repo
-      const root = repoRoot();
-      const target1 = root + 'app.html';
-      // 2) Niba app.html iri mu directory imwe na signin.html, ukoresha current dir
-      const currentDir = location.pathname.substring(0, location.pathname.lastIndexOf('/')+1);
-      const target2 = currentDir + 'app.html';
-
-      // Hitamo aho uherera: niba uri muri subfolder ya repo (ex: /REPO/auth/...), koresha root; ubundi koresha target2
-      const inSubfolder = location.pathname.split('/').filter(Boolean).length >= 2;
-      const finalUrl = (location.hostname.endsWith('github.io') && inSubfolder) ? target1 : target2;
-      window.location.href = finalUrl;
     });
   </script>
 </body>
