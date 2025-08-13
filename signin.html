@@ -1,101 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign in • Les NGANYIRA</title>
+  <title>Sign in</title>
   <style>
-    body{font-family:Arial,sans-serif;background:#f6f7fb;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
-    .wrap{width:100%;max-width:460px;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    h1{margin:0 0 12px}
-    label{display:block;margin:12px 0 6px;font-weight:600}
-    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
-    .muted{color:#6b7280;font-size:12px;margin-top:6px}
-    .btn{display:inline-block;text-align:center;width:100%;padding:12px 14px;border-radius:10px;text-decoration:none;cursor:pointer;margin-top:14px}
-    .btn.primary{background:#111;color:#fff;border:1px solid #111}
-    .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    select{padding:8px;border:1px solid #dfe3eb;border-radius:8px;background:#fff}
-    .pwd-wrap{position:relative}
-    .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#374151}
-    .links{display:flex;justify-content:space-between;margin-top:8px}
-    a.link{color:#111;text-decoration:underline}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; background:#f8fafc; margin:0}
+    .wrap{max-width:520px;margin:10vh auto;padding:24px;border-radius:16px;background:#fff;border:1px solid #e2e8f0;box-shadow:0 6px 20px rgba(0,0,0,.06);text-align:center}
+    a.btn{display:inline-block;padding:12px 18px;border-radius:10px;border:0;background:#111;color:#fff;text-decoration:none;font-weight:600}
+    a.btn:hover{opacity:.9}
+    p{color:#475569}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="toprow">
-      <h1 id="title">Sign in</h1>
-      <label class="muted" style="margin:0">
-        <span id="langLabel">Language</span>
-        <select id="langSel" aria-label="Language">
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="rw">Kinyarwanda</option>
-        </select>
-      </label>
-    </div>
+  <main class="wrap">
+    <h1 style="margin:0 0 8px">Welcome back</h1>
+    <p>Click below to continue.</p>
 
-    <label for="email" id="emailLabel">Email</label>
-    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+    <!-- Koresha URL yuzuye ya GitHub Pages -->
+    <a class="btn" href="https://lesnganyira.github.io/LesNGANYIRA/app.html">Sign in →</a>
 
-    <label for="password" id="pwdLabel">Password</label>
-    <div class="pwd-wrap">
-      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <span class="toggle" id="togglePwd">Show</span>
-    </div>
-
-    <!-- 🔗 FIX: absolute path kuri repo yawe -->
-    <a class="btn primary" id="btnSignin" href="/LesNGANYIRA/app.html">Sign in</a>
-
-    <div class="links">
-      <a id="forgotLink" class="link" href="/LesNGANYIRA/forgot.html">Forgot password?</a>
-      <a id="signupLink" class="link" href="/LesNGANYIRA/signup.html">Create account</a>
-    </div>
-
-    <p class="muted" style="margin-top:14px" id="termsText">
-      By continuing, you agree to our Terms & Policies.
-    </p>
-  </div>
-
-  <script>
-    // I18N
-    const T = {
-      en:{title:"Sign in",email:"Email",pwd:"Password",show:"Show",hide:"Hide",
-          signin:"Sign in",forgot:"Forgot password?",signup:"Create account",
-          terms:"By continuing, you agree to our Terms & Policies.",lang:"Language"},
-      fr:{title:"Se connecter",email:"E-mail",pwd:"Mot de passe",show:"Afficher",hide:"Masquer",
-          signin:"Se connecter",forgot:"Mot de passe oublié ?",signup:"Créer un compte",
-          terms:"En continuant, vous acceptez nos Conditions et Politiques.",lang:"Langue"},
-      rw:{title:"Injira",email:"Imeli",pwd:"Ijambobanga",show:"Erekana",hide:"Hisha",
-          signin:"Injira",forgot:"Wibagiwe ijambobanga?",signup:"Fungura konti",
-          terms:"Ukomereje aha wemeye Amasezerano n’Amabwiriza.",lang:"Ururimi"}
-    };
-
-    const $ = id => document.getElementById(id);
-    const sel=$('langSel'), pwd=$('password'), toggle=$('togglePwd');
-
-    function setText(lang){
-      const t=T[lang]||T.en;
-      $('title').textContent=t.title;
-      $('emailLabel').textContent=t.email;
-      $('pwdLabel').textContent=t.pwd;
-      $('btnSignin').textContent=t.signin;
-      $('forgotLink').textContent=t.forgot;
-      $('signupLink').textContent=t.signup;
-      $('termsText').textContent=t.terms;
-      $('langLabel').textContent=t.lang;
-      toggle.textContent=(pwd.type==='password')?t.show:t.hide;
-      document.documentElement.setAttribute('lang', lang);
-      localStorage.setItem('les_lang', lang);
-    }
-    const saved=localStorage.getItem('les_lang')||'en';
-    sel.value=saved; setText(saved);
-    sel.addEventListener('change', ()=>setText(sel.value));
-    toggle.addEventListener('click', ()=>{
-      const lang=sel.value;
-      pwd.type=(pwd.type==='password')?'text':'password';
-      toggle.textContent=(pwd.type==='password')?T[lang].show:T[lang].hide;
-    });
-  </script>
+    <p style="margin-top:14px;font-size:12px">If nothing happens, copy-paste the link above into a new tab.</p>
+  </main>
 </body>
 </html>
