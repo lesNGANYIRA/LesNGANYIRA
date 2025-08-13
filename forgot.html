@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reset password</title>
+<style>
+  body{font-family:Arial, sans-serif;background:#f6f7fb;margin:0}
+  .wrap{max-width:420px;margin:40px auto;background:#fff;padding:24px 20px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+  label{display:block;margin:12px 0 6px;font-weight:600}
+  input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
+  .btn{width:100%;padding:12px 14px;border:0;border-radius:10px;background:#111;color:#fff;cursor:pointer;margin-top:14px;font-weight:700}
+  .muted{color:#6b7280;font-size:12px;margin-top:8px}
+  .msg{margin-top:8px;font-size:13px}
+</style>
+</head><body>
+<div class="wrap">
+  <h1>Reset password</h1>
+  <label>Email</label>
+  <input id="email" type="email" placeholder="you@example.com" />
+  <button class="btn" id="btnSend">Send reset link</button>
+  <div id="msg" class="msg muted"></div>
+  <p class="muted" style="margin-top:14px"><a href="signin.html">Back to sign in</a></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT_ID.firebaseapp.com",projectId:"YOUR_PROJECT_ID",appId:"YOUR_APP_ID"};
+  firebase.initializeApp(firebaseConfig);
+  const auth=firebase.auth();
+  const msg=document.getElementById('msg'), email=document.getElementById('email');
+  document.getElementById('btnSend').addEventListener('click', async ()=>{
+    msg.textContent='';
+    if(!email.value) { msg.textContent='Injiza email.'; return; }
+    try{
+      await auth.sendPasswordResetEmail(email.value.trim());
+      msg.textContent='Twakohereje link yo guhindura password kuri email yawe.';
+    }catch(e){
+      msg.textContent=e.message || 'Byanze kohereza reset link.';
+    }
+  });
+</script>
+</body></html>
