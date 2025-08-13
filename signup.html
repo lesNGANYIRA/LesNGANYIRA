@@ -1,79 +1,10 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Create account</title>
-  <style>
-    body{font-family:system-ui,Roboto,Inter,Arial;background:#f8fafc;margin:0}
-    .wrap{max-width:520px;margin:8vh auto;padding:24px;border:1px solid #e2e8f0;background:#fff;border-radius:14px}
-    label{display:block;margin:12px 0 6px;font-weight:600}
-    input{width:100%;padding:12px;border:1px solid #dfe3eb;border-radius:10px}
-    button{width:100%;padding:12px;border:0;border-radius:10px;background:#111;color:#fff;font-weight:700;margin-top:14px}
-    .muted{color:#64748b;font-size:12px;margin-top:10px}
-  </style>
+<html><head>
+  <meta charset="utf-8">
+  <title>Redirecting…</title>
+  <meta http-equiv="refresh" content="0; url=/LesNGANYIRA/home.html">
+  <meta name="robots" content="noindex">
 </head>
 <body>
-  <main class="wrap">
-    <h2>Create account</h2>
-
-    <label>Full name</label>
-    <input id="name" type="text" placeholder="e.g. Jane Doe">
-
-    <label>Email</label>
-    <input id="email" type="email" placeholder="you@example.com" required>
-
-    <label>Phone (optional)</label>
-    <input id="phone" type="tel" placeholder="+1 555 000 0000">
-
-    <label>Password</label>
-    <input id="password" type="password" minlength="8" required>
-
-    <label>Confirm password</label>
-    <input id="confirm" type="password" minlength="8" required>
-
-    <button id="btnCreate">Create account</button>
-    <p class="muted">Already have an account? <a href="/LesNGANYIRA/signin.html">Sign in</a></p>
-    <p id="msg" class="muted"></p>
-  </main>
-
-  <!-- Firebase compat SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
-      authDomain: "lesnganyira.firebaseapp.com",
-      projectId: "lesnganyira",
-      storageBucket: "lesnganyira.firebasestorage.app",
-      messagingSenderId: "456037694600",
-      appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const $ = id => document.getElementById(id);
-
-    $('btnCreate').onclick = async (e) => {
-      e.preventDefault();
-      const name = $('name').value.trim();
-      const email = $('email').value.trim();
-      const phone = $('phone').value.trim();
-      const pw = $('password').value, cf = $('confirm').value;
-      const msg = $('msg');
-
-      if (pw !== cf) { msg.textContent = "Passwords don't match."; return; }
-
-      try {
-        const { user } = await auth.createUserWithEmailAndPassword(email, pw);
-        if (name) await user.updateProfile({ displayName: name });
-        // Note: phone number ntitabayemo keretse ukoresheje phone auth; ushobora kuyabitse muri DB niba ubyifuza.
-        await user.sendEmailVerification();
-        msg.textContent = "Account created. We sent a verification email. Please check your inbox.";
-        setTimeout(()=>location.href="/LesNGANYIRA/signin.html", 2000);
-      } catch (err) {
-        msg.textContent = err.code + " — " + (err.message || "Failed to sign up");
-      }
-    };
-  </script>
-</body>
-</html>
+  <a href="/LesNGANYIRA/home.html">Go to home</a>
+</body></html>
