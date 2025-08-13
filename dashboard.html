@@ -2,66 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dashboard • Les NGANYIRA</title>
   <style>
-    :root { --bg:#f8f9fa; --ink:#111; --muted:#6b7280; --brand:#111; --danger:#b91c1c; }
-    *{box-sizing:border-box} body{font-family:Arial, sans-serif; background:var(--bg); margin:0;}
-    header{background:var(--brand); color:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between}
-    .brand{font-weight:800}
-    .controls{display:flex; gap:8px; align-items:center}
-    .btn{border:1px solid var(--ink); background:#fff; color:var(--ink); padding:8px 12px; border-radius:10px; cursor:pointer}
-    .btn.danger{background:var(--danger); color:#fff; border-color:var(--danger)}
-    main{max-width:980px; margin:24px auto; padding:0 16px; text-align:center}
-    .hero{background:#fff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    .hero img{width:100%; height:auto; display:block; object-fit:cover}
-    .pad{padding:16px}
+    :root{
+      --bg:#f7f7fb; --card:#ffffff; --ink:#0f172a; --muted:#64748b;
+      --brand:#111111; --accent:#16a34a; --danger:#ef4444; --ring:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    header{position:sticky;top:0;z-index:50;background:var(--brand);color:#fff;
+      display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+    .brand{font-weight:800;letter-spacing:.3px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12);font-size:13px}
+    select,button{border-radius:10px;border:1px solid var(--ring);background:#fff;color:var(--ink)}
+    select{padding:8px 10px}
+    .btn{padding:10px 14px;cursor:pointer}
+    .btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+    main{max-width:1100px;margin:22px auto;padding:0 16px}
+    .hero{border:1px solid var(--ring);border-radius:16px;overflow:hidden;background:var(--card);
+      box-shadow:0 10px 25px rgba(0,0,0,.06)}
+    .hero img{width:100%;height:340px;object-fit:cover;display:block}
+    .hero .pad{padding:16px}
     .muted{color:var(--muted)}
-    footer{margin-top:24px; background:var(--brand); color:#fff; text-align:center; padding:12px}
-    .row{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
+    .grid{display:grid;gap:14px;margin-top:16px}
+    @media(min-width:720px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:16px}
+    .k{font-size:12px;color:var(--muted)}
+    .v{font-size:28px;font-weight:800}
+    nav.quick{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    nav.quick a{padding:10px 14px;border:1px solid var(--ring);border-radius:10px;background:#fff;
+      text-decoration:none;color:var(--ink)}
+    footer{margin-top:26px;background:#111;color:#fff;text-align:center;padding:14px;border-top:1px solid #000}
   </style>
 </head>
 <body>
 
 <header>
-  <div class="brand" id="title">Welcome to Les NGANYIRA</div>
+  <div class="brand" id="t_title">Les NGANYIRA • Dashboard</div>
   <div class="controls">
-    <span id="userName" class="muted" style="color:#fff;opacity:.9"></span>
-    <button id="langBtn" class="btn">Kinyarwanda</button>
+    <span id="who" class="chip">…</span>
+    <label class="chip" style="background:rgba(255,255,255,.08);border:0">
+      <span id="t_lang">Language</span>
+      <select id="langSel" aria-label="Language">
+        <option value="en">EN</option>
+        <option value="fr">FR</option>
+        <option value="rw">KINY</option>
+      </select>
+    </label>
     <button id="logoutBtn" class="btn danger">Logout</button>
   </div>
 </header>
 
 <main>
-  <div class="hero">
-    <img
-      src="https://i0.wp.com/wildeyessigns.com/wp-content/uploads/2015/02/wash-your-hands-cause-Jesus-and-germs-are-everywhere-on-picture-scaled.jpg?resize=600%2C600&ssl=1"
-      alt="Welcome sign image"
-      referrerpolicy="no-referrer"
-    />
+  <section class="hero">
+    <!-- ▶︎ Shyira ifoto muri repo yawe: assets/family.jpg; cyangwa ukoreshe fallback yo hanze -->
+    <img src="assets/family.jpg"
+         onerror="this.onerror=null;this.src='https://i0.wp.com/wildeyessigns.com/wp-content/uploads/2015/02/wash-your-hands-cause-Jesus-and-germs-are-everywhere-on-picture-scaled.jpg?resize=1200%2C600&ssl=1';"
+         alt="Family cover" />
     <div class="pad">
-      <h2 id="welcomeHeading">We are glad to have you in our family.</h2>
-      <p id="welcomeText" class="muted">
-        Explore your dashboard and stay connected with the family.
-      </p>
-      <div class="row">
-        <a class="btn" href="index.html" id="homeBtn">Home</a>
-        <a class="btn" href="contribute.html" id="contribBtn">Contribute</a>
-        <a class="btn" href="profile.html" id="profileBtn">Profile</a>
-      </div>
+      <h2 id="t_welcome">We are glad to have you in our family.</h2>
+      <p class="muted" id="t_sub">Stay connected and manage your family space from here.</p>
+      <nav class="quick">
+        <a id="t_home" href="index.html">Home</a>
+        <a id="t_contrib" href="contribute.html">Contribute</a>
+        <a id="t_profile" href="profile.html">Profile</a>
+        <a id="t_rules" href="terms.html">Terms & Policies</a>
+      </nav>
     </div>
-  </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <div class="k" id="t_stat1">Total Contributions</div>
+      <div class="v" id="statContrib">$0</div>
+    </div>
+    <div class="card">
+      <div class="k" id="t_stat2">Members</div>
+      <div class="v" id="statMembers">—</div>
+    </div>
+    <div class="card">
+      <div class="k" id="t_stat3">Last Activity</div>
+      <div class="v" id="statLast">—</div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <p id="footerText">© 2025 Les NGANYIRA. All rights reserved.</p>
+  <span id="t_footer">© 2025 Les NGANYIRA. All rights reserved.</span>
 </footer>
 
-<!-- Firebase SDKs -->
+<!-- Firebase CDN (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
-  // Firebase config
+  // 🔧 Firebase config — nk'iyo uri gukoresha muri project yawe
   const firebaseConfig = {
     apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
     authDomain: "lesnganyira.firebaseapp.com",
@@ -74,72 +110,77 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // I18N texts
-  const i18n = {
-    en: {
-      title: "Welcome to Les NGANYIRA",
-      welcomeHeading: "We are glad to have you in our family.",
-      welcomeText: "Explore your dashboard and stay connected with the family.",
-      homeBtn: "Home",
-      contribBtn: "Contribute",
-      profileBtn: "Profile",
-      footerText: "© 2025 Les NGANYIRA. All rights reserved.",
-      langBtn: "Kinyarwanda",
-      logout: "Logout"
+  // -------- I18N --------
+  const T = {
+    en:{
+      title:"Les NGANYIRA • Dashboard",
+      welcome:"We are glad to have you in our family.",
+      sub:"Stay connected and manage your family space from here.",
+      lang:"Language", home:"Home", contrib:"Contribute", profile:"Profile", rules:"Terms & Policies",
+      stat1:"Total Contributions", stat2:"Members", stat3:"Last Activity",
+      footer:"© 2025 Les NGANYIRA. All rights reserved.", logout:"Logout"
     },
-    rw: {
-      title: "Murakaza neza muri Les NGANYIRA",
-      welcomeHeading: "Twishimiye ko mwinjiye mu muryango wacu.",
-      welcomeText: "Reba dashboard yawe kandi uhorane n’umuryango ku murongo.",
-      homeBtn: "Ahabanza",
-      contribBtn: "Iturize",
-      profileBtn: "Umwirondoro",
-      footerText: "© 2025 Les NGANYIRA. Uburenganzira bwose burabitswe.",
-      langBtn: "English",
-      logout: "Sohoka"
+    fr:{
+      title:"Les NGANYIRA • Tableau de bord",
+      welcome:"Nous sommes heureux de vous compter dans la famille.",
+      sub:"Restez connecté(e) et gérez votre espace familial ici.",
+      lang:"Langue", home:"Accueil", contrib:"Cotiser", profile:"Profil", rules:"Conditions & Politiques",
+      stat1:"Contributions totales", stat2:"Membres", stat3:"Dernière activité",
+      footer:"© 2025 Les NGANYIRA. Tous droits réservés.", logout:"Se déconnecter"
+    },
+    rw:{
+      title:"Les NGANYIRA • Dashboard",
+      welcome:"Twishimiye ko uri mu muryango wacu.",
+      sub:"Horanira hano uhuze n’umuryango kandi ucungere urubuga rwawe.",
+      lang:"Ururimi", home:"Ahabanza", contrib:"Iturize", profile:"Umwirondoro", rules:"Amategeko & Politiki",
+      stat1:"Ibyatanzwe byose", stat2:"Abanyamuryango", stat3:"Igikorwa giheruka",
+      footer:"© 2025 Les NGANYIRA. Uburenganzira bwose burabitswe.", logout:"Sohoka"
     }
   };
 
-  function applyLang(lang) {
-    const t = i18n[lang] || i18n.en;
-    title.textContent = t.title;
-    welcomeHeading.textContent = t.welcomeHeading;
-    welcomeText.textContent = t.welcomeText;
-    homeBtn.textContent = t.homeBtn;
-    contribBtn.textContent = t.contribBtn;
-    profileBtn.textContent = t.profileBtn;
-    footerText.textContent = t.footerText;
-    langBtn.textContent = t.langBtn;
-    logoutBtn.textContent = t.logout;
-    localStorage.setItem('les_lang', lang);
-    document.documentElement.setAttribute('lang', lang === 'rw' ? 'rw' : 'en');
+  const $ = id => document.getElementById(id);
+  const sel = $("langSel");
+
+  function applyLang(lang){
+    const t = T[lang] || T.en;
+    $("t_title").textContent = t.title;
+    $("t_welcome").textContent = t.welcome;
+    $("t_sub").textContent = t.sub;
+    $("t_lang").textContent = t.lang;
+    $("t_home").textContent = t.home;
+    $("t_contrib").textContent = t.contrib;
+    $("t_profile").textContent = t.profile;
+    $("t_rules").textContent = t.rules;
+    $("t_stat1").textContent = t.stat1;
+    $("t_stat2").textContent = t.stat2;
+    $("t_stat3").textContent = t.stat3;
+    $("t_footer").textContent = t.footer;
+    $("logoutBtn").textContent = t.logout;
+    localStorage.setItem("les_lang", lang);
+    document.documentElement.setAttribute("lang", lang);
   }
+  // init language
+  const saved = localStorage.getItem("les_lang") || "en";
+  sel.value = saved; applyLang(saved);
+  sel.addEventListener("change", ()=>applyLang(sel.value));
 
-  const saved = localStorage.getItem('les_lang');
-  const initialLang = saved || ((navigator.language||'').toLowerCase().startsWith('rw') ? 'rw' : 'en');
-  applyLang(saved ? saved : initialLang);
-
-  langBtn.addEventListener('click', () => {
-    const current = localStorage.getItem('les_lang') || 'en';
-    applyLang(current === 'en' ? 'rw' : 'en');
-  });
-
-  // Auth guard
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) { location.href = 'signin.html'; return; }
+  // -------- AUTH GUARD --------
+  auth.onAuthStateChanged(async (user)=>{
+    if(!user){ location.href = "signin.html"; return; }
     await user.reload();
-    if (!user.emailVerified) {
-      sessionStorage.setItem('verifyEmailHint', user.email || '');
-      location.href = 'verify.html';
-      return;
+    if(!user.emailVerified){
+      sessionStorage.setItem('verifyEmailHint', user.email||'');
+      location.href = "verify.html"; return;
     }
-    userName.textContent = user.displayName ? `• ${user.displayName}` : `• ${user.email}`;
+    $("who").textContent = user.displayName ? user.displayName : (user.email||"");
+    // (Optional) Shyiramo real stats niba uzabikura ahandi
+    $("statMembers").textContent = "—";
+    $("statContrib").textContent = "$0";
+    $("statLast").textContent = new Date().toLocaleDateString();
   });
 
-  // Logout
-  logoutBtn.addEventListener('click', async () => {
-    await auth.signOut();
-    location.href = 'signin.html';
+  $("logoutBtn").addEventListener("click", async()=>{
+    await auth.signOut(); location.href = "signin.html";
   });
 </script>
 </body>
