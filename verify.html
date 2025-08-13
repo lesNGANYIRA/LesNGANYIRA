@@ -1,159 +1,44 @@
 <!DOCTYPE html>
-<html lang="rw">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Les Nganyira — Email Verification</title>
-  <style>
-    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#f4f6f8; margin:0; }
-    .wrap{ min-height:100dvh; display:grid; place-items:center; padding:24px; }
-    .card{ width:100%; max-width:560px; background:#fff; border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,.08); padding:24px 22px; }
-    h1{ font-size:1.25rem; margin:0 0 8px; }
-    p{ margin:6px 0; color:#6b7280; }
-    .ok{ color:#0a7a35; }
-    .err{ color:#b00020; }
-    .btn{ display:inline-block; margin-top:14px; padding:10px 16px; border-radius:12px; text-decoration:none; border:1px solid #d0d7de; }
-  </style>
+  <title>Verify Email • Les NGANYIRA</title>
 </head>
 <body>
-  <!--
-    IMPORTANT (Email copy): To have the email say exactly
-    "Welcome to family Les Nganyira. This email is for verifying if it's really you. Click here to verify.",
-    set this text in Firebase Console → Authentication → Templates → Email address verification.
-  -->
-  <div class="wrap">
-    <div class="card">
-      <h1 id="title">Igenzura rya email</h1>
-      <p id="state">Tegereza gato…</p>
-      <a id="continue" class="btn" href="#" style="display:none">Komeza</a>
-    </div>
-  </div>
+  <h1>Check your inbox</h1>
+  <p id="hint"></p>
+  <button id="btnResend">Resend verification email</button>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, isSignInWithEmailLink, signInWithEmailLink, applyActionCode, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // ---- FILL THESE WITH YOUR REAL VALUES ----
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
     const firebaseConfig = {
-      apiKey: "<YOUR_FIREBASE_API_KEY>",
-      authDomain: "<YOUR_FIREBASE_PROJECT_ID>.firebaseapp.com",
-      projectId: "<YOUR_FIREBASE_PROJECT_ID>",
-      appId: "<YOUR_FIREBASE_APP_ID>"
+      apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
+      authDomain: "lesnganyira.firebaseapp.com",
+      projectId: "lesnganyira",
+      storageBucket: "lesnganyira.firebasestorage.app",
+      messagingSenderId: "456037694600",
+      appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d",
+      measurementId: "G-TWBDL05VYZ"
     };
-    const DASHBOARD_URL = "https://<username>.github.io/<repo>/dashboard.html"; // where verified users land
-    const AUTH_URL      = "https://<username>.github.io/<repo>/auth.html";      // your Sign In / Create Account page
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    document.getElementById('hint').textContent =
+      'Verification email yoherejwe kuri: ' + (sessionStorage.getItem('verifyEmailHint') || '');
 
-    const titleEl = document.getElementById('title');
-    const stateEl = document.getElementById('state');
-    const btn     = document.getElementById('continue');
-
-    // Small i18n inline (rw default)
-    const text = {
-      rw: {
-        verifying: 'Tegereza gato…',
-        successPwdless: 'Byemejwe! Ubu winjiye. Turakujyana kuri Dashboard.',
-        successEmail: 'Email yawe yemejwe! Ushobora kwinjira kuri konti yawe.',
-        failed: 'Verification byanze. Link ishobora kuba yararengeje igihe cyangwa siyo.',
-        continue: 'Komeza',
-        title: 'Igenzura rya email'
-      },
-      en: {
-        verifying: 'Please wait…',
-        successPwdless: 'Verified and signed in! Taking you to the Dashboard.',
-        successEmail: 'Your email is verified! You can now sign in.',
-        failed: 'Verification failed. The link may be invalid or expired.',
-        continue: 'Continue',
-        title: 'Email verification'
-      },
-      fr: {
-        verifying: 'Veuillez patienter…',
-        successPwdless: "Vérifié et connecté ! Redirection vers le tableau de bord.",
-        successEmail: "Votre e-mail est vérifié ! Vous pouvez maintenant vous connecter.",
-        failed: "Échec de la vérification. Le lien est invalide ou expiré.",
-        continue: 'Continuer',
-        title: "Vérification de l'email"
+    document.getElementById('btnResend').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await user.sendEmailVerification();
+        alert('Verification email re-sent!');
+      } else {
+        alert('Sign in first to resend verification email.');
+        location.href = 'signin.html';
       }
-    };
-    function lang(){ return localStorage.getItem('ng_lang') || 'rw'; }
-    function t(k){ return (text[lang()] && text[lang()][k]) || text.rw[k]; }
-    titleEl.textContent = t('title');
-    stateEl.textContent = t('verifying');
-
-    (async () => {
-      try {
-        const url = new URL(window.location.href);
-        const mode = url.searchParams.get('mode');
-        const oobCode = url.searchParams.get('oobCode');
-
-        // Case A) Passwordless Email Link sign-in flow
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-          let email = localStorage.getItem('pendingEmail');
-          if (!email) {
-            email = window.prompt('Injiza email wakoresheje kwiyandikisha:');
-          }
-          const result = await signInWithEmailLink(auth, email, window.location.href);
-
-          // Save profile if we still have it from the first page
-          const fullName = localStorage.getItem('pendingFullName') || '';
-          const phone    = localStorage.getItem('pendingPhone') || '';
-          await setDoc(doc(db, 'users', result.user.uid), {
-            fullName, phone, email, verified: true, createdAt: serverTimestamp()
-          }, { merge: true });
-
-          // Clean temporary items
-          localStorage.removeItem('pendingEmail');
-          localStorage.removeItem('pendingFullName');
-          localStorage.removeItem('pendingPhone');
-
-          stateEl.innerHTML = `<span class="ok">${t('successPwdless')}</span>`;
-          setTimeout(() => window.location.href = DASHBOARD_URL, 900);
-          return;
-        }
-
-        // Case B) Standard email/password verification link (?mode=verifyEmail)
-        if (mode === 'verifyEmail' && oobCode) {
-          await applyActionCode(auth, oobCode);
-
-          // If user is already signed in, we can mark Firestore as verified.
-          onAuthStateChanged(auth, async (user) => {
-            try{
-              if (user) {
-                await setDoc(doc(db, 'users', user.uid), { verified: true }, { merge: true });
-                stateEl.innerHTML = `<span class="ok">${t('successEmail')}</span>`;
-                btn.style.display = 'inline-block';
-                btn.textContent = t('continue');
-                btn.onclick = () => window.location.href = DASHBOARD_URL;
-              } else {
-                // Not signed in; ask them to log in now.
-                stateEl.innerHTML = `<span class="ok">${t('successEmail')}</span>`;
-                btn.style.display = 'inline-block';
-                btn.textContent = t('continue');
-                btn.onclick = () => window.location.href = AUTH_URL;
-              }
-            }catch(e){ console.error(e); }
-          });
-          return;
-        }
-
-        // Unknown/invalid link
-        stateEl.innerHTML = `<span class="err">${t('failed')}</span>`;
-        btn.style.display = 'inline-block';
-        btn.textContent = t('continue');
-        btn.onclick = () => window.location.href = AUTH_URL;
-
-      } catch (err) {
-        console.error(err);
-        stateEl.innerHTML = `<span class="err">${t('failed')}</span>`;
-        btn.style.display = 'inline-block';
-        btn.textContent = t('continue');
-        btn.onclick = () => window.location.href = AUTH_URL;
-      }
-    })();
+    });
   </script>
 </body>
 </html>
