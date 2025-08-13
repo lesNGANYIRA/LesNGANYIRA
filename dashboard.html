@@ -1,187 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard • Les NGANYIRA</title>
+  <title>Dashboard • Les Nganyira</title>
   <style>
-    :root{
-      --bg:#f7f7fb; --card:#ffffff; --ink:#0f172a; --muted:#64748b;
-      --brand:#111111; --accent:#16a34a; --danger:#ef4444; --ring:#e5e7eb;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    header{position:sticky;top:0;z-index:50;background:var(--brand);color:#fff;
-      display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
-    .brand{font-weight:800;letter-spacing:.3px}
-    .controls{display:flex;gap:8px;align-items:center}
-    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.12);font-size:13px}
-    select,button{border-radius:10px;border:1px solid var(--ring);background:#fff;color:var(--ink)}
-    select{padding:8px 10px}
-    .btn{padding:10px 14px;cursor:pointer}
-    .btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
-    main{max-width:1100px;margin:22px auto;padding:0 16px}
-    .hero{border:1px solid var(--ring);border-radius:16px;overflow:hidden;background:var(--card);
-      box-shadow:0 10px 25px rgba(0,0,0,.06)}
-    .hero img{width:100%;height:340px;object-fit:cover;display:block}
-    .hero .pad{padding:16px}
-    .muted{color:var(--muted)}
-    .grid{display:grid;gap:14px;margin-top:16px}
-    @media(min-width:720px){.grid{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:16px}
-    .k{font-size:12px;color:var(--muted)}
-    .v{font-size:28px;font-weight:800}
-    nav.quick{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    nav.quick a{padding:10px 14px;border:1px solid var(--ring);border-radius:10px;background:#fff;
-      text-decoration:none;color:var(--ink)}
-    footer{margin-top:26px;background:#111;color:#fff;text-align:center;padding:14px;border-top:1px solid #000}
+    :root{--muted:#64748b}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#f8fafc;color:#0f172a}
+    header{padding:14px 20px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+    header .brand{font-weight:800;letter-spacing:.3px}
+    header nav a{color:#0f172a;text-decoration:none;margin-left:14px}
+    main{max-width:1100px;margin:36px auto;padding:0 20px}
+    .hero{display:grid;grid-template-columns:1fr;gap:24px;align-items:center}
+    .hero h1{font-size:clamp(28px,4.5vw,44px);margin:0}
+    .hero p{color:var(--muted);margin:6px 0 0}
+    .hero img{width:100%;height:auto;border-radius:18px;display:block;box-shadow:0 18px 60px rgba(2,6,23,.08)}
+    @media(min-width:860px){.hero{grid-template-columns:1.05fr .95fr}}
+    footer{margin:36px 0 18px;text-align:center;color:var(--muted);font-size:12px}
   </style>
 </head>
 <body>
+  <header>
+    <div class="brand">Les NGANYIRA</div>
+    <nav>
+      <a href="home.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contribute.html">Make a contribution</a>
+    </nav>
+  </header>
 
-<header>
-  <div class="brand" id="t_title">Les NGANYIRA • Dashboard</div>
-  <div class="controls">
-    <span id="who" class="chip">…</span>
-    <label class="chip" style="background:rgba(255,255,255,.08);border:0">
-      <span id="t_lang">Language</span>
-      <select id="langSel" aria-label="Language">
-        <option value="en">EN</option>
-        <option value="fr">FR</option>
-        <option value="rw">KINY</option>
-      </select>
-    </label>
-    <button id="logoutBtn" class="btn danger">Logout</button>
-  </div>
-</header>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>welcome to family Les Nganyira</h1>
+        <p>Turi kumwe twakira umuryango wose — urisanga ku rubuga rwacu.</p>
+      </div>
 
-<main>
-  <section class="hero">
-    <!-- ▶︎ Shyira ifoto muri repo yawe: assets/family.jpg; cyangwa ukoreshe fallback yo hanze -->
-    <img src="assets/family.jpg"
-         onerror="this.onerror=null;this.src='https://i0.wp.com/wildeyessigns.com/wp-content/uploads/2015/02/wash-your-hands-cause-Jesus-and-germs-are-everywhere-on-picture-scaled.jpg?resize=1200%2C600&ssl=1';"
-         alt="Family cover" />
-    <div class="pad">
-      <h2 id="t_welcome">We are glad to have you in our family.</h2>
-      <p class="muted" id="t_sub">Stay connected and manage your family space from here.</p>
-      <nav class="quick">
-        <a id="t_home" href="index.html">Home</a>
-        <a id="t_contrib" href="contribute.html">Contribute</a>
-        <a id="t_profile" href="profile.html">Profile</a>
-        <a id="t_rules" href="terms.html">Terms & Policies</a>
-      </nav>
-    </div>
-  </section>
+      <!-- Ifoto yawe (iStock) + fallback kuri EIDS5199.JPG niba hotlink itaboneka -->
+      <img
+        src="https://media.istockphoto.com/id/1288610566/photo/family-meeting.jpg?s=612x612&w=0&k=20&c=93dPFuCU0gjvd5G8j97b3htnTRAlYtiFqN8IKHqIbrk="
+        alt="Welcome to our family"
+        loading="lazy"
+        onerror="this.onerror=null; this.src='EIDS5199.JPG';" />
+    </section>
+  </main>
 
-  <section class="grid">
-    <div class="card">
-      <div class="k" id="t_stat1">Total Contributions</div>
-      <div class="v" id="statContrib">$0</div>
-    </div>
-    <div class="card">
-      <div class="k" id="t_stat2">Members</div>
-      <div class="v" id="statMembers">—</div>
-    </div>
-    <div class="card">
-      <div class="k" id="t_stat3">Last Activity</div>
-      <div class="v" id="statLast">—</div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <span id="t_footer">© 2025 Les NGANYIRA. All rights reserved.</span>
-</footer>
-
-<!-- Firebase CDN (compat) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script>
-  // 🔧 Firebase config — nk'iyo uri gukoresha muri project yawe
-  const firebaseConfig = {
-    apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
-    authDomain: "lesnganyira.firebaseapp.com",
-    projectId: "lesnganyira",
-    storageBucket: "lesnganyira.firebasestorage.app",
-    messagingSenderId: "456037694600",
-    appId: "1:456037694600:web:fec39a23af5bcaa3ccb33d",
-    measurementId: "G-TWBDL05VYZ"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // -------- I18N --------
-  const T = {
-    en:{
-      title:"Les NGANYIRA • Dashboard",
-      welcome:"We are glad to have you in our family.",
-      sub:"Stay connected and manage your family space from here.",
-      lang:"Language", home:"Home", contrib:"Contribute", profile:"Profile", rules:"Terms & Policies",
-      stat1:"Total Contributions", stat2:"Members", stat3:"Last Activity",
-      footer:"© 2025 Les NGANYIRA. All rights reserved.", logout:"Logout"
-    },
-    fr:{
-      title:"Les NGANYIRA • Tableau de bord",
-      welcome:"Nous sommes heureux de vous compter dans la famille.",
-      sub:"Restez connecté(e) et gérez votre espace familial ici.",
-      lang:"Langue", home:"Accueil", contrib:"Cotiser", profile:"Profil", rules:"Conditions & Politiques",
-      stat1:"Contributions totales", stat2:"Membres", stat3:"Dernière activité",
-      footer:"© 2025 Les NGANYIRA. Tous droits réservés.", logout:"Se déconnecter"
-    },
-    rw:{
-      title:"Les NGANYIRA • Dashboard",
-      welcome:"Twishimiye ko uri mu muryango wacu.",
-      sub:"Horanira hano uhuze n’umuryango kandi ucungere urubuga rwawe.",
-      lang:"Ururimi", home:"Ahabanza", contrib:"Iturize", profile:"Umwirondoro", rules:"Amategeko & Politiki",
-      stat1:"Ibyatanzwe byose", stat2:"Abanyamuryango", stat3:"Igikorwa giheruka",
-      footer:"© 2025 Les NGANYIRA. Uburenganzira bwose burabitswe.", logout:"Sohoka"
-    }
-  };
-
-  const $ = id => document.getElementById(id);
-  const sel = $("langSel");
-
-  function applyLang(lang){
-    const t = T[lang] || T.en;
-    $("t_title").textContent = t.title;
-    $("t_welcome").textContent = t.welcome;
-    $("t_sub").textContent = t.sub;
-    $("t_lang").textContent = t.lang;
-    $("t_home").textContent = t.home;
-    $("t_contrib").textContent = t.contrib;
-    $("t_profile").textContent = t.profile;
-    $("t_rules").textContent = t.rules;
-    $("t_stat1").textContent = t.stat1;
-    $("t_stat2").textContent = t.stat2;
-    $("t_stat3").textContent = t.stat3;
-    $("t_footer").textContent = t.footer;
-    $("logoutBtn").textContent = t.logout;
-    localStorage.setItem("les_lang", lang);
-    document.documentElement.setAttribute("lang", lang);
-  }
-  // init language
-  const saved = localStorage.getItem("les_lang") || "en";
-  sel.value = saved; applyLang(saved);
-  sel.addEventListener("change", ()=>applyLang(sel.value));
-
-  // -------- AUTH GUARD --------
-  auth.onAuthStateChanged(async (user)=>{
-    if(!user){ location.href = "signin.html"; return; }
-    await user.reload();
-    if(!user.emailVerified){
-      sessionStorage.setItem('verifyEmailHint', user.email||'');
-      location.href = "verify.html"; return;
-    }
-    $("who").textContent = user.displayName ? user.displayName : (user.email||"");
-    // (Optional) Shyiramo real stats niba uzabikura ahandi
-    $("statMembers").textContent = "—";
-    $("statContrib").textContent = "$0";
-    $("statLast").textContent = new Date().toLocaleDateString();
-  });
-
-  $("logoutBtn").addEventListener("click", async()=>{
-    await auth.signOut(); location.href = "signin.html";
-  });
-</script>
+  <footer>© Les Nganyira • Family</footer>
 </body>
 </html>
