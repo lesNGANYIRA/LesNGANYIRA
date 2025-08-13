@@ -14,7 +14,7 @@
     .btn.danger{background:var(--danger); color:#fff; border-color:var(--danger)}
     main{max-width:980px; margin:24px auto; padding:0 16px; text-align:center}
     .hero{background:#fff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    .hero img{width:100%; height:auto; display:block}
+    .hero img{width:100%; height:auto; display:block; object-fit:cover}
     .pad{padding:16px}
     .muted{color:var(--muted)}
     footer{margin-top:24px; background:var(--brand); color:#fff; text-align:center; padding:12px}
@@ -34,8 +34,11 @@
 
 <main>
   <div class="hero">
-    <!-- Shyira foto muri repo: assets/family.jpg (cyangwa uhindure iyi path) -->
-    <img src="assets/family.jpg" alt="Les Nganyira family dinner photo" />
+    <img
+      src="https://i0.wp.com/wildeyessigns.com/wp-content/uploads/2015/02/wash-your-hands-cause-Jesus-and-germs-are-everywhere-on-picture-scaled.jpg?resize=600%2C600&ssl=1"
+      alt="Welcome sign image"
+      referrerpolicy="no-referrer"
+    />
     <div class="pad">
       <h2 id="welcomeHeading">We are glad to have you in our family.</h2>
       <p id="welcomeText" class="muted">
@@ -58,7 +61,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
-  // Firebase config (yawe nyayo)
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyA5su24dQrXZUrsZAtUOTptDbPQ2tT6iig",
     authDomain: "lesnganyira.firebaseapp.com",
@@ -71,7 +74,7 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // Texts EN/RW
+  // I18N texts
   const i18n = {
     en: {
       title: "Welcome to Les NGANYIRA",
@@ -97,53 +100,44 @@
     }
   };
 
-  // Apply language
   function applyLang(lang) {
     const t = i18n[lang] || i18n.en;
-    document.getElementById('title').textContent = t.title;
-    document.getElementById('welcomeHeading').textContent = t.welcomeHeading;
-    document.getElementById('welcomeText').textContent = t.welcomeText;
-    document.getElementById('homeBtn').textContent = t.homeBtn;
-    document.getElementById('contribBtn').textContent = t.contribBtn;
-    document.getElementById('profileBtn').textContent = t.profileBtn;
-    document.getElementById('footerText').textContent = t.footerText;
-    document.getElementById('langBtn').textContent = t.langBtn;
-    document.getElementById('logoutBtn').textContent = (t.logout);
-    // Save preference
+    title.textContent = t.title;
+    welcomeHeading.textContent = t.welcomeHeading;
+    welcomeText.textContent = t.welcomeText;
+    homeBtn.textContent = t.homeBtn;
+    contribBtn.textContent = t.contribBtn;
+    profileBtn.textContent = t.profileBtn;
+    footerText.textContent = t.footerText;
+    langBtn.textContent = t.langBtn;
+    logoutBtn.textContent = t.logout;
     localStorage.setItem('les_lang', lang);
-    // Update <html lang="">
     document.documentElement.setAttribute('lang', lang === 'rw' ? 'rw' : 'en');
   }
 
-  // Init language (remember choice or auto-detect)
   const saved = localStorage.getItem('les_lang');
-  const initialLang = saved || (navigator.language || '').toLowerCase().startsWith('rw') ? 'rw' : 'en';
+  const initialLang = saved || ((navigator.language||'').toLowerCase().startsWith('rw') ? 'rw' : 'en');
   applyLang(saved ? saved : initialLang);
 
-  // Toggle language
-  document.getElementById('langBtn').addEventListener('click', () => {
+  langBtn.addEventListener('click', () => {
     const current = localStorage.getItem('les_lang') || 'en';
     applyLang(current === 'en' ? 'rw' : 'en');
   });
 
-  // Auth check (must be logged in & verified)
+  // Auth guard
   auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      location.href = 'signin.html';
-      return;
-    }
+    if (!user) { location.href = 'signin.html'; return; }
     await user.reload();
     if (!user.emailVerified) {
       sessionStorage.setItem('verifyEmailHint', user.email || '');
       location.href = 'verify.html';
       return;
     }
-    // Show name
-    document.getElementById('userName').textContent = user.displayName ? `• ${user.displayName}` : `• ${user.email}`;
+    userName.textContent = user.displayName ? `• ${user.displayName}` : `• ${user.email}`;
   });
 
   // Logout
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
+  logoutBtn.addEventListener('click', async () => {
     await auth.signOut();
     location.href = 'signin.html';
   });
